@@ -1,24 +1,23 @@
-image: python:3.6.7
+image: python:3.7.1
 
 stages:
   - test
   - quality_assurance
 
 before_script:
-  - pip3 install ../graph-flow
+  - pip3 install ../graph-flow -e ".[testing]"
 
 unit_tests:
   stage: test
-  script: pytest
+  script: python setup.py test
   only:
-    - master
     - merge_requests
 
 static_analysis:
   stage: quality_assurance
   script:
     - pylint setup.py
-    - pylint gf
+    - pylint graphflow
+    - pylint tests
   only:
-    - master
     - merge_requests
