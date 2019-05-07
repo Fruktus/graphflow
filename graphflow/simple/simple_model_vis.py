@@ -1,8 +1,8 @@
 import matplotlib.pyplot as plt
 import networkx as nx
 
-from ..simulation.simple_model import SimpleFlowNetwork
-from ..simulation.simple_model_utils import __build_raw_network
+from graphflow.simple.simple_model import SimpleFlowNetwork
+from graphflow.simple.simple_model_utils import __build_raw_network
 
 
 def visualize(network: SimpleFlowNetwork):

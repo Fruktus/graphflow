@@ -1,16 +1,36 @@
 import argparse
 from pathlib import Path
 
-from graphflow.analysis.simple_model_analysis import degree_centrality, hits
-from graphflow.simulation.simple_model_utils import from_json
-from graphflow.visualisation.simple_model_vis import visualize
+from graphflow.simple.simple_model_analysis import degree_centrality, hits
+from graphflow.epanet.epanet_model import EpanetFlowNetwork, SimulationType
+from graphflow.simple.simple_model_utils import from_json
+from graphflow.epanet.epanet_model_vis import get_animation
+from graphflow.simple.simple_model_vis import visualize
 
 
 def main():
     parser = argparse.ArgumentParser('python3 -m graphflow')
-    parser.add_argument('path_to_network_file', help='path to network file which represents network')
+    subparser = parser.add_subparsers(help='network models', dest='network_model')
+    simple_subparser = subparser.add_parser('simple')
+    simple_subparser.add_argument('path_to_network_file',
+                                  help='path to network file which represents network in json format')
+    epanet_subparser = subparser.add_parser('epanet')
+    epanet_subparser.add_argument('path_to_network_file',
+                                  help='path to network file which represents network in inp format')
+    epanet_subparser.add_argument('simulation_type', help='simulation type - pressure, ')
+    epanet_subparser.add_argument('--time', help='simulation time in hours', type=int, nargs='?')
+    epanet_subparser.add_argument('--trace_node', help='node number that will be observed', nargs='?')
+    epidemic_subparser = subparser.add_parser('epidemic')
+    epidemic_subparser.add_argument('path_to_network_file',
+                                    help='path to network file which represents network in x format')
     args = parser.parse_args()
-    __sample_routine(args.path_to_network_file)
+
+    if args.network_model == 'simple':
+        __sample_routine(args.path_to_network_file)
+    elif args.network_model == 'epanet':
+        __run_epanet(args)
+    elif args.network_model == 'epidemic':
+        print("Not implemented yet")
 
 
 def __sample_routine(graph_filepath):
@@ -28,6 +48,24 @@ def __sample_routine(graph_filepath):
         print("Hubs: ", hits_res[1])
         print("Centrality: ", centrality)
         visualize(solved_network)
+
+
+def __run_epanet(args):
+    print("Running simulation...")
+    if args.simulation_type == 'pressure':
+        if not hasattr(args, 'time'):
+            raise ValueError('No time range has been passed')
+        epanet_flow_network = EpanetFlowNetwork(args.path_to_network_file, SimulationType.PRESSURE, time=args.time)
+    elif args.simulation_type == 'quality':
+        if not hasattr(args, 'trace_node'):
+            raise ValueError('No  trace node has been passed')
+        epanet_flow_network = EpanetFlowNetwork(args.path_to_network_file, SimulationType.QUALITY,
+                                                trace_node=args.trace_node)
+    else:
+        raise ValueError('Bad simulation type')
+
+    epanet_flow_network.run_simulation()
+    get_animation(epanet_flow_network, frames=100, fps=1)
 
 
 if __name__ == '__main__':
