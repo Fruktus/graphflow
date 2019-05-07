@@ -6,8 +6,11 @@ INSTALL_REQUIREMENTS = [
     'sympy == 1.4',
     'Matplotlib == 3.0.3',
     'scipy == 1.2.1',
+    'holoviews == 1.12.2',
+    'bokeh == 1.1.0',
+    'scipy == 1.2.1',
     'wntr == 0.1.6',
-    'pandas == 0.24.2'
+    'pandas == 0.24.2',
 ]
 
 TESTS_REQUIREMENTS = [

@@ -1,11 +1,17 @@
+# pylint: disable=E1101
+
+import holoviews as hv
+from holoviews import opts
+from bokeh.io import output_file, show
 import matplotlib.pyplot as plt
 import networkx as nx
 
 from graphflow.simple.simple_model import SimpleFlowNetwork
 from graphflow.simple.simple_model_utils import __build_raw_network
+from graphflow.simple.simple_model_utils import __build_string_network
 
 
-def visualize(network: SimpleFlowNetwork):
+def visualize_matplotlib(network: SimpleFlowNetwork):
     nodes, edges = network.get_network_state()
     raw_network = __build_raw_network(nodes, edges)
 
@@ -19,3 +25,20 @@ def visualize(network: SimpleFlowNetwork):
     nx.draw_networkx_labels(raw_network, graph_pos, labels=node_labels, font_size=8)
     nx.draw_networkx_edge_labels(raw_network, graph_pos, edge_labels=edge_labels, font_size=8)
     plt.show()
+
+
+def visualize_holoviews(network: SimpleFlowNetwork):
+    nodes, edges = network.get_network_state()
+    hv.extension('bokeh')
+
+    string_network = __build_string_network(nodes, edges)
+
+    defaults = dict(width=700, height=700, padding=0.1)
+    hv.opts.defaults(opts.EdgePaths(**defaults), opts.Graph(**defaults), opts.Nodes(**defaults))
+    network_graph = hv.Graph.from_networkx(
+        string_network, nx.layout.spring_layout).opts(tools=['hover'], directed=True, arrowhead_length=0.05)
+
+    renderer = hv.renderer('bokeh')
+    plot = renderer.get_plot(network_graph).state
+    output_file("graph.html")
+    show(plot)
