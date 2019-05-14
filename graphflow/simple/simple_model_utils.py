@@ -29,6 +29,16 @@ def __build_raw_network(nodes, edges) -> nx.DiGraph:
     return new_network
 
 
+def __build_string_network(nodes, edges) -> nx.DiGraph:
+    new_network = nx.DiGraph()
+    for node in nodes:
+        new_network.add_node(node.id, pressure=str(node.pressure), s_flow=str(node.s_flow))
+    for edge in edges:
+        new_network.add_edge(
+            edge.u_id, edge.v_id, length=str(edge.length), cross_area=str(edge.cross_area), m_flow=str(edge.m_flow))
+    return new_network
+
+
 def from_json(json_network: str) -> SimpleFlowNetwork:
     deserializable_dict = json.loads(json_network)
     density = deserializable_dict['density']

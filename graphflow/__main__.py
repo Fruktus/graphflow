@@ -5,7 +5,7 @@ from graphflow.simple.simple_model_analysis import degree_centrality, hits
 from graphflow.epanet.epanet_model import EpanetFlowNetwork, SimulationType
 from graphflow.simple.simple_model_utils import from_json
 from graphflow.epanet.epanet_model_vis import get_animation
-from graphflow.simple.simple_model_vis import visualize
+from graphflow.simple.simple_model_vis import visualize_holoviews
 
 
 def main():
@@ -47,7 +47,7 @@ def __sample_routine(graph_filepath):
         print("Authorities: ", hits_res[0])
         print("Hubs: ", hits_res[1])
         print("Centrality: ", centrality)
-        visualize(solved_network)
+        visualize_holoviews(solved_network)
 
 
 def __run_epanet(args):
