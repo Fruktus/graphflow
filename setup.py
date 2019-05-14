@@ -5,7 +5,9 @@ INSTALL_REQUIREMENTS = [
     'networkx == 2.3',
     'sympy == 1.4',
     'Matplotlib == 3.0.3',
-    'scipy == 1.2.1'
+    'scipy == 1.2.1',
+    'wntr == 0.1.6',
+    'pandas == 0.24.2'
 ]
 
 TESTS_REQUIREMENTS = [
