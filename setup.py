@@ -11,6 +11,7 @@ INSTALL_REQUIREMENTS = [
     'scipy == 1.2.1',
     'wntr == 0.1.6',
     'pandas == 0.24.2',
+    'numpy == 1.16.3',
 ]
 
 TESTS_REQUIREMENTS = [
