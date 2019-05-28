@@ -19,8 +19,8 @@ static_analysis:
     - pylint setup.py
     - pylint graphflow
     - pylint tests
-    - vulture graphflow
-    - vulture tests
-    - bandit graphflow -lll
+    - vulture graphflow --min-confidence 65
+    - vulture tests --min-confidence 65
+    - bandit graphflow -lll -r
   only:
     - merge_requests
