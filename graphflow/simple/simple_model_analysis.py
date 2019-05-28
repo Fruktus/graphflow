@@ -3,7 +3,7 @@ import networkx as nx
 from graphflow.simple.simple_model import SimpleFlowNetwork
 from graphflow.simple.simple_model_utils import __build_raw_network_from_network
 
-
+# general metrics
 def degree_centrality(network: SimpleFlowNetwork):
     raw_network = __build_raw_network_from_network(network)
     return nx.degree_centrality(raw_network)
@@ -41,11 +41,6 @@ def page_rank(network: SimpleFlowNetwork):
     return nx.algorithms.link_analysis.pagerank_alg.pagerank(raw_network)
 
 
-def hits(network: SimpleFlowNetwork):
-    raw_network = __build_raw_network_from_network(network)
-    return nx.algorithms.link_analysis.hits_alg.hits(raw_network)
-
-
 def eigenvector_centrality(network: SimpleFlowNetwork):
     raw_network = __build_raw_network_from_network(network)
     return nx.algorithms.centrality.eigenvector_centrality(raw_network)
@@ -72,4 +67,24 @@ def average_path(network: SimpleFlowNetwork):
         return nx.algorithms.shortest_paths.generic.average_shortest_path_length(raw_network)
     except Exception:
         return 0
+
+
+# specific metrics
+def maximum_flow(network: SimpleFlowNetwork, source, target):
+    # TODO add util for finding source/target?
+    raw_network = __build_raw_network_from_network(network)
+    try:
+        return nx.algorithms.flow.maximum_flow_value(raw_network, source, target)
+    except Exception:
+        return 0.0
+
+
+def current_flow_closeness(network: SimpleFlowNetwork):
+    raw_network = __build_raw_network_from_network(network)
+    return nx.algorithms.centrality.current_flow_closeness_centrality(raw_network)
+
+
+def current_flow_betweenness(network: SimpleFlowNetwork):
+    raw_network = __build_raw_network_from_network(network)
+    return nx.algorithms.centrality.current_flow_betweenness_centrality(raw_network)
 
