@@ -16,7 +16,9 @@ INSTALL_REQUIREMENTS = [
 TESTS_REQUIREMENTS = [
     'jsondiff == 1.1.2',
     'pylint == 2.3.1',
-    'pytest == 4.4.1'
+    'pytest == 4.4.1',
+    'vulture == 1.0',
+    'bandit == 1.6.0'
 ]
 
 EXTRAS = {
