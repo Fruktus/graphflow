@@ -88,3 +88,32 @@ def current_flow_betweenness(network: SimpleFlowNetwork):
     raw_network = __build_raw_network_from_network(network)
     return nx.algorithms.centrality.current_flow_betweenness_centrality(raw_network)
 
+
+def load_centrality(network: SimpleFlowNetwork):
+    raw_network = __build_raw_network_from_network(network)
+    return nx.algorithms.centrality.load_centrality(raw_network)
+
+
+def subgraph(network: SimpleFlowNetwork):
+    raw_network = __build_raw_network_from_network(network)
+    return nx.algorithms.centrality.subgraph_centrality(raw_network)
+
+
+def harmonic_centrality(network: SimpleFlowNetwork):
+    raw_network = __build_raw_network_from_network(network)
+    return nx.algorithms.centrality.harmonic_centrality(raw_network)
+
+
+def global_reaching(network: SimpleFlowNetwork):
+    raw_network = __build_raw_network_from_network(network)
+    return nx.algorithms.centrality.global_reaching_centrality(raw_network)
+
+
+def percolation(network: SimpleFlowNetwork):
+    raw_network = __build_raw_network_from_network(network)
+    return nx.algorithms.centrality.percolation_centrality(raw_network)
+
+
+def second_order_centrality(network: SimpleFlowNetwork):
+    raw_network = __build_raw_network_from_network(network)
+    return nx.algorithms.centrality.second_order_centrality(raw_network)
