@@ -1,9 +1,16 @@
 image: python:3.7-slim-stretch
 
+variables:
+  DOCKER_HOST: tcp://docker:2375/
+  DOCKER_DRIVER: overlay2
+
 stages:
   - test
   - quality_assurance
   - deploy
+
+services:
+  - docker:dind
 
 before_script:
   - pip3 install ../graph-flow -e ".[testing]"
@@ -29,6 +36,7 @@ static_analysis:
     - master
 
 deploy_registry:
+  image: docker:stable
   stage: deploy
   script:
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
