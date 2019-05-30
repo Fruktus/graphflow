@@ -1,8 +1,9 @@
-image: python:3.7.1
+image: python:3.7-slim-stretch
 
 stages:
   - test
   - quality_assurance
+  - deploy
 
 before_script:
   - pip3 install ../graph-flow -e ".[testing]"
@@ -12,6 +13,7 @@ unit_tests:
   script: python setup.py test
   only:
     - merge_requests
+    - master
 
 static_analysis:
   stage: quality_assurance
@@ -24,3 +26,13 @@ static_analysis:
     - bandit graphflow -lll -r
   only:
     - merge_requests
+    - master
+
+deploy_registry:
+  stage: deploy
+  script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    - docker build -t $CI_REGISTRY/io-2019-networks/graph-flow/image:latest .
+    - docker push $CI_REGISTRY/io-2019-networks/graph-flow/image:latest
+  only:
+    - master
