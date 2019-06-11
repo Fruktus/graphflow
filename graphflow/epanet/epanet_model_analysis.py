@@ -2,6 +2,7 @@ import networkx as nx
 
 from graphflow.epanet.epanet_model import EpanetFlowNetwork
 
+
 # general metrics
 def degree_centrality(network: EpanetFlowNetwork):
     return nx.degree_centrality(network.get_networkx_graph())
@@ -40,10 +41,6 @@ def hits(network: EpanetFlowNetwork):
 
 def eigenvector_centrality(network: EpanetFlowNetwork):
     return nx.algorithms.centrality.eigenvector_centrality(network.get_networkx_graph())
-
-
-def hits(network: EpanetFlowNetwork):
-    return nx.algorithms.link_analysis.hits_alg.hits(network.get_networkx_graph())
 
 
 def closeness_centrality(network: EpanetFlowNetwork):
