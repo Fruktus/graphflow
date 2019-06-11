@@ -43,7 +43,7 @@ def __sample_routine(graph_filepath):
 
         solved_network = network.calculate_network_state()
         hits_res = hits(solved_network)
-        centrality = harmonic_centrality(solved_network)
+        centrality = betweenness_centrality(solved_network)
         load = load_centrality(solved_network)
 
         print("Authorities: ", hits_res[0])

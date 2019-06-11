@@ -9,11 +9,17 @@ def degree_centrality(network: EpanetFlowNetwork):
 
 
 def hits(network: EpanetFlowNetwork):
-    return nx.hits_scipy(network.get_networkx_graph())
+    try:
+        return nx.hits_scipy(network.get_networkx_graph(), max_iter=10000)
+    except Exception:
+        return None
 
 
 def diameter(network: EpanetFlowNetwork):
-    return nx.algorithms.distance_measures.diameter(network.get_networkx_graph())
+    try:
+        return nx.algorithms.distance_measures.diameter(network.get_networkx_graph())
+    except Exception:
+        return 0
 
 
 def degree(network: EpanetFlowNetwork):
@@ -32,15 +38,14 @@ def modularity(network: EpanetFlowNetwork):
 
 
 def page_rank(network: EpanetFlowNetwork):
-    return nx.algorithms.link_analysis.pagerank_alg.pagerank(network.get_networkx_graph())
-
-
-def hits(network: EpanetFlowNetwork):
-    return nx.algorithms.link_analysis.hits_alg.hits(network.get_networkx_graph())
+    return nx.algorithms.link_analysis.pagerank_alg.pagerank(nx.Graph(network.get_networkx_graph()))
 
 
 def eigenvector_centrality(network: EpanetFlowNetwork):
-    return nx.algorithms.centrality.eigenvector_centrality(network.get_networkx_graph())
+    try:
+        return nx.algorithms.centrality.eigenvector_centrality(nx.Graph(network.get_networkx_graph()), max_iter=10000)
+    except Exception:
+        return None
 
 
 def closeness_centrality(network: EpanetFlowNetwork):
@@ -68,11 +73,11 @@ def maximum_flow(network: EpanetFlowNetwork, source, target):
 
 
 def current_flow_closeness(network: EpanetFlowNetwork):
-    return nx.algorithms.centrality.current_flow_closeness_centrality(network.get_networkx_graph())
+    return nx.algorithms.centrality.current_flow_closeness_centrality(network.get_networkx_graph().to_undirected())
 
 
 def current_flow_betweenness(network: EpanetFlowNetwork):
-    return nx.algorithms.centrality.current_flow_betweenness_centrality(network.get_networkx_graph())
+    return nx.algorithms.centrality.current_flow_betweenness_centrality(network.get_networkx_graph().to_undirected())
 
 
 def load_centrality(network: EpanetFlowNetwork):
@@ -80,7 +85,7 @@ def load_centrality(network: EpanetFlowNetwork):
 
 
 def subgraph(network: EpanetFlowNetwork):
-    return nx.algorithms.centrality.subgraph_centrality(network.get_networkx_graph())
+    return nx.algorithms.centrality.subgraph_centrality(nx.Graph(network.get_networkx_graph().to_undirected()))
 
 
 def harmonic_centrality(network: EpanetFlowNetwork):
@@ -92,8 +97,11 @@ def global_reaching(network: EpanetFlowNetwork):
 
 
 def percolation(network: EpanetFlowNetwork):
-    return nx.algorithms.centrality.percolation_centrality(network.get_networkx_graph())
+    try:
+        return nx.algorithms.centrality.percolation_centrality(network.get_networkx_graph())
+    except Exception:
+        return {}
 
 
 def second_order_centrality(network: EpanetFlowNetwork):
-    return nx.algorithms.centrality.second_order_centrality(network.get_networkx_graph())
+    return nx.algorithms.centrality.second_order_centrality(nx.Graph(network.get_networkx_graph()).to_undirected())

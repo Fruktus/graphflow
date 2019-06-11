@@ -1,6 +1,7 @@
 from graphflow.epanet.epanet_model_analysis import *
 from pathlib import Path
 import pytest
+from graphflow.epanet.epanet_model import EpanetFlowNetwork, SimulationType
 
 
 @pytest.fixture(scope='module')
@@ -11,10 +12,7 @@ def test_network():
     """
     base_path = Path(__file__).parent.parent.parent
     file_path = (base_path / "examples" / "epanet" / "example_epanet_network.inp").resolve()
-    with open(file_path) as file:
-        json_network = file.read()
-        network = from_json(json_network)
-        test_network = network.calculate_network_state()
+    test_network = EpanetFlowNetwork(file_path, SimulationType.PRESSURE, time=20)
     return test_network
 
 
@@ -23,7 +21,7 @@ def test_degree_centrality(test_network):
 
 
 def test_hits(test_network):
-    assert isinstance(hits(test_network), tuple or None)
+    assert isinstance(hits(test_network), tuple)
 
 
 def test_diameter(test_network):
