@@ -15,7 +15,7 @@ def hits(network: SimpleFlowNetwork):
     try:
         raw_network = __build_raw_network_from_network(network)
         return nx.hits_scipy(raw_network)
-    except Exception:
+    except nx.PowerIterationFailedConvergence:
         return None
 
 
@@ -24,25 +24,22 @@ def diameter(network: SimpleFlowNetwork):
     try:
         raw_network = __build_raw_network_from_network(network)
         return nx.algorithms.distance_measures.diameter(raw_network)
-    except Exception:
+    except nx.NetworkXError:
         return 0
 
 
 def density(network: SimpleFlowNetwork):
     """Returns: density (Float)"""
     raw_network = __build_raw_network_from_network(network)
-    e = len(raw_network.edges)
-    v = len(raw_network.nodes)
-    return e/(v*(v-1))
+    edges = len(raw_network.edges)
+    vertices = len(raw_network.nodes)
+    return edges / (vertices * (vertices - 1))
 
 
 def modularity(network: SimpleFlowNetwork):
     """Returns: None, Yields sets of nodes, one for each community."""
-    try:
-        raw_network = __build_raw_network_from_network(network)
-        return nx.algorithms.community.modularity_max.greedy_modularity_communities(raw_network)
-    except Exception:
-        return None
+    raw_network = __build_raw_network_from_network(network)
+    return nx.algorithms.community.modularity_max.greedy_modularity_communities(raw_network)
 
 
 def page_rank(network: SimpleFlowNetwork):
@@ -72,21 +69,19 @@ def betweenness_centrality(network: SimpleFlowNetwork):
 def average_path(network: SimpleFlowNetwork):
     """Returns: average shortest path length."""
     raw_network = __build_raw_network_from_network(network)
-    try:
-        return nx.algorithms.shortest_paths.generic.average_shortest_path_length(raw_network)
-    except Exception:
-        return 0
+    return nx.algorithms.shortest_paths.generic.average_shortest_path_length(raw_network)
 
 
 # specific metrics
 def maximum_flow(network: SimpleFlowNetwork, source, target):
     """flow_value (integer, float) – Value of the maximum flow, i.e., net outflow from the source.
        flow_dict (dict) – A dictionary containing the value of the flow that went through each edge."""
-    # TODO add util for finding source/target?
     raw_network = __build_raw_network_from_network(network)
     try:
         return nx.algorithms.flow.maximum_flow_value(raw_network, source, target)
-    except Exception:
+    except nx.NetworkXError:
+        return 0.0
+    except nx.NetworkXUnbounded:
         return 0.0
 
 
@@ -131,7 +126,7 @@ def percolation(network: SimpleFlowNetwork):
     try:
         raw_network = __build_raw_network_from_network(network)
         return nx.algorithms.centrality.percolation_centrality(raw_network)
-    except Exception:
+    except KeyError:
         return {}
 
 

@@ -11,14 +11,14 @@ def degree_centrality(network: EpanetFlowNetwork):
 def hits(network: EpanetFlowNetwork):
     try:
         return nx.hits_scipy(network.get_networkx_graph(), max_iter=10000)
-    except Exception:
+    except nx.PowerIterationFailedConvergence:
         return None
 
 
 def diameter(network: EpanetFlowNetwork):
     try:
         return nx.algorithms.distance_measures.diameter(network.get_networkx_graph())
-    except Exception:
+    except nx.NetworkXError:
         return 0
 
 
@@ -28,9 +28,9 @@ def degree(network: EpanetFlowNetwork):
 
 def density(network: EpanetFlowNetwork):
     raw_network = network.get_networkx_graph()
-    e = len(raw_network.edges)
-    v = len(raw_network.nodes)
-    return e/(v*(v-1))
+    edges = len(raw_network.edges)
+    vertices = len(raw_network.nodes)
+    return edges/(vertices*(vertices-1))
 
 
 def modularity(network: EpanetFlowNetwork):
@@ -42,10 +42,7 @@ def page_rank(network: EpanetFlowNetwork):
 
 
 def eigenvector_centrality(network: EpanetFlowNetwork):
-    try:
-        return nx.algorithms.centrality.eigenvector_centrality(nx.Graph(network.get_networkx_graph()), max_iter=10000)
-    except Exception:
-        return None
+    return nx.algorithms.centrality.eigenvector_centrality(nx.Graph(network.get_networkx_graph()), max_iter=10000)
 
 
 def closeness_centrality(network: EpanetFlowNetwork):
@@ -57,18 +54,16 @@ def betweenness_centrality(network: EpanetFlowNetwork):
 
 
 def average_path(network: EpanetFlowNetwork):
-    try:
-        return nx.algorithms.shortest_paths.generic.average_shortest_path_length(network.get_networkx_graph())
-    except Exception:
-        return 0
+    return nx.algorithms.shortest_paths.generic.average_shortest_path_length(network.get_networkx_graph())
 
 
 # specific metrics
 def maximum_flow(network: EpanetFlowNetwork, source, target):
-    # TODO add util for finding source/target?
     try:
         return nx.algorithms.flow.maximum_flow_value(network.get_networkx_graph(), source, target)
-    except Exception:
+    except nx.NetworkXError:
+        return 0.0
+    except nx.NetworkXUnbounded:
         return 0.0
 
 
@@ -99,7 +94,7 @@ def global_reaching(network: EpanetFlowNetwork):
 def percolation(network: EpanetFlowNetwork):
     try:
         return nx.algorithms.centrality.percolation_centrality(network.get_networkx_graph())
-    except Exception:
+    except KeyError:
         return {}
 
 
