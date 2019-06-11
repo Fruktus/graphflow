@@ -1,4 +1,4 @@
-# pylint: disable=R0801,W0401,W0614,W0621
+# pylint: skip-file
 from pathlib import Path
 import pytest
 
