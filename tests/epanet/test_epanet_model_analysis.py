@@ -1,15 +1,15 @@
 # pylint: disable=R0801,W0401,W0614,W0621
-import pytest
 from pathlib import Path
+import pytest
 
 from graphflow.epanet.epanet_model_analysis import *
 from graphflow.epanet.epanet_model import EpanetFlowNetwork, SimulationType
 
 
 @pytest.fixture(scope='module')
-def test_test_networkwork():
+def test_network():
     base_path = Path(__file__).parent.parent.parent
-    file_path = (base_path / "examples" / "epatest_network" / "example_epatest_network_test_networkwork.inp").resolve()
+    file_path = (base_path / "examples" / "epanet" / "example_epanet_network.inp").resolve()
     test_network = EpanetFlowNetwork(file_path, SimulationType.PRESSURE, time=20)
     return test_network
 

@@ -1,4 +1,4 @@
-# pylint: disable=R0801,W0401,W0621
+# pylint: disable=R0801,W0401,W0621,W0614
 from pathlib import Path
 import pytest
 
