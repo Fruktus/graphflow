@@ -1,7 +1,7 @@
 import argparse
 from pathlib import Path
 
-from graphflow.simple.simple_model_analysis import degree_centrality, hits
+from graphflow.simple.simple_model_analysis import betweenness_centrality, hits, load_centrality
 from graphflow.epanet.epanet_model import EpanetFlowNetwork, SimulationType
 from graphflow.simple.simple_model_utils import from_json
 from graphflow.epanet.epanet_model_vis import get_animation, \
@@ -50,12 +50,15 @@ def __sample_routine(graph_filepath):
 
         solved_network = network.calculate_network_state()
         hits_res = hits(solved_network)
-        centrality = degree_centrality(solved_network)
+        centrality = betweenness_centrality(solved_network)
+        load = load_centrality(solved_network)
 
         print("Authorities: ", hits_res[0])
         print("Hubs: ", hits_res[1])
         print("Centrality: ", centrality)
-        visualize_holoviews(solved_network)
+        print("Load: ", load)
+        res = ('bb', betweenness_centrality(solved_network))
+        visualize_holoviews(solved_network, [res])
 
 
 def __run_epanet(args):
