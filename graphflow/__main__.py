@@ -2,7 +2,6 @@ import argparse
 from pathlib import Path
 
 from graphflow.simple.simple_model_analysis import betweenness_centrality, hits, load_centrality
-from graphflow.epanet.epanet_model_analysis import current_flow_betweenness
 from graphflow.epanet.epanet_model import EpanetFlowNetwork, SimulationType
 from graphflow.simple.simple_model_utils import from_json
 from graphflow.epanet.epanet_model_vis import get_animation, \
