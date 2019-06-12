@@ -11,6 +11,9 @@ from graphflow.epanet.epanet_model_vis import get_animation, \
     draw_probability_of_major_leak, draw_damage_states_plot
 from graphflow.simple.simple_model_vis import visualize_holoviews
 
+from graphflow.epidemic.epidemic_runner import Parser
+from graphflow.epidemic.epidemic_simulation import Simulation
+
 
 def main():
     parser = argparse.ArgumentParser('python3 -m graphflow')
@@ -30,7 +33,13 @@ def main():
     epanet_subparser.add_argument('--depth', help='depth of earthquake in meters', type=int, nargs='?')
     epidemic_subparser = subparser.add_parser('epidemic')
     epidemic_subparser.add_argument('path_to_network_file',
-                                    help='path to network file which represents network in x format')
+                                    help='path to network file which represents network in gml format')
+    epidemic_subparser.add_argument('type', help='simulation type - sir or sis, ')
+    epidemic_subparser.add_argument('-transrate', help='transmission rate, ', type=float, default=2.0)
+    epidemic_subparser.add_argument('-recrate', help='recovery rate, ', type=float, default=1.0)
+    epidemic_subparser.add_argument('-tmax', help='max simulation time, ', type=int, default=100)
+
+
     args = parser.parse_args()
 
     if args.network_model == 'simple':
@@ -38,7 +47,7 @@ def main():
     elif args.network_model == 'epanet':
         __run_epanet(args)
     elif args.network_model == 'epidemic':
-        print("Not implemented yet")
+        __run_epidemic(args)
 
 
 def __sample_routine(graph_filepath):
@@ -101,6 +110,15 @@ def __run_epanet(args):
         draw_probability_of_major_leak(epanet_flow_network)
         draw_damage_states_plot(epanet_flow_network)
         show_plots()
+
+
+def __run_epidemic(args):
+    epidemic_params = Parser()
+    epidemic_params.parse_input(args.type, args.path_to_network_file, args.transrate, args.recrate, args.tmax)
+    simulation_config = epidemic_params.get_simulation_config()
+
+    my_sim = Simulation(simulation_config)
+    my_sim.run_simulation()
 
 
 if __name__ == '__main__':
