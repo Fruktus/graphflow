@@ -5,7 +5,11 @@ from graphflow.simple.simple_model_analysis import betweenness_centrality, hits,
 from graphflow.epanet.epanet_model_analysis import current_flow_betweenness
 from graphflow.epanet.epanet_model import EpanetFlowNetwork, SimulationType
 from graphflow.simple.simple_model_utils import from_json
-from graphflow.epanet.epanet_model_vis import get_animation
+from graphflow.epanet.epanet_model_vis import get_animation, \
+    show_plots, draw_epicenter_plot, draw_fragility_curve_plot, \
+    draw_distance_to_epicenter_plot, draw_peak_ground_acceleration_plot, draw_peak_ground_velocity_plot, \
+    draw_repair_rate_plot, draw_repair_rate_x_pipe_length, draw_probability_of_minor_leak, \
+    draw_probability_of_major_leak, draw_damage_states_plot
 from graphflow.simple.simple_model_vis import visualize_holoviews
 
 
@@ -18,9 +22,13 @@ def main():
     epanet_subparser = subparser.add_parser('epanet')
     epanet_subparser.add_argument('path_to_network_file',
                                   help='path to network file which represents network in inp format')
-    epanet_subparser.add_argument('simulation_type', help='simulation type - pressure, ')
+    epanet_subparser.add_argument('simulation_type', help='simulation type - pressure or earthquake, ')
     epanet_subparser.add_argument('--time', help='simulation time in hours', type=int, nargs='?')
     epanet_subparser.add_argument('--trace_node', help='node number that will be observed', nargs='?')
+    epanet_subparser.add_argument('--epicenter_x', help='x cord of earthquake epicenter', type=int, nargs='?')
+    epanet_subparser.add_argument('--epicenter_y', help='y cord of earthquake epicenter', type=int, nargs='?')
+    epanet_subparser.add_argument('--magnitude', help='magnitude of earthquake ', type=float, nargs='?')
+    epanet_subparser.add_argument('--depth', help='depth of earthquake in meters', type=int, nargs='?')
     epidemic_subparser = subparser.add_parser('epidemic')
     epidemic_subparser.add_argument('path_to_network_file',
                                     help='path to network file which represents network in x format')
@@ -56,7 +64,17 @@ def __sample_routine(graph_filepath):
 
 def __run_epanet(args):
     print("Running simulation...")
-    if args.simulation_type == 'pressure':
+    if args.simulation_type == 'earthquake':
+        if not (hasattr(args, 'epicenter_x')
+                and hasattr(args, 'epicenter_y')
+                and hasattr(args, 'magnitude')
+                and hasattr(args, 'depth')):
+            raise ValueError('No all arguments have been passed')
+        epanet_flow_network = EpanetFlowNetwork(args.path_to_network_file, SimulationType.EARTHQUAKE,
+                                                epicenter=(args.epicenter_x, args.epicenter_y),
+                                                magnitude=args.magnitude,
+                                                depth=args.depth)
+    elif args.simulation_type == 'pressure':
         if not hasattr(args, 'time'):
             raise ValueError('No time range has been passed')
         epanet_flow_network = EpanetFlowNetwork(args.path_to_network_file, SimulationType.PRESSURE, time=args.time)
@@ -69,8 +87,21 @@ def __run_epanet(args):
         raise ValueError('Bad simulation type')
 
     epanet_flow_network.run_simulation()
-    print("Current Flow: ", current_flow_betweenness(epanet_flow_network))
-    get_animation(epanet_flow_network, frames=100, fps=1)
+
+    if args.simulation_type == 'pressure' or args.simulation_type == 'quality':
+        get_animation(epanet_flow_network, frames=100, fps=1)
+    elif args.simulation_type == 'earthquake':
+        draw_epicenter_plot(epanet_flow_network)
+        draw_fragility_curve_plot(epanet_flow_network)
+        draw_distance_to_epicenter_plot(epanet_flow_network)
+        draw_peak_ground_acceleration_plot(epanet_flow_network)
+        draw_peak_ground_velocity_plot(epanet_flow_network)
+        draw_repair_rate_plot(epanet_flow_network)
+        draw_repair_rate_x_pipe_length(epanet_flow_network)
+        draw_probability_of_minor_leak(epanet_flow_network)
+        draw_probability_of_major_leak(epanet_flow_network)
+        draw_damage_states_plot(epanet_flow_network)
+        show_plots()
 
 
 if __name__ == '__main__':
