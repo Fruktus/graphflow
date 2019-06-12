@@ -26,8 +26,3 @@ for n in nx.nodes(G):
     nx.set_node_attributes(G, attrs)
 
 nx.write_gml(G, input_name + "_out")
-
-
-
-
-

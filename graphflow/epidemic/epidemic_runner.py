@@ -1,13 +1,10 @@
 import networkx as nx
-import sys
 from enum import Enum
-import graphflow.epidemic.epidemic_simulation  as epidemic_simulation
 
 
 class EpidemicSimulationType(Enum):
     SIR = "sir"
     SIS = "sis"
-
 
 
 class ExperimentParameters():
@@ -23,37 +20,35 @@ class ExperimentParameters():
         self.tmax = tmax
 
 
-class Runner():
+class Parser():
+    sym_type: EpidemicSimulationType
+    G: nx.Graph
+    transm_rate: float
+    recov_rate: float
+    initial_infected: []
+    initial_recovered: []
+    t_max: int
+    simulation_input_data: ExperimentParameters
 
-        sym_type : EpidemicSimulationType
-        G : nx.Graph
-        transm_rate : float
-        recov_rate : float
-        initial_infected : []
-        initial_recovered : []
-        t_max: int
-        simulation_input_data : ExperimentParameters
-
-
-    def parse_input(self):
+    def parse_input(self, type, network, transmission, recovery, maxtime):
         # simulation type
         self.sym_type = None
-        if sys.argv[1].lower() == 'sir':
+        if type.lower() == 'sir':
             self.sym_type = EpidemicSimulationType.SIR
-        elif sys.argv[1].lower() == 'sis':
+        elif type.lower() == 'sis':
             self.sym_type = EpidemicSimulationType.SIS
         else:
             raise ValueError("Invalid simulation type name!")
 
         # networkx Graph
-        gml_graph = sys.argv[2]
+        gml_graph = network
         self.G = nx.read_gml(gml_graph)
 
         # transmission rate per edge
-        self.transm_rate = sys.argv[3]
+        self.transm_rate = transmission
 
         # recovery rate per node
-        self.recov_rate = sys.argv[4]
+        self.recov_rate = recovery
 
         # lists of initialy infected and recovered(only when SIR) nodes
         self.initial_infected = []
@@ -65,31 +60,18 @@ class Runner():
                 self.initial_recovered.append(n)
 
         # max simulation time
-        self.t_max = sys.argv[5]
+        self.t_max = maxtime
 
 
-    def get_symulation_config(self):
+    def get_simulation_config(self):
         self.simulation_input_data = None
         if self.sym_type == EpidemicSimulationType.SIR:
-            self.simulation_input_data = ExperimentParameters(self.sym_type, self.G, self.transm_rate, self.recov_rate, self.initial_infected,
-                                                         self.initial_recovered, self.t_max)
+            self.simulation_input_data = ExperimentParameters(self.sym_type, self.G, self.transm_rate, self.recov_rate,
+                                                              self.initial_infected,
+                                                              self.initial_recovered, self.t_max)
         else:
-            self.simulation_input_data = ExperimentParameters(self.sym_type, self.G, self.transm_rate, self.recov_rate, self.initial_infected, None,
-                                                         self.t_max)
+            self.simulation_input_data = ExperimentParameters(self.sym_type, self.G, self.transm_rate, self.recov_rate,
+                                                              self.initial_infected, None,
+                                                              self.t_max)
 
-        return  self.simulation_input_data
-
-    def run():
-        parse_input()
-        get_symulation_config()
-
-        my_sim = epidemic_simulation.Simulation(get_symulation_config())
-        my_sim.run_simulation()
-
-
-
-
-
-
-
-
+        return self.simulation_input_data

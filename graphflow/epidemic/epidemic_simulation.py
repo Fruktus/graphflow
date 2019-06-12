@@ -1,8 +1,6 @@
 import EoN
-import networkx as nx
-import matplotlib.pyplot as plt
 from graphflow.epidemic import epidemic_runner
-from enum import Enum
+import uuid
 
 
 class Simulation():
@@ -37,23 +35,9 @@ class Simulation():
                                       recovery_weight=None,
                                       return_full_data=True)
 
-
-
         else:
             pass
 
         animation = simulation.animate()
-        # pos = {node: node for node in self.simulation_params.network}
-        # simulation.set_pos(pos)
-        # animation = simulation.animate(ts_plots=['I', 'SIR'], node_size=4)
-        animation.save('amination_out11.mp4', fps=5, extra_args=['-vcodec', 'libx264'])
-
-
-# my_sim = Simulation(epidemic_runner.simulation_input_data)
-# my_sim.run_simulation()
-
-
-
-
-
-
+        unique_filename = str(uuid.uuid4())
+        animation.save(unique_filename + '.mp4', fps=5, extra_args=['-vcodec', 'libx264'])
