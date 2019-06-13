@@ -1,26 +1,34 @@
 import argparse
 from pathlib import Path
 
-from graphflow.simple.simple_model_analysis import betweenness_centrality, hits, load_centrality
 from graphflow.epanet.epanet_model import EpanetFlowNetwork, SimulationType
-from graphflow.simple.simple_model_utils import from_json
-from graphflow.epanet.epanet_model_vis import get_animation, \
-    show_plots, draw_epicenter_plot, draw_fragility_curve_plot, \
+from graphflow.epanet.epanet_model_vis import get_animation
+from graphflow.epanet.epanet_model_vis import show_plots, draw_epicenter_plot, draw_fragility_curve_plot, \
     draw_distance_to_epicenter_plot, draw_peak_ground_acceleration_plot, draw_peak_ground_velocity_plot, \
     draw_repair_rate_plot, draw_repair_rate_x_pipe_length, draw_probability_of_minor_leak, \
     draw_probability_of_major_leak, draw_damage_states_plot
-from graphflow.simple.simple_model_vis import visualize_holoviews
-
 from graphflow.epidemic.epidemic_runner import Parser
 from graphflow.epidemic.epidemic_simulation import Simulation
+from graphflow.extended.extended_model_utils import from_json as extended_from_json
+from graphflow.extended.extended_model_utils import to_json as extended_to_json
+from graphflow.simple.simple_model_analysis import betweenness_centrality, load_centrality
+from graphflow.simple.simple_model_analysis import hits
+from graphflow.simple.simple_model_utils import from_json
+from graphflow.simple.simple_model_vis import visualize_holoviews
 
 
 def main():
     parser = argparse.ArgumentParser('python3 -m graphflow')
     subparser = parser.add_subparsers(help='network models', dest='network_model')
+
     simple_subparser = subparser.add_parser('simple')
     simple_subparser.add_argument('path_to_network_file',
                                   help='path to network file which represents network in json format')
+
+    extended_subparser = subparser.add_parser('extended')
+    extended_subparser.add_argument('path_to_network_file',
+                                    help='path to network file which represents network in json format')
+
     epanet_subparser = subparser.add_parser('epanet')
     epanet_subparser.add_argument('path_to_network_file',
                                   help='path to network file which represents network in inp format')
@@ -31,19 +39,16 @@ def main():
     epanet_subparser.add_argument('--epicenter_y', help='y cord of earthquake epicenter', type=int, nargs='?')
     epanet_subparser.add_argument('--magnitude', help='magnitude of earthquake ', type=float, nargs='?')
     epanet_subparser.add_argument('--depth', help='depth of earthquake in meters', type=int, nargs='?')
+
     epidemic_subparser = subparser.add_parser('epidemic')
     epidemic_subparser.add_argument('path_to_network_file',
-                                    help='path to network file which represents network in gml format')
-    epidemic_subparser.add_argument('type', help='simulation type - sir or sis, ')
-    epidemic_subparser.add_argument('-transrate', help='transmission rate, ', type=float, default=2.0)
-    epidemic_subparser.add_argument('-recrate', help='recovery rate, ', type=float, default=1.0)
-    epidemic_subparser.add_argument('-tmax', help='max simulation time, ', type=int, default=100)
-
-
+                                    help='path to network file which represents network in x format')
     args = parser.parse_args()
 
     if args.network_model == 'simple':
         __sample_routine(args.path_to_network_file)
+    elif args.network_model == 'extended':
+        __sample_routine_two(args.path_to_network_file)
     elif args.network_model == 'epanet':
         __run_epanet(args)
     elif args.network_model == 'epidemic':
@@ -68,6 +73,17 @@ def __sample_routine(graph_filepath):
         print("Load: ", load)
         res = ('bb', betweenness_centrality(solved_network))
         visualize_holoviews(solved_network, [res])
+
+
+def __sample_routine_two(graph_filepath):
+    base_path = Path(__file__).parent
+    file_path = (base_path / graph_filepath).resolve()
+    with open(file_path) as file:
+        json_network = file.read()
+        network = extended_from_json(json_network)
+        solved_network = network.calculate_network_state()
+        json = extended_to_json(solved_network)
+        print(json)
 
 
 def __run_epanet(args):

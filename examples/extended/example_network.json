@@ -1,0 +1,60 @@
+{
+  "directed": true,
+  "multigraph": false,
+  "graph": {},
+  "nodes": [
+    {
+      "s_flow": 200,
+      "id": 1
+    },
+    {
+      "s_flow": 500,
+      "id": 2
+    },
+    {
+      "s_flow": 0,
+      "id": 3
+    },
+    {
+      "s_flow": null,
+      "id": 4
+    }
+  ],
+  "links": [
+    {
+      "length": 400,
+      "cross_area": 1,
+      "m_flow": null,
+      "source": 1,
+      "target": 3,
+      "u_angle": 30.0,
+      "v_angle": 30.0,
+      "u_pressure": 100000.0,
+      "v_pressure": null
+    },
+    {
+      "length": 100,
+      "cross_area": 1,
+      "m_flow": null,
+      "source": 2,
+      "target": 3,
+      "u_angle": 30.0,
+      "v_angle": 30.0,
+      "u_pressure": null,
+      "v_pressure": null
+    },
+    {
+      "length": 100,
+      "cross_area": 2,
+      "m_flow": null,
+      "source": 4,
+      "target": 3,
+      "u_angle": 30.0,
+      "v_angle": 30.0,
+      "u_pressure": null,
+      "v_pressure": null
+    }
+  ],
+  "density": 997.08,
+  "viscosity": 0.0009
+}
