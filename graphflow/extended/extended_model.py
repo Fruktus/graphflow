@@ -6,58 +6,28 @@ from dataclasses import dataclass, replace
 from typing import Optional
 
 import math
-import networkx as nx
 import numpy as np
 import sympy
 
-
-@dataclass
-class ExtendedFlowNetworkNode:
-    id: int
-
-    s_flow: Optional[float]
+from ..abstract_simple.abstract_simple_model import AbstractFlowNetworkNode, AbstractFlowNetworkEdge, \
+    AbstractFlowNetwork
 
 
 @dataclass
-class ExtendedFlowNetworkEdge:
-    u_id: int
-    v_id: int
+class ExtendedFlowNetworkNode(AbstractFlowNetworkNode):
+    pass
 
-    length: float
-    cross_area: float
+
+@dataclass
+class ExtendedFlowNetworkEdge(AbstractFlowNetworkEdge):
     u_angle: float
     v_angle: float
 
-    m_flow: Optional[float]
     u_pressure: Optional[float]
     v_pressure: Optional[float]
 
 
-class ExtendedFlowNetwork:
-    density: float
-    viscosity: float
-
-    __internal_network: nx.DiGraph
-    __internal_nodes: dict
-    __internal_edges: dict
-
-    def __init__(self, density, viscosity):
-        self.density = density
-        self.viscosity = viscosity
-        self.__internal_network = nx.DiGraph()
-        self.__internal_nodes = {}
-        self.__internal_edges = {}
-
-    def get_network_state(self) -> (list, list):
-        return self.__internal_nodes.values(), self.__internal_edges.values()
-
-    def add_node(self, node: ExtendedFlowNetworkNode):
-        self.__internal_network.add_node(node.id)
-        self.__internal_nodes[node.id] = node
-
-    def add_edge(self, edge: ExtendedFlowNetworkEdge):
-        self.__internal_network.add_edge(edge.u_id, edge.v_id)
-        self.__internal_edges[(edge.u_id, edge.v_id)] = edge
+class ExtendedFlowNetwork(AbstractFlowNetwork):
 
     def calculate_network_state(self):
         s_values, m_values = self.__calculate_flow_network_state()
@@ -78,28 +48,28 @@ class ExtendedFlowNetwork:
         return s_values, m_values
 
     def __create_flow_symbols(self, m_symbols, s_symbols):
-        for node in self.__internal_nodes.values():
+        for node in self._internal_nodes.values():
             s_symbols[node.id] = sympy.Symbol("s_%i" % node.id)
 
-        for edge in self.__internal_edges.values():
+        for edge in self._internal_edges.values():
             m_symbols[(edge.u_id, edge.v_id)] = sympy.Symbol('m_%i_%i' % (edge.u_id, edge.v_id))
 
     def __add_initial_flow_conditions(self, equations, m_symbols, s_symbols):
-        for node in self.__internal_nodes.values():
+        for node in self._internal_nodes.values():
             if node.s_flow is not None:
                 equations.append(s_symbols[node.id] - node.s_flow)
 
-        for edge in self.__internal_edges.values():
+        for edge in self._internal_edges.values():
             if edge.m_flow is not None:
                 equations.append(m_symbols[(edge.u_id, edge.v_id)] - edge.m_flow)
 
     def __add_node_flow_equations(self, equations, m_symbols, s_symbols):
-        for node in self.__internal_nodes.values():
+        for node in self._internal_nodes.values():
             equations.append(self.__build_flow_expr(node, m_symbols, s_symbols))
 
     def __build_flow_expr(self, node, m_symbols, s_symbols):
-        in_edges_m = list(map(lambda x: m_symbols[x], self.__internal_network.in_edges(node.id)))
-        out_edges_m = list(map(lambda x: m_symbols[x], self.__internal_network.out_edges(node.id)))
+        in_edges_m = list(map(lambda x: m_symbols[x], self._internal_network.in_edges(node.id)))
+        out_edges_m = list(map(lambda x: m_symbols[x], self._internal_network.out_edges(node.id)))
         return s_symbols[node.id] + sum(in_edges_m) - sum(out_edges_m)
 
     @staticmethod
@@ -119,22 +89,26 @@ class ExtendedFlowNetwork:
 
     def __update_network(self, s_values, m_values):
         new_network = ExtendedFlowNetwork(density=self.density, viscosity=self.viscosity)
-        for node in self.__internal_nodes.values():
+        self.__fill_with_nodes(new_network, s_values)
+        self.__fill_with_edges(m_values, new_network)
+        self._internal_network, self._internal_nodes, self._internal_edges = new_network.get_internal_components()
+
+    def __fill_with_nodes(self, new_network, s_values):
+        for node in self._internal_nodes.values():
             new_node = replace(node, s_flow=s_values[node.id])
             new_network.add_node(new_node)
 
-        for edge in self.__internal_edges.values():
-            if m_values[(edge.u_id, edge.v_id)] >= 0:
-                new_edge = replace(edge, m_flow=m_values[(edge.u_id, edge.v_id)])
-            else:
+    def __fill_with_edges(self, m_values, new_network):
+        for edge in self._internal_edges.values():
+            if m_values[(edge.u_id, edge.v_id)] < 0:
                 new_edge = replace(edge, u_id=edge.v_id, v_id=edge.u_id, m_flow=-m_values[(edge.u_id, edge.v_id)],
                                    u_angle=edge.v_angle, v_angle=edge.u_angle)
+            else:
+                new_edge = replace(edge, m_flow=m_values[(edge.u_id, edge.v_id)])
             new_network.add_edge(new_edge)
 
-        self.__internal_network, self.__internal_nodes, self.__internal_edges = new_network.get_internal_components()
-
     def get_internal_components(self):
-        return self.__internal_network, self.__internal_nodes, self.__internal_edges
+        return self._internal_network, self._internal_nodes, self._internal_edges
 
     # Pressure Calculations
     def __calculate_pressure_network_state(self):
@@ -149,12 +123,12 @@ class ExtendedFlowNetwork:
         return p_in_result, p_out_result
 
     def __create_pressure_symbols(self, p_in_symbols, p_out_symbols):
-        for edge in self.__internal_edges.values():
+        for edge in self._internal_edges.values():
             p_in_symbols[(edge.u_id, edge.v_id)] = sympy.Symbol('p_in_%i_%i' % (edge.u_id, edge.v_id))
             p_out_symbols[(edge.v_id, edge.u_id)] = sympy.Symbol('p_out_%i_%i' % (edge.v_id, edge.u_id))
 
     def __add_initial_pressure_conditions(self, equations, p_in_symbols, p_out_symbols):
-        for edge in self.__internal_edges.values():
+        for edge in self._internal_edges.values():
             if edge.u_pressure is not None:
                 equations.append(p_in_symbols[(edge.u_id, edge.v_id)] - edge.u_pressure)
 
@@ -166,9 +140,9 @@ class ExtendedFlowNetwork:
         self.__add_pressure_edge_equations(equations, p_in_symbols, p_out_symbols)
 
     def __add_pressure_node_equations(self, equations, p_in_symbols, p_out_symbols):
-        for node in self.__internal_nodes.values():
-            in_nodes = [i for (i, j) in self.__internal_network.in_edges(node.id)]
-            out_nodes = [j for (i, j) in self.__internal_network.out_edges(node.id)]
+        for node in self._internal_nodes.values():
+            in_nodes = [i for (i, j) in self._internal_network.in_edges(node.id)]
+            out_nodes = [j for (i, j) in self._internal_network.out_edges(node.id)]
 
             if not in_nodes or not out_nodes:
                 continue
@@ -180,8 +154,8 @@ class ExtendedFlowNetwork:
                 c_ref_j = self.__calculate_coefficients(j, node.id, ref)
                 c_ref[(ref, j)] = c_ref_j
 
-                m_node_j = self.__internal_edges[(node.id, j)].m_flow
-                a_node_j = self.__internal_edges[(node.id, j)].cross_area
+                m_node_j = self._internal_edges[(node.id, j)].m_flow
+                a_node_j = self._internal_edges[(node.id, j)].cross_area
                 u_j = m_node_j / (self.density * a_node_j)
 
                 p_in_ref_node = p_in_symbols[(ref, node.id)]
@@ -189,7 +163,7 @@ class ExtendedFlowNetwork:
                 equation = p_in_ref_node - p_out_j_node - c_ref_j * self.density * u_j ** 2
                 equations.append(equation)
 
-            m_sum = sum([self.__internal_edges[(node.id, j)].m_flow for j in out_nodes])
+            m_sum = sum([self._internal_edges[(node.id, j)].m_flow for j in out_nodes])
 
             for i in in_nodes:
                 if i == ref:
@@ -199,8 +173,8 @@ class ExtendedFlowNetwork:
                 for j in out_nodes:
                     c_i_j = self.__calculate_coefficients(j, node.id, ref)
 
-                    m_node_j = self.__internal_edges[(node.id, j)].m_flow
-                    a_node_j = self.__internal_edges[(node.id, j)].cross_area
+                    m_node_j = self._internal_edges[(node.id, j)].m_flow
+                    a_node_j = self._internal_edges[(node.id, j)].cross_area
                     u_j = m_node_j / (self.density * a_node_j)
                     coeff += m_node_j / m_sum * (c_i_j - c_ref[(ref, j)]) * self.density * u_j ** 2
 
@@ -208,15 +182,15 @@ class ExtendedFlowNetwork:
                 equations.append(equation)
 
     def __calculate_coefficients(self, j, node, ref):
-        psi = self.__internal_edges[(ref, node)].cross_area / self.__internal_edges[(node, j)].cross_area
-        q_ref_j = self.__internal_edges[(node, j)].m_flow / self.__internal_edges[(ref, node)].m_flow
-        th_ref_j = (self.__internal_edges[(ref, node)].u_angle - self.__internal_edges[
+        psi = self._internal_edges[(ref, node)].cross_area / self._internal_edges[(node, j)].cross_area
+        q_ref_j = self._internal_edges[(node, j)].m_flow / self._internal_edges[(ref, node)].m_flow
+        th_ref_j = (self._internal_edges[(ref, node)].u_angle - self._internal_edges[
             (node, j)].u_angle) / math.pi % 1
         c_ref_j = 1 - 1 / (psi * q_ref_j) * math.cos(0.75 * (math.pi - th_ref_j))
         return c_ref_j
 
     def __add_pressure_edge_equations(self, equations, p_in_symbols, p_out_symbols):
-        for edge in self.__internal_edges.values():
+        for edge in self._internal_edges.values():
             re_val = 2 * edge.m_flow / (self.viscosity * math.sqrt(edge.cross_area) * math.pi)
 
             f1_val = np.sign(-4.5 * (re_val - 3000) / 1000) * 64 / re_val
@@ -245,11 +219,11 @@ class ExtendedFlowNetwork:
 
     def __build_new_network(self, p_in_symbols, p_out_symbols):
         new_network = ExtendedFlowNetwork(density=self.density, viscosity=self.viscosity)
-        for node in self.__internal_nodes.values():
+        for node in self._internal_nodes.values():
             new_node = replace(node)
             new_network.add_node(new_node)
 
-        for edge in self.__internal_edges.values():
+        for edge in self._internal_edges.values():
             new_edge = replace(edge, u_pressure=p_in_symbols[(edge.v_id, edge.u_id)],
                                v_pressure=p_out_symbols[(edge.u_id, edge.v_id)])
             new_network.add_edge(new_edge)

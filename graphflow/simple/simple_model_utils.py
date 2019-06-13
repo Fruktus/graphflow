@@ -1,23 +1,15 @@
-import json
-
 import networkx as nx
 
 from graphflow.simple.simple_model import SimpleFlowNetwork, SimpleFlowNetworkNode, SimpleFlowNetworkEdge
+from ..abstract_simple import abstract_simple_utils
 
 
 def to_json(network: SimpleFlowNetwork, indent=None) -> str:
-    nodes, edges = network.get_network_state()
-    new_network = __build_raw_network(nodes, edges)
-
-    serializable_dict = nx.readwrite.json_graph.node_link_data(new_network)
-    serializable_dict['density'] = network.density
-    serializable_dict['viscosity'] = network.viscosity
-    return json.dumps(serializable_dict, indent=indent)
+    return abstract_simple_utils.to_json(network, __build_raw_network, indent)
 
 
 def __build_raw_network_from_network(network: SimpleFlowNetwork) -> nx.DiGraph:
-    nodes, edges = network.get_network_state()
-    return __build_raw_network(nodes, edges)
+    return abstract_simple_utils.build_raw_network_from_network(network, __build_raw_network)
 
 
 def __build_raw_network(nodes, edges) -> nx.DiGraph:
@@ -40,13 +32,7 @@ def __build_string_network(nodes, edges) -> nx.DiGraph:
 
 
 def from_json(json_network: str) -> SimpleFlowNetwork:
-    deserializable_dict = json.loads(json_network)
-    density = deserializable_dict['density']
-    viscosity = deserializable_dict['viscosity']
-    raw_network = nx.readwrite.json_graph.node_link_graph(deserializable_dict)
-
-    flow_network = __build_flow_network(density, raw_network, viscosity)
-    return flow_network
+    return abstract_simple_utils.from_json(json_network, __build_flow_network)
 
 
 def __build_flow_network(density, raw_network, viscosity):
