@@ -1,9 +1,9 @@
 from __future__ import annotations
 
-import math
 from dataclasses import dataclass, replace
 from typing import Optional
 
+import math
 import networkx as nx
 import sympy
 from sympy.solvers.solveset import linsolve
@@ -64,7 +64,7 @@ class SimpleFlowNetwork:
         self.__add_node_equations(equations, m_symbols, p_symbols, s_symbols)
         p_values, s_values, m_values = self.__solve_equations(equations, m_symbols, p_symbols, s_symbols)
 
-        return self.build_new_network(p_values, s_values, m_values)
+        return self.__build_new_network(p_values, s_values, m_values)
 
     def __create_symbols(self, m_symbols, p_symbols, s_symbols):
         for node in self.__internal_nodes.values():
@@ -74,25 +74,38 @@ class SimpleFlowNetwork:
         for edge in self.__internal_edges.values():
             m_symbols[(edge.u_id, edge.v_id)] = sympy.Symbol('m_%i_%i' % (edge.u_id, edge.v_id))
 
+    # Initial conditions
     def __add_initial_conditions(self, equations, m_symbols, p_symbols, s_symbols):
         for node in self.__internal_nodes.values():
-            if node.pressure is not None:
-                equations.append(p_symbols[node.id] - node.pressure)
-            if node.s_flow is not None:
-                equations.append(s_symbols[node.id] - node.s_flow)
+            self.__add_initial_node_conditions(equations, node, p_symbols, s_symbols)
 
         for edge in self.__internal_edges.values():
-            if edge.m_flow is not None:
-                equations.append(m_symbols[(edge.u_id, edge.v_id)] - edge.m_flow)
+            self.__add_initial_edge_conditions(edge, equations, m_symbols)
 
+    @staticmethod
+    def __add_initial_node_conditions(equations, node, p_symbols, s_symbols):
+        if node.pressure is not None:
+            equations.append(p_symbols[node.id] - node.pressure)
+        if node.s_flow is not None:
+            equations.append(s_symbols[node.id] - node.s_flow)
+
+    @staticmethod
+    def __add_initial_edge_conditions(edge, equations, m_symbols):
+        if edge.m_flow is not None:
+            equations.append(m_symbols[(edge.u_id, edge.v_id)] - edge.m_flow)
+
+    # Node equations
     def __add_node_equations(self, equations, m_symbols, p_symbols, s_symbols):
         for node in self.__internal_nodes.values():
-            in_edges_m = list(map(lambda x: m_symbols[x], self.__internal_network.in_edges(node.id)))
-            out_edges_m = list(map(lambda x: m_symbols[x], self.__internal_network.out_edges(node.id)))
-            equations.append(s_symbols[node.id] + sum(in_edges_m) - sum(out_edges_m))
+            equations.append(self.__build_flow_expr(node, m_symbols, s_symbols))
 
         for edge in self.__internal_edges.values():
             equations.append(self.__build_pressure_expr(edge, m_symbols, p_symbols))
+
+    def __build_flow_expr(self, node, m_symbols, s_symbols):
+        in_edges_m = list(map(lambda x: m_symbols[x], self.__internal_network.in_edges(node.id)))
+        out_edges_m = list(map(lambda x: m_symbols[x], self.__internal_network.out_edges(node.id)))
+        return s_symbols[node.id] + sum(in_edges_m) - sum(out_edges_m)
 
     def __build_pressure_expr(self, edge, m_symbols, p_symbols):
         p_u = p_symbols[edge.u_id]
@@ -119,7 +132,7 @@ class SimpleFlowNetwork:
         m_result = dict(list(zip(m_symbols.keys(), m_values)))
         return p_result, s_result, m_result
 
-    def build_new_network(self, p_values, s_values, m_values):
+    def __build_new_network(self, p_values, s_values, m_values):
         new_network = SimpleFlowNetwork(density=self.density, viscosity=self.viscosity)
         for node in self.__internal_nodes.values():
             new_node = replace(node, pressure=p_values[node.id], s_flow=s_values[node.id])
