@@ -12,6 +12,7 @@ INSTALL_REQUIREMENTS = [
     'wntr == 0.1.6',
     'pandas == 0.24.2',
     'numpy == 1.16.3',
+    'EoN == 1.0.7'
 ]
 
 TESTS_REQUIREMENTS = [

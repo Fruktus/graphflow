@@ -1,31 +1,34 @@
 import argparse
 from pathlib import Path
 
-from graphflow.simple.simple_model_analysis import betweenness_centrality, hits, load_centrality
 from graphflow.epanet.epanet_model import EpanetFlowNetwork, SimulationType
-from graphflow.simple.simple_model_utils import from_json
-from graphflow.epanet.epanet_model_vis import get_animation, \
-    show_plots, draw_epicenter_plot, draw_fragility_curve_plot, \
+from graphflow.epanet.epanet_model_vis import get_animation
+from graphflow.epanet.epanet_model_vis import show_plots, draw_epicenter_plot, draw_fragility_curve_plot, \
     draw_distance_to_epicenter_plot, draw_peak_ground_acceleration_plot, draw_peak_ground_velocity_plot, \
     draw_repair_rate_plot, draw_repair_rate_x_pipe_length, draw_probability_of_minor_leak, \
     draw_probability_of_major_leak, draw_damage_states_plot
-from graphflow.epanet.epanet_model_vis import get_animation
-from graphflow.extended.extended_model_utils import from_json as extended_from_json
-from graphflow.extended.extended_model_utils import to_json as extended_to_json
-from graphflow.simple.simple_model_analysis import degree_centrality, hits
-from graphflow.simple.simple_model_utils import from_json as simple_from_json
-from graphflow.simple.simple_model_vis import visualize_holoviews
-
 from graphflow.epidemic.epidemic_runner import Parser
 from graphflow.epidemic.epidemic_simulation import Simulation
+from graphflow.extended.extended_model_utils import from_json as extended_from_json
+from graphflow.extended.extended_model_utils import to_json as extended_to_json
+from graphflow.simple.simple_model_analysis import betweenness_centrality, load_centrality
+from graphflow.simple.simple_model_analysis import hits
+from graphflow.simple.simple_model_utils import from_json
+from graphflow.simple.simple_model_vis import visualize_holoviews
 
 
 def main():
     parser = argparse.ArgumentParser('python3 -m graphflow')
     subparser = parser.add_subparsers(help='network models', dest='network_model')
+
     simple_subparser = subparser.add_parser('simple')
     simple_subparser.add_argument('path_to_network_file',
                                   help='path to network file which represents network in json format')
+
+    extended_subparser = subparser.add_parser('extended')
+    extended_subparser.add_argument('path_to_network_file',
+                                    help='path to network file which represents network in json format')
+
     epanet_subparser = subparser.add_parser('epanet')
     epanet_subparser.add_argument('path_to_network_file',
                                   help='path to network file which represents network in inp format')
