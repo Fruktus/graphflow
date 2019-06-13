@@ -1,3 +1,4 @@
+# pylint: disable=R0914
 from __future__ import annotations
 
 import random
@@ -130,9 +131,10 @@ class ExtendedFlowNetwork:
                                    u_angle=edge.v_angle, v_angle=edge.u_angle)
             new_network.add_edge(new_edge)
 
-        self.__internal_network = new_network.__internal_network
-        self.__internal_nodes = new_network.__internal_nodes
-        self.__internal_edges = new_network.__internal_edges
+        self.__internal_network, self.__internal_nodes, self.__internal_edges = new_network.get_internal_components()
+
+    def get_internal_components(self):
+        return self.__internal_network, self.__internal_nodes, self.__internal_edges
 
     # Pressure Calculations
     def __calculate_pressure_network_state(self):
@@ -168,19 +170,24 @@ class ExtendedFlowNetwork:
             in_nodes = [i for (i, j) in self.__internal_network.in_edges(node.id)]
             out_nodes = [j for (i, j) in self.__internal_network.out_edges(node.id)]
 
-            if len(in_nodes) == 0 or len(out_nodes) == 0:
+            if not in_nodes or not out_nodes:
                 continue
 
             ref = random.choice(in_nodes)
 
             c_ref = {}
             for j in out_nodes:
-                c = self.__calculate_coefficients(j, node.id, ref)
-                c_ref[(ref, j)] = c
-                u = self.__internal_edges[(node.id, j)].m_flow / (
-                        self.density * self.__internal_edges[(node.id, j)].cross_area)
-                eq = p_in_symbols[(ref, node.id)] - p_out_symbols[(j, node.id)] - c * self.density * u ** 2
-                equations.append(eq)
+                c_ref_j = self.__calculate_coefficients(j, node.id, ref)
+                c_ref[(ref, j)] = c_ref_j
+
+                m_node_j = self.__internal_edges[(node.id, j)].m_flow
+                a_node_j = self.__internal_edges[(node.id, j)].cross_area
+                u_j = m_node_j / (self.density * a_node_j)
+
+                p_in_ref_node = p_in_symbols[(ref, node.id)]
+                p_out_j_node = p_out_symbols[(j, node.id)]
+                equation = p_in_ref_node - p_out_j_node - c_ref_j * self.density * u_j ** 2
+                equations.append(equation)
 
             m_sum = sum([self.__internal_edges[(node.id, j)].m_flow for j in out_nodes])
 
@@ -190,32 +197,36 @@ class ExtendedFlowNetwork:
 
                 coeff = 0
                 for j in out_nodes:
-                    c = self.__calculate_coefficients(j, node.id, ref)
-                    u = self.__internal_edges[(node.id, j)].m_flow / (
-                            self.density * self.__internal_edges[(node.id, j)].cross_area)
-                    coeff += self.__internal_edges[(node.id, j)].m_flow / m_sum * (
-                            c - c_ref[(ref, j)]) * self.density * u ** 2
+                    c_i_j = self.__calculate_coefficients(j, node.id, ref)
 
-                eq = p_out_symbols[(node.id, i)] - p_in_symbols[(ref, node.id)] - coeff
-                equations.append(eq)
+                    m_node_j = self.__internal_edges[(node.id, j)].m_flow
+                    a_node_j = self.__internal_edges[(node.id, j)].cross_area
+                    u_j = m_node_j / (self.density * a_node_j)
+                    coeff += m_node_j / m_sum * (c_i_j - c_ref[(ref, j)]) * self.density * u_j ** 2
+
+                equation = p_out_symbols[(node.id, i)] - p_in_symbols[(ref, node.id)] - coeff
+                equations.append(equation)
 
     def __calculate_coefficients(self, j, node, ref):
         psi = self.__internal_edges[(ref, node)].cross_area / self.__internal_edges[(node, j)].cross_area
-        q = self.__internal_edges[(node, j)].m_flow / self.__internal_edges[(ref, node)].m_flow
-        th = (self.__internal_edges[(ref, node)].u_angle - self.__internal_edges[
+        q_ref_j = self.__internal_edges[(node, j)].m_flow / self.__internal_edges[(ref, node)].m_flow
+        th_ref_j = (self.__internal_edges[(ref, node)].u_angle - self.__internal_edges[
             (node, j)].u_angle) / math.pi % 1
-        c = 1 - 1 / (psi * q) * math.cos(0.75 * (math.pi - th))
-        return c
+        c_ref_j = 1 - 1 / (psi * q_ref_j) * math.cos(0.75 * (math.pi - th_ref_j))
+        return c_ref_j
 
     def __add_pressure_edge_equations(self, equations, p_in_symbols, p_out_symbols):
         for edge in self.__internal_edges.values():
-            re = 2 * edge.m_flow / (self.viscosity * math.sqrt(edge.cross_area) * math.pi)
-            f = np.sign(-4.5 * (re - 3000) / 1000) * 64 / re + np.sign(4.5 * (re - 3000) / 1000) * 0.079 / (re * 0.25)
+            re_val = 2 * edge.m_flow / (self.viscosity * math.sqrt(edge.cross_area) * math.pi)
+
+            f1_val = np.sign(-4.5 * (re_val - 3000) / 1000) * 64 / re_val
+            f2_val = np.sign(4.5 * (re_val - 3000) / 1000) * 0.079 / (re_val * 0.25)
+            f_val = f1_val + f2_val
 
             coeff = edge.length * edge.m_flow ** 2 / (self.density * edge.cross_area ** 2) * math.sqrt(
                 math.pi / edge.cross_area)
-            eq = p_in_symbols[(edge.u_id, edge.v_id)] - p_out_symbols[(edge.v_id, edge.u_id)] - f * coeff
-            equations.append(eq)
+            equation = p_in_symbols[(edge.u_id, edge.v_id)] - p_out_symbols[(edge.v_id, edge.u_id)] - f_val * coeff
+            equations.append(equation)
 
     @staticmethod
     def __solve_pressure_equations(equations, p_in_symbols, p_out_symbols):
