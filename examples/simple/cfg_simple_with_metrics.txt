@@ -1,0 +1,6 @@
+simple
+..\examples\simple\example_network.json
+--metric
+hits
+-m
+degree

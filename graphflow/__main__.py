@@ -14,7 +14,8 @@ from graphflow.extended.extended_model_utils import to_json as extended_to_json
 from graphflow.simple.simple_model_analysis import betweenness_centrality, load_centrality
 from graphflow.simple.simple_model_analysis import hits
 from graphflow.simple.simple_model_utils import from_json
-from graphflow.simple.simple_model_vis import visualize_holoviews
+from graphflow.visualisation.generic_vis import visualize_holoviews
+from graphflow.analysis.metrics import calculate_metric_array
 
 
 def main():
@@ -24,10 +25,18 @@ def main():
     simple_subparser = subparser.add_parser('simple')
     simple_subparser.add_argument('path_to_network_file',
                                   help='path to network file which represents network in json format')
+    simple_subparser.add_argument('--metric', '-m', action='append',
+                                  help='metric to use, can be specified multiple times')
+    simple_subparser.add_argument('--visualize', action='store_true', default=False,
+                                  help='whether to visualize results')
 
     extended_subparser = subparser.add_parser('extended')
     extended_subparser.add_argument('path_to_network_file',
                                     help='path to network file which represents network in json format')
+    extended_subparser.add_argument('--metric', '-m', action='append',
+                                    help='metric to use, can be specified multiple times')
+    extended_subparser.add_argument('--visualize', action='store_true', default=False,
+                                    help='whether to visualize results')
 
     epanet_subparser = subparser.add_parser('epanet')
     epanet_subparser.add_argument('path_to_network_file',
@@ -39,6 +48,8 @@ def main():
     epanet_subparser.add_argument('--epicenter_y', help='y cord of earthquake epicenter', type=int, nargs='?')
     epanet_subparser.add_argument('--magnitude', help='magnitude of earthquake ', type=float, nargs='?')
     epanet_subparser.add_argument('--depth', help='depth of earthquake in meters', type=int, nargs='?')
+    epanet_subparser.add_argument('--metric', '-m', action='append',
+                                  help='metric to use, can be specified multiple times')
 
     epidemic_subparser = subparser.add_parser('epidemic')
     epidemic_subparser.add_argument('path_to_network_file',
@@ -46,16 +57,16 @@ def main():
     args = parser.parse_args()
 
     if args.network_model == 'simple':
-        __sample_routine(args.path_to_network_file)
+        __sample_routine(args.path_to_network_file, args)
     elif args.network_model == 'extended':
-        __sample_routine_two(args.path_to_network_file)
+        __sample_routine_two(args.path_to_network_file, args)
     elif args.network_model == 'epanet':
         __run_epanet(args)
     elif args.network_model == 'epidemic':
         __run_epidemic(args)
 
 
-def __sample_routine(graph_filepath):
+def __sample_routine(graph_filepath, args):
     base_path = Path(__file__).parent
     file_path = (base_path / graph_filepath).resolve()
     with open(file_path) as file:
@@ -71,11 +82,16 @@ def __sample_routine(graph_filepath):
         print("Hubs: ", hits_res[1])
         print("Centrality: ", centrality)
         print("Load: ", load)
-        res = ('bb', betweenness_centrality(solved_network))
-        visualize_holoviews(solved_network, [res])
+        res = None
+        if args.metric:
+            res = calculate_metric_array('simple', solved_network, args.metric)
+            for i in res:
+                print(i)
+        if args.visualize:
+            visualize_holoviews(solved_network, res)
 
 
-def __sample_routine_two(graph_filepath):
+def __sample_routine_two(graph_filepath, args):
     base_path = Path(__file__).parent
     file_path = (base_path / graph_filepath).resolve()
     with open(file_path) as file:
@@ -84,6 +100,13 @@ def __sample_routine_two(graph_filepath):
         solved_network = network.calculate_network_state()
         json = extended_to_json(solved_network)
         print(json)
+        res = None
+        if args.metric:
+            res = calculate_metric_array('simple', solved_network, args.metric)
+            for i in res:
+                print(i)
+        if args.visualize:
+            visualize_holoviews(solved_network, res)
 
 
 def __run_epanet(args):
@@ -111,6 +134,10 @@ def __run_epanet(args):
         raise ValueError('Bad simulation type')
 
     epanet_flow_network.run_simulation()
+    if args.metric:
+        res = calculate_metric_array('simple', epanet_flow_network, args.metric)
+        for i in res:
+            print(i)
 
     if args.simulation_type == 'pressure' or args.simulation_type == 'quality':
         get_animation(epanet_flow_network, frames=100, fps=1)
