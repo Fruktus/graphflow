@@ -18,7 +18,7 @@ from graphflow.simple.simple_model_vis import visualize_holoviews
 
 
 def main():
-    parser = argparse.ArgumentParser('python3 -m graphflow')
+    parser = argparse.ArgumentParser('python3 -m graphflow', fromfile_prefix_chars='@')
     subparser = parser.add_subparsers(help='network models', dest='network_model')
 
     simple_subparser = subparser.add_parser('simple')
