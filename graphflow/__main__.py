@@ -11,8 +11,7 @@ from graphflow.epidemic.epidemic_runner import Parser
 from graphflow.epidemic.epidemic_simulation import Simulation
 from graphflow.extended.extended_model_utils import from_json as extended_from_json
 from graphflow.extended.extended_model_utils import to_json as extended_to_json
-from graphflow.simple.simple_model_analysis import betweenness_centrality, load_centrality
-from graphflow.simple.simple_model_analysis import hits
+from graphflow.analysis.metrics import betweenness_centrality, load_centrality, hits
 from graphflow.simple.simple_model_utils import from_json
 from graphflow.visualisation.generic_vis import visualize_holoviews
 from graphflow.analysis.metrics import calculate_metric_array
@@ -135,9 +134,11 @@ def __run_epanet(args):
 
     epanet_flow_network.run_simulation()
     if args.metric:
-        res = calculate_metric_array('simple', epanet_flow_network, args.metric)
+        res = calculate_metric_array('epanet', epanet_flow_network, args.metric)
         for i in res:
             print(i)
+        if args.visualize:
+            visualize_holoviews(epanet_flow_network, res)
 
     if args.simulation_type == 'pressure' or args.simulation_type == 'quality':
         get_animation(epanet_flow_network, frames=100, fps=1)

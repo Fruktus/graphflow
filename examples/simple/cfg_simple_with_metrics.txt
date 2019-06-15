@@ -3,4 +3,7 @@ simple
 --metric
 hits
 -m
-degree
+diameter
+-m
+degree_centrality
+--visualize

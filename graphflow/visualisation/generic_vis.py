@@ -17,16 +17,17 @@ def visualize_holoviews(network, metrics: [tuple] = None):
         for i in metrics:
             if isinstance(i[1], dict):
                 nx.set_node_attributes(nx_network, i[1], i[0])
+            elif isinstance(i[1], tuple):
+                nx.set_node_attributes(nx_network, i[1][0], i[0])
             else:
                 print(i[0], ":", i[1])
 
     defaults = dict(width=700, height=700, padding=0.1)
     hv.opts.defaults(opts.EdgePaths(**defaults), opts.Graph(**defaults), opts.Nodes(**defaults))
     network_graph = hv.Graph.from_networkx(
-        nx_network, nx.layout.spring_layout).opts(tools=['hover'], directed=True, arrowhead_length=0.05)
+        nx_network, nx.layout.spring_layout).opts(tools=['hover'], directed=True)
 
     renderer = hv.renderer('bokeh')
     plot = renderer.get_plot(network_graph).state
     output_file("graph.html")
     show(plot)
-
