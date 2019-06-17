@@ -1,0 +1,9 @@
+simple
+..\examples\simple\example_network.json
+--metric
+hits
+-m
+diameter
+-m
+degree_centrality
+--visualize
