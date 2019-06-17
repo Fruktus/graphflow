@@ -21,7 +21,7 @@ def test_back_and_forth_conversion(network_json):
 @pytest.fixture(scope='module')
 def network_json() -> str:
     base_path = Path(__file__).parent
-    file_path = (base_path / '../../examples/analysis/example_network.json').resolve()
+    file_path = (base_path / '../../examples/simple/example_network.json').resolve()
     with open(file_path) as file:
         json_network = file.read()
     return json_network
