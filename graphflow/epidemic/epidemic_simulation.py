@@ -4,13 +4,13 @@ import uuid
 
 
 class Simulation:
-    sim_params: epidemic_runner.ExperimentParameters
+    simulation_params: epidemic_runner.ExperimentParameters
 
     def __init__(self, sim_params):
         self.simulation_params = sim_params
 
     def get_network(self):
-        return self.sim_params.network
+        return self.simulation_params.network
 
     def run_simulation(self):
         if self.simulation_params.simulation_type == epidemic_runner.EpidemicSimulationType.SIR:

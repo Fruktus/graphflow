@@ -3,6 +3,7 @@ from graphflow.simple.simple_model_utils import __build_string_network as __buil
 from graphflow.extended.extended_model import ExtendedFlowNetwork
 from graphflow.extended.extended_model_utils import __build_string_network as __build_string_network_extended
 from graphflow.epanet.epanet_model import EpanetFlowNetwork
+from networkx import Graph, DiGraph
 
 
 def get_nx_network(network):
@@ -14,6 +15,10 @@ def get_nx_network(network):
         return __build_string_network_extended(nodes, edges)
     elif isinstance(network, EpanetFlowNetwork):
         return network.get_networkx_graph()
+    elif isinstance(network, Graph):
+        return network
+    elif isinstance(network, DiGraph):
+        return network
     else:
         raise TypeError('unknown network format')
 
