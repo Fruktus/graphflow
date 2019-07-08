@@ -12,7 +12,7 @@ def calculate_metric(ntype, name, network):
         if ntype == 'epanet':
             return name, globals()[name](network)
         if ntype == 'epidemic':
-            raise NotImplementedError('this feature was not yet implemented')
+            return name, globals()[name](network)
         raise TypeError('unknown network type')
     except KeyError:
         print('unknown key: ', name)

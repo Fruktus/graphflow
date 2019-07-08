@@ -172,6 +172,11 @@ def __run_epidemic(args):
     my_sim = Simulation(simulation_config)
     my_sim.run_simulation()
 
+    if args.metric:
+        res = calculate_metric_array('simple', my_sim.get_network(), args.metric)
+        for i in res:
+            print(i)
+
 
 if __name__ == '__main__':
     main()
