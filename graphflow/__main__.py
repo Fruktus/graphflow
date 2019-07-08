@@ -7,14 +7,17 @@ from graphflow.epanet.epanet_model_vis import show_plots, draw_epicenter_plot, d
     draw_distance_to_epicenter_plot, draw_peak_ground_acceleration_plot, draw_peak_ground_velocity_plot, \
     draw_repair_rate_plot, draw_repair_rate_x_pipe_length, draw_probability_of_minor_leak, \
     draw_probability_of_major_leak, draw_damage_states_plot
+
 from graphflow.epidemic.epidemic_runner import Parser
 from graphflow.epidemic.epidemic_simulation import Simulation
 from graphflow.extended.extended_model_utils import from_json as extended_from_json
+
 from graphflow.extended.extended_model_utils import to_json as extended_to_json
-from graphflow.analysis.metrics import betweenness_centrality, load_centrality, hits
+
 from graphflow.simple.simple_model_utils import from_json
+
+from graphflow.analysis.metrics import calculate_metric_array, betweenness_centrality, load_centrality, hits
 from graphflow.visualisation.generic_vis import visualize_holoviews
-from graphflow.analysis.metrics import calculate_metric_array
 
 
 def main():
@@ -52,7 +55,12 @@ def main():
 
     epidemic_subparser = subparser.add_parser('epidemic')
     epidemic_subparser.add_argument('path_to_network_file',
-                                    help='path to network file which represents network in x format')
+                                    help='path to network file which represents network in gml format')
+    epidemic_subparser.add_argument('type', help='simulation type - sir or sis, ')
+    epidemic_subparser.add_argument('-transrate', help='transmission rate, ', type=float, default=2.0)
+    epidemic_subparser.add_argument('-recrate', help='recovery rate, ', type=float, default=1.0)
+    epidemic_subparser.add_argument('-tmax', help='max simulation time, ', type=int, default=100)
+
     args = parser.parse_args()
 
     if args.network_model == 'simple':

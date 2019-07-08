@@ -1,2 +1,3 @@
 simple
-example_network.json
+..\examples\simple\example_network.json
+--visualize

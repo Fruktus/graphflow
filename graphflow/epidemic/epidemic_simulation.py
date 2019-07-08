@@ -3,7 +3,7 @@ from graphflow.epidemic import epidemic_runner
 import uuid
 
 
-class Simulation():
+class Simulation:
     sim_params: epidemic_runner.ExperimentParameters
 
     def __init__(self, sim_params):
@@ -36,7 +36,7 @@ class Simulation():
                                       return_full_data=True)
 
         else:
-            pass
+            raise NotImplementedError
 
         animation = simulation.animate()
         unique_filename = str(uuid.uuid4())
