@@ -60,6 +60,8 @@ def main():
     epidemic_subparser.add_argument('-transrate', help='transmission rate, ', type=float, default=2.0)
     epidemic_subparser.add_argument('-recrate', help='recovery rate, ', type=float, default=1.0)
     epidemic_subparser.add_argument('-tmax', help='max simulation time, ', type=int, default=100)
+    epidemic_subparser.add_argument('--metric', '-m', action='append',
+                                    help='metric to use, can be specified multiple times')
 
     args = parser.parse_args()
 
@@ -171,6 +173,11 @@ def __run_epidemic(args):
 
     my_sim = Simulation(simulation_config)
     my_sim.run_simulation()
+
+    if args.metric:
+        res = calculate_metric_array('simple', my_sim.get_network(), args.metric)
+        for i in res:
+            print(i)
 
 
 if __name__ == '__main__':

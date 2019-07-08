@@ -35,14 +35,3 @@ static_analysis:
     - merge_requests
     - master
 
-deploy_registry:
-  image: docker:stable
-  stage: deploy
-  before_script:
-    - docker info
-  script:
-    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-    - docker build -t $CI_REGISTRY/io-2019-networks/graph-flow/image:latest .
-    - docker push $CI_REGISTRY/io-2019-networks/graph-flow/image:latest
-  only:
-    - master
