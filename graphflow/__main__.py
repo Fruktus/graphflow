@@ -17,6 +17,7 @@ from graphflow.extended.extended_model_utils import to_json as extended_to_json
 from graphflow.simple.simple_model_utils import from_json
 
 from graphflow.analysis.metrics import calculate_metric_array, betweenness_centrality, load_centrality, hits
+from graphflow.analysis.network_utils import export_csv
 from graphflow.visualisation.generic_vis import visualize_holoviews
 
 
@@ -96,6 +97,8 @@ def __sample_routine(graph_filepath, args):
             res = calculate_metric_array('simple', solved_network, args.metric)
             for i in res:
                 print(i)
+            print('exporting csv')
+            export_csv(res, 'simple_results.csv')
         if args.visualize:
             visualize_holoviews(solved_network, res)
 
