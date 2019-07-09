@@ -1,14 +1,10 @@
 # pylint: disable=E1101
 
-import holoviews as hv
-from holoviews import opts
-from bokeh.io import output_file, show
 import matplotlib.pyplot as plt
 import networkx as nx
 
 from graphflow.simple.simple_model import SimpleFlowNetwork
 from graphflow.simple.simple_model_utils import __build_raw_network
-from graphflow.simple.simple_model_utils import __build_string_network
 
 
 def visualize_matplotlib(network: SimpleFlowNetwork):
