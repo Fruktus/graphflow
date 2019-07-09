@@ -6,4 +6,3 @@ hits
 diameter
 -m
 degree_centrality
---visualize
