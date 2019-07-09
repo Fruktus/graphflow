@@ -1,3 +1,4 @@
+import csv
 from graphflow.simple.simple_model import SimpleFlowNetwork
 from graphflow.simple.simple_model_utils import __build_string_network as __build_string_network_simple
 from graphflow.extended.extended_model import ExtendedFlowNetwork
@@ -22,3 +23,22 @@ def get_nx_network(network):
     else:
         raise TypeError('unknown network format')
 
+
+def export_csv(data: [], path: str):
+    # data will be array of rows to output
+    with open(path, 'w', newline='') as csvfile:
+        writer = csv.writer(csvfile, quotechar='|', quoting=csv.QUOTE_MINIMAL)
+
+        for r in data:
+            if isinstance(r[1], dict):
+                writer.writerow(['metrics'] + list(r[1].keys()))
+                break
+        for r in data:
+            print('csv:', r)
+            if isinstance(r[1], tuple):
+                for dictdata in r[1]:
+                    writer.writerow([r[0]] + list(dictdata.values()))
+            if isinstance(r[1], dict):
+                    writer.writerow([r[0]] + list(r[1].values()))
+            if isinstance(r, int or float):
+                continue
