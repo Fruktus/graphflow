@@ -18,6 +18,7 @@ from graphflow.simple.simple_model_utils import from_json
 
 from graphflow.analysis.metrics import calculate_metric_array, betweenness_centrality, load_centrality, hits
 from graphflow.visualisation.generic_vis import visualize_holoviews
+from graphflow.visualisation.generic_vis import visualize_epidemic
 
 
 def main():
@@ -62,6 +63,8 @@ def main():
     epidemic_subparser.add_argument('-tmax', help='max simulation time, ', type=int, default=100)
     epidemic_subparser.add_argument('--metric', '-m', action='append',
                                     help='metric to use, can be specified multiple times')
+    epidemic_subparser.add_argument('--visualize', action='store_true', default=False,
+                                    help='whether to visualize results')
 
     args = parser.parse_args()
 
@@ -172,13 +175,15 @@ def __run_epidemic(args):
     simulation_config = epidemic_params.get_simulation_config()
 
     my_sim = Simulation(simulation_config)
-    my_sim.run_simulation()
+    simulation_investigation = my_sim.run_simulation()
 
     if args.metric:
         res = calculate_metric_array('simple', my_sim.get_network(), args.metric)
         for i in res:
             print(i)
 
+    if args.visualize:
+        visualize_epidemic(my_sim.get_network(), simulation_investigation)
 
 if __name__ == '__main__':
     main()

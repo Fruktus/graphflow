@@ -1,5 +1,5 @@
 simple
-..\examples\simple\example_network.json
+../examples/simple/example_network.json
 --metric
 hits
 -m

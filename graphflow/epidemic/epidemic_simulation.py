@@ -2,7 +2,6 @@ import EoN
 from graphflow.epidemic import epidemic_runner
 import uuid
 
-
 class Simulation:
     simulation_params: epidemic_runner.ExperimentParameters
 
@@ -12,7 +11,7 @@ class Simulation:
     def get_network(self):
         return self.simulation_params.network
 
-    def run_simulation(self):
+    def run_simulation(self, save_to_file=False):
         if self.simulation_params.simulation_type == epidemic_runner.EpidemicSimulationType.SIR:
             simulation = EoN.fast_SIR(self.simulation_params.network,
                                       self.simulation_params.edge_transmission_rate,
@@ -42,5 +41,9 @@ class Simulation:
             raise NotImplementedError
 
         animation = simulation.animate()
-        unique_filename = str(uuid.uuid4())
-        animation.save(unique_filename + '.mp4', fps=5, extra_args=['-vcodec', 'libx264'])
+
+        if save_to_file:
+            unique_filename = str(uuid.uuid4())
+            animation.save(unique_filename + '.mp4', fps=5, extra_args=['-vcodec', 'libx264'])
+
+        return simulation
