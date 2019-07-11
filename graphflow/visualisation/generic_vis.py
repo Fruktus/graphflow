@@ -11,7 +11,10 @@ from graphflow.analysis.network_utils import get_nx_network
 
 
 def visualize_holoviews(network, metrics: [tuple] = None):
-    """metrics is an array of two-tuple consisting of string (metric name) and dict or value returned from metric"""
+    """generates interactive html plot of network
+    :param network: networkx graph
+    :param metrics: an array of two-tuple consisting of string (metric name) and dict or value returned from metric
+    """
     hv.extension('bokeh')
 
     nx_network = get_nx_network(network)

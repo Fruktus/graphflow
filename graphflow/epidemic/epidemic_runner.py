@@ -7,7 +7,7 @@ class EpidemicSimulationType(Enum):
     SIS = "sis"
 
 
-class ExperimentParameters():
+class ExperimentParameters:
 
     def __init__(self, simulation_type, graph, edge_transmission_rate,
                  node_recovery_rate, initial_infected, initial_recovered, tmax):
@@ -20,7 +20,7 @@ class ExperimentParameters():
         self.tmax = tmax
 
 
-class Parser():
+class Parser:
     sym_type: EpidemicSimulationType
     G: nx.Graph
     transm_rate: float
@@ -61,7 +61,6 @@ class Parser():
 
         # max simulation time
         self.t_max = maxtime
-
 
     def get_simulation_config(self):
         self.simulation_input_data = None

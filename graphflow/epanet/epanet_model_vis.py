@@ -4,7 +4,7 @@ import wntr
 from graphflow.epanet.epanet_model import EpanetFlowNetwork
 
 
-def get_animation(epanet_flow_network: EpanetFlowNetwork, frames: int, fps: int):
+def save_animation(epanet_flow_network: EpanetFlowNetwork, frames: int, fps: int):
     fig = plt.figure(figsize=(12, 10), facecolor='w')
     axis = plt.gca()
     values = epanet_flow_network.results.node[epanet_flow_network.simulation_type.value]

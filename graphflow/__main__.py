@@ -3,7 +3,7 @@ from pathlib import Path
 import sys
 
 from graphflow.epanet.epanet_model import EpanetFlowNetwork, SimulationType
-from graphflow.epanet.epanet_model_vis import get_animation
+from graphflow.epanet.epanet_model_vis import save_animation
 from graphflow.epanet.epanet_model_vis import show_plots, draw_epicenter_plot, draw_fragility_curve_plot, \
     draw_distance_to_epicenter_plot, draw_peak_ground_acceleration_plot, draw_peak_ground_velocity_plot, \
     draw_repair_rate_plot, draw_repair_rate_x_pipe_length, draw_probability_of_minor_leak, \
@@ -163,7 +163,7 @@ def __run_epanet(args):
             visualize_holoviews(epanet_flow_network, res)
 
     if args.simulation_type == 'pressure' or args.simulation_type == 'quality':
-        get_animation(epanet_flow_network, frames=100, fps=1)
+        save_animation(epanet_flow_network, frames=100, fps=1)
     elif args.simulation_type == 'earthquake':
         draw_epicenter_plot(epanet_flow_network)
         draw_fragility_curve_plot(epanet_flow_network)

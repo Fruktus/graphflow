@@ -1,11 +1,17 @@
+# pylint: skip-file
 from tkinter import Tk, ttk, filedialog, Button, messagebox, Entry, Label
 import tkinter as tk
 import re
 
+from graphflow.epanet.epanet_model import EpanetFlowNetwork, SimulationType
 from graphflow.simple.simple_model_utils import from_json
 from graphflow.extended.extended_model_utils import from_json as extended_from_json
 from graphflow.epidemic.epidemic_simulation import Simulation
 from graphflow.epidemic.epidemic_runner import Parser
+from graphflow.epanet.epanet_model_vis import draw_epicenter_plot, draw_fragility_curve_plot,\
+    draw_distance_to_epicenter_plot, save_animation, draw_peak_ground_acceleration_plot,\
+    draw_peak_ground_velocity_plot, draw_repair_rate_plot, draw_repair_rate_x_pipe_length,\
+    draw_probability_of_minor_leak, draw_probability_of_major_leak, draw_damage_states_plot, show_plots
 
 from graphflow.visualisation.generic_vis import visualize_holoviews, visualize_epidemic
 import graphflow.analysis.metrics as mtr
@@ -96,20 +102,104 @@ class Gui:
         frame = ttk.Frame(self.nb)
         self.nb.add(frame, text='Epanet')
 
+        # buttons #
         buttonframe = ttk.Frame(frame, relief=tk.SUNKEN)
         load_button = Button(buttonframe, text='load network',
                              command=lambda: self._load_file(self.root, filetypes=(("epanet files", "*.inp"),
                                                                                    ("all files", "*.*"))))
         load_button.pack(side=tk.LEFT, padx=5, pady=5)
-        calculate_button = Button(buttonframe, text='calculate',
-                                  command=lambda: self._calculate_epanet(metrics=cb.get_checked_items()))
-        calculate_button.pack(side=tk.LEFT, padx=5, pady=5)
+
         export_button = Button(buttonframe, text='export', command=lambda: self._export_data())
         export_button.pack(side=tk.LEFT, padx=5, pady=5)
+
         buttonframe.pack(side=tk.BOTTOM, fill=tk.X, expand=True)
 
+        # checklist #
         cb = self._generate_metrics_checklist(frame)
         cb.pack(side=tk.LEFT, padx=5, pady=5)
+
+        # earthquake #
+        eq_frame = ttk.Frame(frame, relief=tk.SUNKEN)
+        Label(eq_frame, text='Earthquake').pack(padx=5, pady=5)
+
+        epicx_box_frame = ttk.Frame(eq_frame, relief=tk.FLAT)
+        epicx_box = Entry(epicx_box_frame, width=8)
+        epicx_box.pack(side=tk.RIGHT, padx=5, pady=5)
+        Label(epicx_box_frame, text='epicenter x').pack(side=tk.RIGHT, padx=5, pady=5)
+        epicx_box_frame.pack(fill=tk.X, expand=True, padx=5, pady=5)
+
+        epicy_box_frame = ttk.Frame(eq_frame, relief=tk.FLAT)
+        epicy_box = Entry(epicy_box_frame, width=8)
+        epicy_box.pack(side=tk.RIGHT, padx=5, pady=5)
+        Label(epicy_box_frame, text='epicenter y').pack(side=tk.RIGHT, padx=5, pady=5)
+        epicy_box_frame.pack(fill=tk.X, expand=True, padx=5, pady=5)
+
+        magni_box_frame = ttk.Frame(eq_frame, relief=tk.FLAT)
+        magni_box = Entry(magni_box_frame, width=8)
+        magni_box.pack(side=tk.RIGHT, padx=5, pady=5)
+        Label(magni_box_frame, text='magnitude').pack(side=tk.RIGHT, padx=5, pady=5)
+        magni_box_frame.pack(fill=tk.X, expand=True, padx=5, pady=5)
+
+        depth_box_frame = ttk.Frame(eq_frame, relief=tk.FLAT)
+        depth_box = Entry(depth_box_frame, width=8)
+        depth_box.pack(side=tk.RIGHT, padx=5, pady=5)
+        Label(depth_box_frame, text='depth').pack(side=tk.RIGHT, padx=5, pady=5)
+        depth_box_frame.pack(fill=tk.X, expand=True, padx=5, pady=5)
+
+        viseq_button = Button(eq_frame, text='visualize',
+                              command=lambda: self._visualize_epanet('earthquake'))
+        viseq_button.pack(side=tk.RIGHT, padx=5, pady=5)
+        calculate_button = Button(eq_frame, text='calculate',
+                                  command=lambda: self._calculate_epanet('earthquake',
+                                                                         epix=float(epicx_box.get()),
+                                                                         epiy=(epicy_box.get()),
+                                                                         magnitude=float(magni_box.get()),
+                                                                         depth=float(depth_box.get()),
+                                                                         metrics=cb.get_checked_items()))
+        calculate_button.pack(side=tk.RIGHT, padx=5, pady=5)
+
+        eq_frame.pack()
+
+        # pressure #
+        pr_frame = ttk.Frame(frame, relief=tk.SUNKEN)
+        Label(pr_frame, text='Pressure').pack(padx=5, pady=5)
+
+        time_box_frame = ttk.Frame(pr_frame, relief=tk.FLAT)
+        time_box = Entry(time_box_frame, width=8)
+        time_box.pack(side=tk.RIGHT, padx=5, pady=5)
+        Label(time_box_frame, text='time').pack(side=tk.RIGHT, padx=5, pady=5)
+        time_box_frame.pack(fill=tk.X, expand=True, padx=5, pady=5)
+
+        vispr_button = Button(pr_frame, text='visualize',
+                              command=lambda: self._visualize_epanet('pressure'))
+        vispr_button.pack(side=tk.RIGHT, padx=5, pady=5)
+        calculate_button = Button(pr_frame, text='calculate',
+                                  command=lambda: self._calculate_epanet('pressure',
+                                                                         time=float(time_box.get()),
+                                                                         metrics=cb.get_checked_items()))
+        calculate_button.pack(side=tk.RIGHT, padx=5, pady=5)
+
+        pr_frame.pack()
+
+        # quality #
+        ql_frame = ttk.Frame(frame, relief=tk.SUNKEN)
+        Label(ql_frame, text='Quality').pack(padx=5, pady=5)
+
+        tn_box_frame = ttk.Frame(ql_frame, relief=tk.FLAT)
+        tn_box = Entry(tn_box_frame, width=8)
+        tn_box.pack(side=tk.RIGHT, padx=5, pady=5)
+        Label(tn_box_frame, text='trace node').pack(side=tk.RIGHT, padx=5, pady=5)
+        tn_box_frame.pack(fill=tk.X, expand=True, padx=5, pady=5)
+
+        visql_button = Button(ql_frame, text='visualize',
+                              command=lambda: self._visualize_epanet('quality'))
+        visql_button.pack(side=tk.RIGHT, padx=5, pady=5)
+        calculate_button = Button(ql_frame, text='calculate',
+                                  command=lambda: self._calculate_epanet('quality', trace_node=tn_box.get(),
+                                                                         metrics=cb.get_checked_items()))
+        calculate_button.pack(side=tk.RIGHT, padx=5, pady=5)
+
+        ql_frame.pack()
 
     def _add_epidemic_nb(self):
         frame = ttk.Frame(self.nb)
@@ -127,7 +217,7 @@ class Gui:
         calculate_button.pack(side=tk.LEFT, padx=5, pady=5)
         export_button = Button(buttonframe, text='export', command=lambda: self._export_data())
         export_button.pack(side=tk.LEFT, padx=5, pady=5)
-        animation_button = Button(buttonframe, text='animate', command=lambda: self._export_animation())
+        animation_button = Button(buttonframe, text='animate', command=lambda: self._export_epidemic_animation())
         animation_button.pack(side=tk.LEFT, padx=5, pady=5)
         buttonframe.pack(side=tk.BOTTOM, fill=tk.X, expand=True)
 
@@ -178,12 +268,13 @@ class Gui:
         if not hasattr(self.root, 'calculated_metrics'):
             messagebox.showerror('Error', 'No data to export')
             return
-        path = filedialog.asksaveasfilename(title="Select file", defaultextension='.csv', filetypes=(("CSV", "*.csv"),
-                                            ("all files", "*.*")))
+        path = filedialog.asksaveasfilename(title="Select file",
+                                            defaultextension='.csv', filetypes=(("CSV", "*.csv"),
+                                                                                ("all files", "*.*")))
         if path:
             export_csv(path, self.root.calculated_metrics)
 
-    def _export_animation(self):
+    def _export_epidemic_animation(self):
         if not hasattr(self.root, 'epidemic_result'):
             messagebox.showerror('Error', 'No data to export')
             return
@@ -225,8 +316,59 @@ class Gui:
 
             visualize_holoviews(solved_network, self.root.calculated_metrics)
 
-    def _calculate_epanet(self, metrics: [str] = None):
-        raise NotImplementedError
+    def _calculate_epanet(self, sim_type, epix=None, epiy=None, magnitude=None, depth=None,
+                          time=None, trace_node=None, metrics: [str] = None):
+        if not hasattr(self.root, 'filename'):
+            messagebox.showerror('Error', 'No network file selected')
+            return
+
+        if sim_type == 'earthquake':
+            if not (epix and epiy and magnitude and depth):
+                raise ValueError('No all arguments have been passed')
+            epanet_flow_network = EpanetFlowNetwork(self.root.filename, SimulationType.EARTHQUAKE,
+                                                    epicenter=(epix, epiy),
+                                                    magnitude=magnitude,
+                                                    depth=depth)
+        elif sim_type == 'pressure':
+            if not time:
+                raise ValueError('No time range has been passed')
+            epanet_flow_network = EpanetFlowNetwork(self.root.filename, SimulationType.PRESSURE, time=time)
+        elif sim_type == 'quality':
+            if not trace_node:
+                raise ValueError('No  trace node has been passed')
+            epanet_flow_network = EpanetFlowNetwork(self.root.filename, SimulationType.QUALITY,
+                                                    trace_node=trace_node)
+        else:
+            raise ValueError('Bad simulation type')
+
+        epanet_flow_network.run_simulation()
+        if metrics:
+            self.root.calculated_metrics = calculate_metric_array('epanet', epanet_flow_network, metrics)
+
+        self.root.epanet_network = epanet_flow_network
+
+    def _visualize_epanet(self, sim_type):
+        if not hasattr(self.root, 'epanet_network'):
+            messagebox.showerror('Error', 'No data to show')
+            return
+
+        if hasattr(self.root, 'calculated_metrics'):
+            visualize_holoviews(self.root.epanet_network, self.root.calculated_metrics)
+
+        if sim_type == 'pressure' or sim_type == 'quality':
+            save_animation(self.root.epanet_network, frames=100, fps=1)
+        elif sim_type == 'earthquake':
+            draw_epicenter_plot(self.root.epanet_network)
+            draw_fragility_curve_plot(self.root.root.epanet_network)
+            draw_distance_to_epicenter_plot(self.root.epanet_network)
+            draw_peak_ground_acceleration_plot(self.root.epanet_network)
+            draw_peak_ground_velocity_plot(self.root.epanet_network)
+            draw_repair_rate_plot(self.root.epanet_network)
+            draw_repair_rate_x_pipe_length(self.root.epanet_network)
+            draw_probability_of_minor_leak(self.root.epanet_network)
+            draw_probability_of_major_leak(self.root.epanet_network)
+            draw_damage_states_plot(self.root.epanet_network)
+            show_plots()
 
     def _calculate_epidemic(self, metrics: [str] = None, ntype: str = 'sis', transrate: float = 2.0,
                             recrate: float = 1.0, tmax: float = 100):
