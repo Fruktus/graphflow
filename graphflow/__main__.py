@@ -1,5 +1,6 @@
 import argparse
 from pathlib import Path
+import sys
 
 from graphflow.epanet.epanet_model import EpanetFlowNetwork, SimulationType
 from graphflow.epanet.epanet_model_vis import get_animation
@@ -20,6 +21,7 @@ from graphflow.analysis.metrics import calculate_metric_array, betweenness_centr
 from graphflow.analysis.network_utils import export_csv
 from graphflow.visualisation.generic_vis import visualize_holoviews
 from graphflow.visualisation.generic_vis import visualize_epidemic
+from graphflow.visualisation.gui import Gui
 
 
 def main():
@@ -66,8 +68,11 @@ def main():
                                     help='metric to use, can be specified multiple times')
     epidemic_subparser.add_argument('--visualize', action='store_true', default=False,
                                     help='whether to visualize results')
-
-    args = parser.parse_args()
+    if len(sys.argv) > 1:
+        args = parser.parse_args()
+    else:
+        Gui().start()
+        sys.exit()
 
     if args.network_model == 'simple':
         __sample_routine(args.path_to_network_file, args)
@@ -101,7 +106,7 @@ def __sample_routine(graph_filepath, args):
             for i in res:
                 print(i)
             print('exporting csv')
-            export_csv(res, 'simple_results.csv')
+            export_csv('simple_results.csv', res)
         if args.visualize:
             visualize_holoviews(solved_network, res)
 
