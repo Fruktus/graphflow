@@ -1,15 +1,15 @@
+import sys
 import random
 import networkx as nx
-import sys
 
 # get raw networkx graph and generates 'infected' and 'recovered' labels values for each node with given probability
 # input can be: samples/raw_graph_sample 0.2 0.1
 
-input_name = sys.argv[1]
-G = nx.read_gml(input_name)
+INPUT_NAME = sys.argv[1]
+G = nx.read_gml(INPUT_NAME)
 
-infected_prob = float(sys.argv[2])
-recovered_prob = float(sys.argv[3])
+INFECTED_PROB = float(sys.argv[2])
+RECOVERED_PROB = float(sys.argv[3])
 
 for n in nx.nodes(G):
 
@@ -17,12 +17,12 @@ for n in nx.nodes(G):
     infected = False
     val = random.random()
 
-    if val < infected_prob:
+    if val < INFECTED_PROB:
         infected = True
-    elif val < infected_prob + recovered_prob:
+    elif val < INFECTED_PROB + RECOVERED_PROB:
         recovered = True
 
     attrs = {n: {'infected': infected, 'recovered': recovered}}
     nx.set_node_attributes(G, attrs)
 
-nx.write_gml(G, input_name + "_out")
+nx.write_gml(G, INPUT_NAME + "_out")

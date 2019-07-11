@@ -1,5 +1,5 @@
-import networkx as nx
 from enum import Enum
+import networkx as nx
 
 
 class EpidemicSimulationType(Enum):
@@ -30,12 +30,12 @@ class Parser():
     t_max: int
     simulation_input_data: ExperimentParameters
 
-    def parse_input(self, type, network, transmission, recovery, maxtime):
+    def parse_input(self, ntype, network, transmission, recovery, maxtime):
         # simulation type
         self.sym_type = None
-        if type.lower() == 'sir':
+        if ntype.lower() == 'sir':
             self.sym_type = EpidemicSimulationType.SIR
-        elif type.lower() == 'sis':
+        elif ntype.lower() == 'sis':
             self.sym_type = EpidemicSimulationType.SIS
         else:
             raise ValueError("Invalid simulation type name!")
@@ -54,9 +54,9 @@ class Parser():
         self.initial_infected = []
         self.initial_recovered = []
         for n in nx.nodes(self.G):
-            if self.G.nodes[n]['infected'] == True:
+            if self.G.nodes[n]['infected']:
                 self.initial_infected.append(n)
-            elif self.G.nodes[n]['recovered'] == True:
+            elif self.G.nodes[n]['recovered']:
                 self.initial_recovered.append(n)
 
         # max simulation time

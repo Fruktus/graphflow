@@ -17,7 +17,8 @@ from graphflow.extended.extended_model_utils import to_json as extended_to_json
 
 from graphflow.simple.simple_model_utils import from_json
 
-from graphflow.analysis.metrics import calculate_metric_array, betweenness_centrality, load_centrality, hits
+from graphflow.analysis.metrics import betweenness_centrality, load_centrality, hits
+from graphflow.analysis.metric_utils import calculate_metric_array
 from graphflow.analysis.network_utils import export_csv
 from graphflow.visualisation.generic_vis import visualize_holoviews
 from graphflow.visualisation.generic_vis import visualize_epidemic
@@ -191,6 +192,7 @@ def __run_epidemic(args):
 
     if args.visualize:
         visualize_epidemic(my_sim.get_network(), simulation_investigation, res)
+
 
 if __name__ == '__main__':
     main()
