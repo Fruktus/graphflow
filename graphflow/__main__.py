@@ -1,8 +1,9 @@
 import argparse
 from pathlib import Path
+import sys
 
 from graphflow.epanet.epanet_model import EpanetFlowNetwork, SimulationType
-from graphflow.epanet.epanet_model_vis import get_animation
+from graphflow.epanet.epanet_model_vis import save_animation
 from graphflow.epanet.epanet_model_vis import show_plots, draw_epicenter_plot, draw_fragility_curve_plot, \
     draw_distance_to_epicenter_plot, draw_peak_ground_acceleration_plot, draw_peak_ground_velocity_plot, \
     draw_repair_rate_plot, draw_repair_rate_x_pipe_length, draw_probability_of_minor_leak, \
@@ -16,10 +17,12 @@ from graphflow.extended.extended_model_utils import to_json as extended_to_json
 
 from graphflow.simple.simple_model_utils import from_json
 
-from graphflow.analysis.metrics import calculate_metric_array, betweenness_centrality, load_centrality, hits
+from graphflow.analysis.metrics import betweenness_centrality, load_centrality, hits
+from graphflow.analysis.metric_utils import calculate_metric_array
 from graphflow.analysis.network_utils import export_csv
 from graphflow.visualisation.generic_vis import visualize_holoviews
 from graphflow.visualisation.generic_vis import visualize_epidemic
+from graphflow.visualisation.gui import Gui
 
 
 def main():
@@ -66,8 +69,11 @@ def main():
                                     help='metric to use, can be specified multiple times')
     epidemic_subparser.add_argument('--visualize', action='store_true', default=False,
                                     help='whether to visualize results')
-
-    args = parser.parse_args()
+    if len(sys.argv) > 1:
+        args = parser.parse_args()
+    else:
+        Gui().start()
+        sys.exit()
 
     if args.network_model == 'simple':
         __sample_routine(args.path_to_network_file, args)
@@ -101,7 +107,7 @@ def __sample_routine(graph_filepath, args):
             for i in res:
                 print(i)
             print('exporting csv')
-            export_csv(res, 'simple_results.csv')
+            export_csv('simple_results.csv', res)
         if args.visualize:
             visualize_holoviews(solved_network, res)
 
@@ -157,7 +163,7 @@ def __run_epanet(args):
             visualize_holoviews(epanet_flow_network, res)
 
     if args.simulation_type == 'pressure' or args.simulation_type == 'quality':
-        get_animation(epanet_flow_network, frames=100, fps=1)
+        save_animation(epanet_flow_network, frames=100, fps=1)
     elif args.simulation_type == 'earthquake':
         draw_epicenter_plot(epanet_flow_network)
         draw_fragility_curve_plot(epanet_flow_network)

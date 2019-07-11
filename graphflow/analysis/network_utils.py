@@ -1,44 +1,43 @@
 import csv
+from networkx import Graph, DiGraph
+
 from graphflow.simple.simple_model import SimpleFlowNetwork
 from graphflow.simple.simple_model_utils import __build_string_network as __build_string_network_simple
 from graphflow.extended.extended_model import ExtendedFlowNetwork
 from graphflow.extended.extended_model_utils import __build_string_network as __build_string_network_extended
 from graphflow.epanet.epanet_model import EpanetFlowNetwork
-from networkx import Graph, DiGraph
 
 
 def get_nx_network(network):
     if isinstance(network, SimpleFlowNetwork):
         nodes, edges = network.get_network_state()
         return __build_string_network_simple(nodes, edges)
-    elif isinstance(network, ExtendedFlowNetwork):
+    if isinstance(network, ExtendedFlowNetwork):
         nodes, edges = network.get_network_state()
         return __build_string_network_extended(nodes, edges)
-    elif isinstance(network, EpanetFlowNetwork):
+    if isinstance(network, EpanetFlowNetwork):
         return network.get_networkx_graph()
-    elif isinstance(network, Graph):
+    if isinstance(network, Graph):
         return network
-    elif isinstance(network, DiGraph):
+    if isinstance(network, DiGraph):
         return network
-    else:
-        raise TypeError('unknown network format')
+    raise TypeError('unknown network format')
 
 
-def export_csv(data: [], path: str):
+def export_csv(path: str, data: []):
     # data will be array of rows to output
     with open(path, 'w', newline='') as csvfile:
         writer = csv.writer(csvfile, quotechar='|', quoting=csv.QUOTE_MINIMAL)
 
-        for r in data:
-            if isinstance(r[1], dict):
-                writer.writerow(['metrics'] + list(r[1].keys()))
+        for row in data:
+            if isinstance(row[1], dict):
+                writer.writerow(['metrics'] + list(row[1].keys()))
                 break
-        for r in data:
-            print('csv:', r)
-            if isinstance(r[1], tuple):
-                for dictdata in r[1]:
-                    writer.writerow([r[0]] + list(dictdata.values()))
-            if isinstance(r[1], dict):
-                    writer.writerow([r[0]] + list(r[1].values()))
-            if isinstance(r, int or float):
+        for row in data:
+            if isinstance(row[1], tuple):
+                for dictdata in row[1]:
+                    writer.writerow([row[0]] + list(dictdata.values()))
+            if isinstance(row[1], dict):
+                writer.writerow([row[0]] + list(row[1].values()))
+            if isinstance(row, int or float):
                 continue

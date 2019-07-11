@@ -1,6 +1,7 @@
+import uuid
 import EoN
 from graphflow.epidemic import epidemic_runner
-import uuid
+
 
 class Simulation:
     simulation_params: epidemic_runner.ExperimentParameters
