@@ -1,14 +1,13 @@
 # pylint: disable=E1101
 import webbrowser
 
-import numpy as np
+import networkx as nx
 import holoviews as hv
 from holoviews import opts
 from bokeh.io import output_file, show
-import networkx as nx
 import EoN
 
-from graphflow.analysis.metrics import calculate_metric, apply_all_metrics
+from graphflow.analysis.metrics import apply_all_metrics
 from graphflow.analysis.network_utils import get_nx_network
 
 
@@ -48,15 +47,14 @@ def visualize_epidemic(network, simulation_investigation: EoN.Simulation_Investi
         del node[1]['recovered']
 
     if simulation_investigation.SIR:
-        time_steps = simulation_investigation.t()[1:]
+        time_steps = simulation_investigation.t()[0:]
     else:
-        time_steps = simulation_investigation.t()[1:max_time_steps]
+        time_steps = simulation_investigation.t()[0:max_time_steps]
 
-    spatial_dims = [hv.Dimension('x', range=(-1.1, 1.1)),
-                    hv.Dimension('y', range=(-1.1, 1.1))]
     possible_statuses = ["S", "I", "R"]
     color_map = {'S': 'yellow', 'I': 'red', 'R': 'green'}
     graph_dict = {}
+    metrics_dict = {}
     node_count = {'S': ([], []), 'I': ([], []), 'R': ([], [])}
 
     layout = nx.layout.spring_layout(nx_network)
@@ -64,6 +62,11 @@ def visualize_epidemic(network, simulation_investigation: EoN.Simulation_Investi
         statuses = simulation_investigation.get_statuses(time=time)
         nx.set_node_attributes(network, statuses, 'Status')
         apply_all_metrics("epidemic", metrics, nx_network)
+
+        labels = hv.Labels({(0, i/2-0.9): "{}: {}".format(metric, value)
+                            for i, (metric, value) in enumerate(nx_network.graph.items())
+                            if metric not in ('bottom', 'top')})
+        metrics_dict[time] = labels
 
         graph = hv.Graph.from_networkx(network, layout).opts(node_color='Status', cmap=color_map)
         graph_dict[time] = graph
@@ -73,36 +76,17 @@ def visualize_epidemic(network, simulation_investigation: EoN.Simulation_Investi
             node_count[status][0].append(time)
             node_count[status][1].append(count)
 
-    curve_dict = {status: hv.Curve(node_count[status], key_dimensions=['Time'], value_dimensions=['Count'])
+    curve_dict = {status: hv.Curve(node_count[status], kdims='Time', vdims='Count').opts(color=color_map[status])
                   for status in possible_statuses}
-    ndoverlay = hv.NdOverlay(curve_dict, key_dimensions=[hv.Dimension('Status', values=possible_statuses)])
+    ndoverlay = hv.NdOverlay(curve_dict)
+    distribution = hv.HoloMap({i: (ndoverlay * hv.VLine(i)).relabel(group='Counts')
+                               for i in time_steps}, kdims='Time').opts(width=400, height=400, padding=0.1)
 
-    distribution = hv.HoloMap({i: (ndoverlay * hv.VLine(i)).relabel(group='Counts', label='SRI')
-                               for i in time_steps}, key_dimensions=['Time'])
+    holomap = hv.HoloMap(graph_dict, kdims='Time').opts(width=400, height=400, padding=0.1).relabel(group='Network')
+    labels_holomap = hv.HoloMap(metrics_dict, kdims='Time').opts(xaxis=None, yaxis=None, height=100)
 
-    hmap = hv.HoloMap(graph_dict, key_dimensions=['Time']).relabel(group='Network', label='SRI')
-
-    # defaults = dict(width=700, height=700, padding=0.1)
-    # hv.opts.defaults(opts.EdgePaths(**defaults), opts.Graph(**defaults), opts.Nodes(**defaults))
+    layout = (holomap + distribution + labels_holomap).cols(2)
 
     filename = "graph.html"
-    hv.save(hmap + distribution, filename, backend='bokeh')
+    hv.save(layout, filename, backend='bokeh')
     webbrowser.open(filename)
-
-
-def __get_epidemic_network_graph(network, layout, statuses, metrics: [str] = None):
-
-    nx.set_node_attributes(network, statuses, 'Status')
-    color_map = {'S': 'yellow', 'I': 'red', 'R': 'green'}
-
-    apply_all_metrics("epidemic", metrics, network)
-
-    counts = {}
-    for status in "SIR":
-        count = len([node for node in network.nodes(data=True) if node['Status'] == status])
-        counts[status] = count
-
-    network_graph = hv.Graph.from_networkx(
-        network, layout).opts(node_color='Status', cmap=color_map, show_legend=True, legend_position='right')
-
-    return network_graph, counts
