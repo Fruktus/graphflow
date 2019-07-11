@@ -182,10 +182,12 @@ def __run_epidemic(args):
 
     res = None
     if args.metric:
-        res = calculate_metric_array('simple', my_sim.get_network(), args.metric)
+        res = args.metric
+        # res = calculate_metric_array('simple', my_sim.get_network(), args.metric)
 
     if args.visualize:
         visualize_epidemic(my_sim.get_network(), simulation_investigation, res)
+
 
 if __name__ == '__main__':
     main()

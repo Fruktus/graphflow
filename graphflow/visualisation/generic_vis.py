@@ -1,12 +1,13 @@
 # pylint: disable=E1101
 import webbrowser
 
+import networkx as nx
 import holoviews as hv
 from holoviews import opts
 from bokeh.io import output_file, show
-import networkx as nx
 import EoN
 
+from graphflow.analysis.metrics import apply_all_metrics
 from graphflow.analysis.network_utils import get_nx_network
 
 
@@ -36,48 +37,56 @@ def visualize_holoviews(network, metrics: [tuple] = None):
 
 
 def visualize_epidemic(network, simulation_investigation: EoN.Simulation_Investigation,
-                       metrics: [tuple] = None, max_time_steps=200):
+                       metrics: [str] = None, max_time_steps=50):
     hv.extension('bokeh')
-
     nx_network = get_nx_network(network)
 
+    # remove unused attributes
     for node in nx_network.nodes(data=True):
         del node[1]['infected']
         del node[1]['recovered']
 
     if simulation_investigation.SIR:
-        time_steps = simulation_investigation.t()[1:]
+        time_steps = simulation_investigation.t()[0:]
     else:
-        time_steps = simulation_investigation.t()[1:max_time_steps]
+        time_steps = simulation_investigation.t()[0:max_time_steps]
+
+    possible_statuses = ["S", "I", "R"]
+    color_map = {'S': 'yellow', 'I': 'red', 'R': 'green'}
+    graph_dict = {}
+    metrics_dict = {}
+    node_count = {'S': ([], []), 'I': ([], []), 'R': ([], [])}
 
     layout = nx.layout.spring_layout(nx_network)
-    graph_dict = {time: __get_epidemic_network_graph(nx_network, layout,
-                                                     simulation_investigation.get_statuses(time=time),
-                                                     metrics) for time in time_steps}
-    hmap = hv.HoloMap(graph_dict, kdims='t')
+    for time in time_steps:
+        statuses = simulation_investigation.get_statuses(time=time)
+        nx.set_node_attributes(network, statuses, 'Status')
+        apply_all_metrics("epidemic", metrics, nx_network)
 
-    defaults = dict(width=700, height=700, padding=0.1)
-    hv.opts.defaults(opts.EdgePaths(**defaults), opts.Graph(**defaults), opts.Nodes(**defaults))
+        labels = hv.Labels({(0, i/2-0.9): "{}: {}".format(metric, value)
+                            for i, (metric, value) in enumerate(nx_network.graph.items())
+                            if metric not in ('bottom', 'top')})
+        metrics_dict[time] = labels
+
+        graph = hv.Graph.from_networkx(network, layout).opts(node_color='Status', cmap=color_map)
+        graph_dict[time] = graph
+
+        for status in possible_statuses:
+            count = len([node for node in nx_network.nodes(data=True) if node[1]['Status'] == status])
+            node_count[status][0].append(time)
+            node_count[status][1].append(count)
+
+    curve_dict = {status: hv.Curve(node_count[status], kdims='Time', vdims='Count').opts(color=color_map[status])
+                  for status in possible_statuses}
+    ndoverlay = hv.NdOverlay(curve_dict)
+    distribution = hv.HoloMap({i: (ndoverlay * hv.VLine(i)).relabel(group='Counts')
+                               for i in time_steps}, kdims='Time').opts(width=400, height=400, padding=0.1)
+
+    holomap = hv.HoloMap(graph_dict, kdims='Time').opts(width=400, height=400, padding=0.1).relabel(group='Network')
+    labels_holomap = hv.HoloMap(metrics_dict, kdims='Time').opts(xaxis=None, yaxis=None, height=100)
+
+    layout = (holomap + distribution + labels_holomap).cols(2)
 
     filename = "graph.html"
-    hv.save(hmap, filename, backend='bokeh')
+    hv.save(layout, filename, backend='bokeh')
     webbrowser.open(filename)
-
-
-def __get_epidemic_network_graph(network, layout, statuses, metrics: [tuple] = None):
-    if metrics:
-        for i in metrics:
-            if isinstance(i[1], dict):
-                nx.set_node_attributes(network, i[1], i[0])
-            elif isinstance(i[1], tuple):
-                nx.set_node_attributes(network, i[1][0], i[0])
-            # else:
-            #     print(i[0], ":", i[1])
-
-    nx.set_node_attributes(network, statuses, 'Status')
-    color_map = {'S': 'green', 'I': 'red', 'R': 'blue'}
-
-    network_graph = hv.Graph.from_networkx(
-        network, layout).opts(tools=['hover'], directed=False, node_color='Status', cmap=color_map)
-
-    return network_graph
