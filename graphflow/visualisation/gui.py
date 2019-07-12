@@ -205,13 +205,16 @@ class Gui:
         frame = ttk.Frame(self.nb)
         self.nb.add(frame, text='Epidemic')
 
+        types = {0: 'sir', 1: 'sis'}
+
         buttonframe = ttk.Frame(frame, relief=tk.SUNKEN)
         load_button = Button(buttonframe, text='load network',
                              command=lambda: self._load_file(self.root, filetypes=(("text files", "*.txt"),
                                                                                    ("all files", "*.*"))))
         load_button.pack(side=tk.LEFT, padx=5, pady=5)
         calculate_button = Button(buttonframe, text='calculate',
-                                  command=lambda: self._calculate_epidemic(metrics=cb.get_checked_items(),
+                                  command=lambda: self._calculate_epidemic(ntype=types[type_box.curselection()[0]],
+                                                                           metrics=cb.get_checked_items(),
                                                                            transrate=float(transrate_box.get()),
                                                                            recrate=float(recrate_box.get()),
                                                                            tmax=float(tmax_box.get())))
@@ -226,6 +229,15 @@ class Gui:
         cb.pack(side=tk.LEFT, padx=5, pady=5)
 
         input_frame = ttk.Frame(frame, relief=tk.FLAT)
+
+        type_frame = ttk.Frame(input_frame, relief=tk.SUNKEN)
+        type_box = tk.Listbox(type_frame, width=6, height=2)
+        type_box.pack(fill=tk.X, expand=True, side=tk.RIGHT, padx=5, pady=5)
+        Label(type_frame, text='network type').pack(side=tk.RIGHT, padx=5, pady=5)
+        type_frame.pack(fill=tk.X, expand=True)
+
+        type_box.insert(tk.END, 'sir')
+        type_box.insert(tk.END, 'sis')
 
         transrate_frame = ttk.Frame(input_frame, relief=tk.SUNKEN)
         transrate_box = Entry(transrate_frame, width=8)
@@ -373,7 +385,6 @@ class Gui:
 
     def _calculate_epidemic(self, metrics: [str] = None, ntype: str = 'sis', transrate: float = 2.0,
                             recrate: float = 1.0, tmax: float = 100):
-
         if not hasattr(self.root, 'filename'):
             messagebox.showerror('Error', 'No network file selected')
             return
