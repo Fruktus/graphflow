@@ -43,7 +43,7 @@ def apply_metric(ntype, name, network):
         network.graph[metric[0]] = metric[1]
 
 
-def apply_all_metrics(ntype, names, network):
+def apply_all_metrics(ntype, names: [str], network):
     for metric in names:
         apply_metric(ntype, metric, network)
 

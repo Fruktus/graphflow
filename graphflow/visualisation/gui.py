@@ -300,7 +300,7 @@ class Gui:
             if metrics:
                 self.root.calculated_metrics = calculate_metric_array('simple', self.root.solved_network, metrics)
 
-            visualize_holoviews(self.root.solved_network, self.root.calculated_metrics)
+                visualize_holoviews(self.root.solved_network, self.root.calculated_metrics)
 
     def _calculate_extended(self, metrics: [str] = None):
         if not hasattr(self.root, 'filename'):
@@ -315,7 +315,7 @@ class Gui:
             if metrics:
                 self.root.calculated_metrics = calculate_metric_array('simple', solved_network, metrics)
 
-            visualize_holoviews(solved_network, self.root.calculated_metrics)
+                visualize_holoviews(solved_network, self.root.calculated_metrics)
 
     def _calculate_epanet(self, sim_type, epix=None, epiy=None, magnitude=None, depth=None,
                           time=None, trace_node=None, metrics: [str] = None):
@@ -388,7 +388,7 @@ class Gui:
         if metrics:
             self.root.calculated_metrics = calculate_metric_array('simple', my_sim.get_network(), metrics)
 
-        visualize_epidemic(my_sim.get_network(), simulation_investigation, self.root.calculated_metrics)
+            visualize_epidemic(my_sim.get_network(), simulation_investigation, metrics)
 
     def start(self):
         self.root.mainloop()
