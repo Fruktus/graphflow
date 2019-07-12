@@ -1,7 +1,7 @@
 from matplotlib import animation
 from matplotlib import pyplot as plt
 import wntr
-from graphflow.epanet.epanet_model import EpanetFlowNetwork
+from graphflow.models.epanet.epanet_model import EpanetFlowNetwork
 
 
 def save_animation(epanet_flow_network: EpanetFlowNetwork, frames: int, fps: int):

@@ -3,12 +3,12 @@ from tkinter import Tk, ttk, filedialog, Button, messagebox, Entry, Label
 import tkinter as tk
 import re
 
-from graphflow.epanet.epanet_model import EpanetFlowNetwork, SimulationType
-from graphflow.simple.simple_model_utils import from_json
-from graphflow.extended.extended_model_utils import from_json as extended_from_json
-from graphflow.epidemic.epidemic_simulation import Simulation
-from graphflow.epidemic.epidemic_runner import Parser
-from graphflow.epanet.epanet_model_vis import draw_epicenter_plot, draw_fragility_curve_plot,\
+from graphflow.models.epanet.epanet_model import EpanetFlowNetwork, SimulationType
+from graphflow.models.simple.simple_model_utils import from_json
+from graphflow.models.extended.extended_model_utils import from_json as extended_from_json
+from graphflow.models.epidemic.epidemic_simulation import Simulation
+from graphflow.models.epidemic.epidemic_runner import Parser
+from graphflow.models.epanet.epanet_model_vis import draw_epicenter_plot, draw_fragility_curve_plot,\
     draw_distance_to_epicenter_plot, save_animation, draw_peak_ground_acceleration_plot,\
     draw_peak_ground_velocity_plot, draw_repair_rate_plot, draw_repair_rate_x_pipe_length,\
     draw_probability_of_minor_leak, draw_probability_of_major_leak, draw_damage_states_plot, show_plots

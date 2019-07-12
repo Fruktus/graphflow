@@ -3,8 +3,8 @@
 import matplotlib.pyplot as plt
 import networkx as nx
 
-from graphflow.simple.simple_model import SimpleFlowNetwork
-from graphflow.simple.simple_model_utils import __build_raw_network
+from graphflow.models.simple.simple_model import SimpleFlowNetwork
+from graphflow.models.simple.simple_model_utils import __build_raw_network
 
 
 def visualize_matplotlib(network: SimpleFlowNetwork):

@@ -1,27 +1,11 @@
 import argparse
-from pathlib import Path
 import sys
 
-from graphflow.epanet.epanet_model import EpanetFlowNetwork, SimulationType
-from graphflow.epanet.epanet_model_vis import save_animation
-from graphflow.epanet.epanet_model_vis import show_plots, draw_epicenter_plot, draw_fragility_curve_plot, \
-    draw_distance_to_epicenter_plot, draw_peak_ground_acceleration_plot, draw_peak_ground_velocity_plot, \
-    draw_repair_rate_plot, draw_repair_rate_x_pipe_length, draw_probability_of_minor_leak, \
-    draw_probability_of_major_leak, draw_damage_states_plot
+from graphflow.models.epanet.epanet_model import SimulationType
+from graphflow.models.epanet.epanet_network import EpanetNetwork
+from graphflow.models.extended.extended_network import ExtendedNetwork
+from graphflow.models.simple.simple_network import SimpleNetwork
 
-from graphflow.epidemic.epidemic_runner import Parser
-from graphflow.epidemic.epidemic_simulation import Simulation
-from graphflow.extended.extended_model_utils import from_json as extended_from_json
-
-from graphflow.extended.extended_model_utils import to_json as extended_to_json
-
-from graphflow.simple.simple_model_utils import from_json
-
-from graphflow.analysis.metrics import betweenness_centrality, load_centrality, hits
-from graphflow.analysis.metric_utils import calculate_metric_array
-from graphflow.analysis.network_utils import export_csv
-from graphflow.visualisation.generic_vis import visualize_holoviews
-from graphflow.visualisation.generic_vis import visualize_epidemic
 from graphflow.visualisation.gui import Gui
 
 
@@ -76,123 +60,79 @@ def main():
         sys.exit()
 
     if args.network_model == 'simple':
-        __sample_routine(args.path_to_network_file, args)
+        __run_simple(args.path_to_network_file, args)
     elif args.network_model == 'extended':
-        __sample_routine_two(args.path_to_network_file, args)
+        __run_extended(args.path_to_network_file, args)
     elif args.network_model == 'epanet':
         __run_epanet(args)
     elif args.network_model == 'epidemic':
         __run_epidemic(args)
 
 
-def __sample_routine(graph_filepath, args):
-    base_path = Path(__file__).parent
-    file_path = (base_path / graph_filepath).resolve()
-    with open(file_path) as file:
-        json_network = file.read()
-        network = from_json(json_network)
+def __run_simple(graph_filepath, args):
 
-        solved_network = network.calculate_network_state()
-        hits_res = hits(solved_network)
-        centrality = betweenness_centrality(solved_network)
-        load = load_centrality(solved_network)
+    network = SimpleNetwork(args.path_to_network_file, args.metric)
 
-        print("Authorities: ", hits_res[0])
-        print("Hubs: ", hits_res[1])
-        print("Centrality: ", centrality)
-        print("Load: ", load)
-        res = None
-        if args.metric:
-            res = calculate_metric_array('simple', solved_network, args.metric)
-            for i in res:
-                print(i)
-            print('exporting csv')
-            export_csv('simple_results.csv', res)
-        if args.visualize:
-            visualize_holoviews(solved_network, res)
+    network.calculate()
+
+    if args.visualize:
+        network.visualize()
 
 
-def __sample_routine_two(graph_filepath, args):
-    base_path = Path(__file__).parent
-    file_path = (base_path / graph_filepath).resolve()
-    with open(file_path) as file:
-        json_network = file.read()
-        network = extended_from_json(json_network)
-        solved_network = network.calculate_network_state()
-        json = extended_to_json(solved_network)
-        print(json)
-        res = None
-        if args.metric:
-            res = calculate_metric_array('simple', solved_network, args.metric)
-            for i in res:
-                print(i)
-        if args.visualize:
-            visualize_holoviews(solved_network, res)
+def __run_extended(graph_filepath, args):
+
+    network = ExtendedNetwork(args.path_to_network_file, args.metric)
+
+    network.calculate()
+
+    if args.visualize:
+        network.visualize()
 
 
 def __run_epanet(args):
-    print("Running simulation...")
+
+    network = None
+
     if args.simulation_type == 'earthquake':
         if not (hasattr(args, 'epicenter_x')
                 and hasattr(args, 'epicenter_y')
                 and hasattr(args, 'magnitude')
                 and hasattr(args, 'depth')):
             raise ValueError('No all arguments have been passed')
-        epanet_flow_network = EpanetFlowNetwork(args.path_to_network_file, SimulationType.EARTHQUAKE,
-                                                epicenter=(args.epicenter_x, args.epicenter_y),
-                                                magnitude=args.magnitude,
-                                                depth=args.depth)
+        network = EpanetNetwork(args.path_to_netowrk_file, args.metric, SimulationType.EARTHQUAKE,
+                                epicenter=(args.epicenter_x, args.epicenter_y),
+                                magnitude=args.magnitude,
+                                depth=args.dept)
+
     elif args.simulation_type == 'pressure':
         if not hasattr(args, 'time'):
             raise ValueError('No time range has been passed')
-        epanet_flow_network = EpanetFlowNetwork(args.path_to_network_file, SimulationType.PRESSURE, time=args.time)
+        network = EpanetNetwork(args.path_to_netowrk_file, args.metric, SimulationType.PRESSURE,
+                                time=args.time)
+
     elif args.simulation_type == 'quality':
         if not hasattr(args, 'trace_node'):
             raise ValueError('No  trace node has been passed')
-        epanet_flow_network = EpanetFlowNetwork(args.path_to_network_file, SimulationType.QUALITY,
-                                                trace_node=args.trace_node)
+        network = EpanetNetwork(args.path_to_netowrk_file, args.metric, SimulationType.QUALITY,
+                                trace_node=args.trace_node)
+
     else:
         raise ValueError('Bad simulation type')
 
-    epanet_flow_network.run_simulation()
-    if args.metric:
-        res = calculate_metric_array('epanet', epanet_flow_network, args.metric)
-        for i in res:
-            print(i)
-        if args.visualize:
-            visualize_holoviews(epanet_flow_network, res)
+    network.calculate()
 
-    if args.simulation_type == 'pressure' or args.simulation_type == 'quality':
-        save_animation(epanet_flow_network, frames=100, fps=1)
-    elif args.simulation_type == 'earthquake':
-        draw_epicenter_plot(epanet_flow_network)
-        draw_fragility_curve_plot(epanet_flow_network)
-        draw_distance_to_epicenter_plot(epanet_flow_network)
-        draw_peak_ground_acceleration_plot(epanet_flow_network)
-        draw_peak_ground_velocity_plot(epanet_flow_network)
-        draw_repair_rate_plot(epanet_flow_network)
-        draw_repair_rate_x_pipe_length(epanet_flow_network)
-        draw_probability_of_minor_leak(epanet_flow_network)
-        draw_probability_of_major_leak(epanet_flow_network)
-        draw_damage_states_plot(epanet_flow_network)
-        show_plots()
+    if args.visualize:
+        network.visualize()
 
 
 def __run_epidemic(args):
-    epidemic_params = Parser()
-    epidemic_params.parse_input(args.type, args.path_to_network_file, args.transrate, args.recrate, args.tmax)
-    simulation_config = epidemic_params.get_simulation_config()
 
-    my_sim = Simulation(simulation_config)
-    simulation_investigation = my_sim.run_simulation()
+    network = EpanetNetwork(args.path_to_netowrk_file, args.metric, args.type, args.transrate, args.recrate, args.tmax)
 
-    res = None
-    if args.metric:
-        res = args.metric
-        # res = calculate_metric_array('simple', my_sim.get_network(), args.metric)
+    network.calculate()
 
     if args.visualize:
-        visualize_epidemic(my_sim.get_network(), simulation_investigation, res)
+        network.visualize()
 
 
 if __name__ == '__main__':

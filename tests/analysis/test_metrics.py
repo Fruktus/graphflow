@@ -3,7 +3,7 @@ from pathlib import Path
 import pytest
 
 from graphflow.analysis.metrics import *
-from graphflow.simple.simple_model_utils import from_json
+from graphflow.models.simple.simple_model_utils import from_json
 
 
 @pytest.fixture(scope='module')

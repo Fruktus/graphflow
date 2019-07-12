@@ -1,6 +1,6 @@
 import uuid
 import EoN
-from graphflow.epidemic import epidemic_runner
+from graphflow.models.epidemic import epidemic_runner
 
 
 class Simulation:

@@ -9,7 +9,7 @@ import math
 import numpy as np
 import sympy
 
-from ..abstract_simple.abstract_simple_model import AbstractFlowNetworkNode, AbstractFlowNetworkEdge, \
+from graphflow.models.abstract_simple.abstract_simple_model import AbstractFlowNetworkNode, AbstractFlowNetworkEdge, \
     AbstractFlowNetwork
 
 

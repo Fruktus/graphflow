@@ -3,7 +3,7 @@ from pathlib import Path
 import pytest
 
 from graphflow.analysis.network_utils import get_nx_network
-from graphflow.simple.simple_model_utils import from_json
+from graphflow.models.simple.simple_model_utils import from_json
 from networkx import DiGraph
 from networkx import Graph
 
