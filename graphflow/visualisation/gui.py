@@ -207,7 +207,8 @@ class Gui:
 
         buttonframe = ttk.Frame(frame, relief=tk.SUNKEN)
         load_button = Button(buttonframe, text='load network',
-                             command=lambda: self._load_file(self.root, filetypes=("all files", "*.*")))
+                             command=lambda: self._load_file(self.root, filetypes=(("text files", "*.txt"),
+                                                                                   ("all files", "*.*"))))
         load_button.pack(side=tk.LEFT, padx=5, pady=5)
         calculate_button = Button(buttonframe, text='calculate',
                                   command=lambda: self._calculate_epidemic(metrics=cb.get_checked_items(),

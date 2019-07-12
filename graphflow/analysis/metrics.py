@@ -2,6 +2,7 @@ import networkx as nx
 
 from graphflow.analysis.network_utils import get_nx_network
 
+
 def calculate_metric(ntype, name, network):
     """calls available metrics (those in this document)
        returns results (mostly dicts and numerical values"""
