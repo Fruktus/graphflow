@@ -1,6 +1,7 @@
 import networkx as nx
 
-from graphflow.models.extended.extended_model import ExtendedFlowNetwork, ExtendedFlowNetworkNode, ExtendedFlowNetworkEdge
+from graphflow.models.extended.extended_model import ExtendedFlowNetwork, ExtendedFlowNetworkNode, \
+    ExtendedFlowNetworkEdge
 from graphflow.models.abstract_simple import abstract_simple_utils
 
 
