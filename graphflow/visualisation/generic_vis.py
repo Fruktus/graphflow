@@ -22,7 +22,9 @@ def visualize_holoviews(network: Network, metrics: [tuple] = None):
     nx_network = network.get_nx_network()
     if metrics:
         for i in metrics:
-            if isinstance(i[1], dict):
+            if isinstance(i, dict):
+                nx.set_node_attributes(nx_network, i)
+            elif isinstance(i[1], dict):
                 nx.set_node_attributes(nx_network, i[1], i[0])
             elif isinstance(i[1], tuple):
                 nx.set_node_attributes(nx_network, i[1][0], i[0])
