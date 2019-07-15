@@ -134,7 +134,8 @@ def __run_epanet(args):
 
 def __run_epidemic(args):
 
-    network = EpidemicNetwork(args.path_to_network_file, args.metric, args.type, args.transrate, args.recrate, args.tmax)
+    network = EpidemicNetwork(args.path_to_network_file, args.metric,
+                              args.type, args.transrate, args.recrate, args.tmax)
 
     network.calculate()
 

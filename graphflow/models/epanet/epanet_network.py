@@ -5,7 +5,7 @@ from graphflow.models.epanet import epanet_model_vis
 
 
 class EpanetNetwork(Network):
-    def __init__(self, path_to_network: str, metrics: [str] = None, *args, **kwargs):
+    def __init__(self, path_to_network: str, metrics: [str], *args, **kwargs):
         self._model = 'epanet'
         self._metrics = metrics
 

@@ -1,18 +1,24 @@
+import webbrowser
+from copy import deepcopy
+
+import networkx as nx
+import holoviews as hv
+
 from graphflow.analysis.metric_utils import apply_all_metrics
 from graphflow.models.epidemic.epidemic_runner import Parser
 from graphflow.models.epidemic.epidemic_simulation import Simulation
 from graphflow.models.network import Network
-import networkx as nx
-import holoviews as hv
-import webbrowser
-from copy import deepcopy
 
 
 class EpidemicNetwork(Network):
-    def __init__(self, path_to_network: str, metrics: [str] = None, *args, **kwargs):
+    def __init__(self, path_to_network: str, metrics: [str], *args, **kwargs):
         self._model = 'epidemic'
         self._metrics = metrics
         self.__simulation_investigation = None
+        self.__time_steps = None
+        self.__S = None
+        self.__I = None
+        self.__R = None
 
         epidemic_params = Parser()
         epidemic_params.parse_input(args[0], path_to_network, *args[1:])

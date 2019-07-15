@@ -2,20 +2,8 @@ import webbrowser
 
 from abc import ABC, abstractmethod
 
-import holoviews as hv
 import networkx as nx
-
-# def get_network(model: str, path_to_network: str, metrics: [str], *args, **kwargs):
-#     if model == 'simple':
-#         return SimpleNetwork(path_to_network, metrics, args, kwargs)
-#     if model == 'extended':
-#         return ExtendedNetwork(path_to_network, metrics, args, kwargs)
-#     if model == 'epidemic':
-#         return EpidemicNetwork(path_to_network, metrics, args, kwargs)
-#     if model == 'epanet':
-#         return EpanetNetwork(path_to_network, metrics, args, kwargs)
-#
-#     raise ValueError("There is no model named: {}".format(model))
+import holoviews as hv
 
 
 class Network(ABC):
@@ -63,11 +51,10 @@ class Network(ABC):
         hv.extension('bokeh')
 
         graph_dict = {}
-        graph_layout = nx.layout.spring_layout(list(self._calculated_networks.values())[0])
-        step = 0
+        graph_layout = nx.drawing.layout.spring_layout(list(self._calculated_networks.values())[0])
         for time, graph in self._calculated_networks.items():
 
-            if (color_map):
+            if color_map:
                 graph = hv.Graph.from_networkx(self._calculated_networks[time], graph_layout)\
                     .opts(node_color=color_by, cmap=color_map)
             else:
@@ -84,5 +71,3 @@ class Network(ABC):
         with open(path_to_html, "a") as file:
             for name, metric in list(self._calculated_networks.values())[0].graph.items():
                 file.write("{}: {}<br>".format(name, metric))
-
-
