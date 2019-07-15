@@ -140,6 +140,7 @@ disable=print-statement,
         exception-escape,
         comprehension-escape,
         missing-docstring,
+        duplicate-code
         invalid-name,
         too-many-locals
 

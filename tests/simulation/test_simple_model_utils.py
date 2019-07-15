@@ -5,7 +5,7 @@ from pathlib import Path
 import pytest
 from jsondiff import diff
 
-from graphflow.simple.simple_model_utils import from_json, to_json
+from graphflow.models.simple.simple_model_utils import from_json, to_json
 
 
 def test_back_and_forth_conversion(network_json):

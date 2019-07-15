@@ -1,11 +1,12 @@
 import csv
 from networkx import Graph, DiGraph
 
-from graphflow.simple.simple_model import SimpleFlowNetwork
-from graphflow.simple.simple_model_utils import __build_string_network as __build_string_network_simple
-from graphflow.extended.extended_model import ExtendedFlowNetwork
-from graphflow.extended.extended_model_utils import __build_string_network as __build_string_network_extended
-from graphflow.epanet.epanet_model import EpanetFlowNetwork
+from graphflow.models.network import Network
+from graphflow.models.simple.simple_model import SimpleFlowNetwork
+from graphflow.models.simple.simple_model_utils import __build_string_network as __build_string_network_simple
+from graphflow.models.extended.extended_model import ExtendedFlowNetwork
+from graphflow.models.extended.extended_model_utils import __build_string_network as __build_string_network_extended
+from graphflow.models.epanet.epanet_model import EpanetFlowNetwork
 
 
 def get_nx_network(network):
@@ -21,6 +22,8 @@ def get_nx_network(network):
         return network
     if isinstance(network, DiGraph):
         return network
+    if isinstance(network, Network):
+        return network.get_nx_network()
     raise TypeError('unknown network format')
 
 

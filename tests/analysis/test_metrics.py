@@ -3,18 +3,15 @@ from pathlib import Path
 import pytest
 
 from graphflow.analysis.metrics import *
-from graphflow.simple.simple_model_utils import from_json
+from graphflow.models.simple.simple_model_utils import from_json
+from graphflow.models.simple.simple_network import SimpleNetwork
 
 
 @pytest.fixture(scope='module')
 def test_network():
-    base_path = Path(__file__).parent.parent.parent
-    file_path = (base_path / "examples" / "simple" / "example_network.json").resolve()
-    with open(file_path) as file:
-        json_network = file.read()
-        network = from_json(json_network)
-        test_network = network.calculate_network_state()
-    return test_network
+    network = SimpleNetwork("../examples/simple/example_network.json", None)
+
+    return network.get_nx_network()
 
 
 def test_degree_centrality(test_network):

@@ -7,18 +7,19 @@ from holoviews import opts
 from bokeh.io import output_file, show
 import EoN
 
-from graphflow.analysis.metrics import apply_all_metrics
+from graphflow.analysis.metric_utils import apply_all_metrics
 from graphflow.analysis.network_utils import get_nx_network
+from graphflow.models.network import Network
 
 
-def visualize_holoviews(network, metrics: [tuple] = None):
+def visualize_holoviews(network: Network, metrics: [tuple] = None):
     """generates interactive html plot of network
     :param network: networkx graph
     :param metrics: an array of two-tuple consisting of string (metric name) and dict or value returned from metric
     """
     hv.extension('bokeh')
 
-    nx_network = get_nx_network(network)
+    nx_network = network.get_nx_network()
     if metrics:
         for i in metrics:
             if isinstance(i, dict):
@@ -62,7 +63,7 @@ def visualize_epidemic(network, simulation_investigation: EoN.Simulation_Investi
     metrics_dict = {}
     node_count = {'S': ([], []), 'I': ([], []), 'R': ([], [])}
 
-    layout = nx.layout.spring_layout(nx_network)
+    graph_layout = nx.layout.spring_layout(nx_network)
     for time in time_steps:
         statuses = simulation_investigation.get_statuses(time=time)
         nx.set_node_attributes(network, statuses, 'Status')
@@ -73,7 +74,7 @@ def visualize_epidemic(network, simulation_investigation: EoN.Simulation_Investi
                             if metric not in ('bottom', 'top')})
         metrics_dict[time] = labels
 
-        graph = hv.Graph.from_networkx(network, layout).opts(node_color='Status', cmap=color_map)
+        graph = hv.Graph.from_networkx(network, graph_layout).opts(node_color='Status', cmap=color_map)
         graph_dict[time] = graph
 
         for status in possible_statuses:

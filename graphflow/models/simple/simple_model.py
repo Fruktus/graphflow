@@ -7,7 +7,7 @@ import math
 import sympy
 from sympy.solvers.solveset import linsolve
 
-from ..abstract_simple.abstract_simple_model import AbstractFlowNetwork, AbstractFlowNetworkNode, \
+from graphflow.models.abstract_simple.abstract_simple_model import AbstractFlowNetwork, AbstractFlowNetworkNode, \
     AbstractFlowNetworkEdge
 
 

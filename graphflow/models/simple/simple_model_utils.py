@@ -1,7 +1,7 @@
 import networkx as nx
 
-from graphflow.simple.simple_model import SimpleFlowNetwork, SimpleFlowNetworkNode, SimpleFlowNetworkEdge
-from ..abstract_simple import abstract_simple_utils
+from graphflow.models.simple.simple_model import SimpleFlowNetwork, SimpleFlowNetworkNode, SimpleFlowNetworkEdge
+from graphflow.models.abstract_simple import abstract_simple_utils
 
 
 def to_json(network: SimpleFlowNetwork, indent=None) -> str:
