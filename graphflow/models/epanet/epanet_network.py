@@ -1,3 +1,4 @@
+# pylint: skip-file
 from graphflow.analysis.metric_utils import apply_all_metrics
 from graphflow.models.epanet.epanet_model import EpanetFlowNetwork, SimulationType
 from graphflow.models.network import Network

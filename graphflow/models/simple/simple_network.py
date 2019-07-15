@@ -1,3 +1,4 @@
+# pylint: skip-file
 from pathlib import Path
 
 from graphflow.analysis.metric_utils import apply_all_metrics

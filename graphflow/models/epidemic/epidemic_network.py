@@ -1,3 +1,4 @@
+# pylint: skip-file
 import webbrowser
 from copy import deepcopy
 
