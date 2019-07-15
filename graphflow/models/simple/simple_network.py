@@ -42,18 +42,6 @@ class SimpleNetwork(Network):
 
         export_csv(path, self._calculated_networks[0.0])
 
-    def visualize(self):
-        if not self.is_calculated:
-            raise ValueError("Network not calculated.")
-
-        layout = self._get_hv_network(color_by="hits")
-
-        filename = "graph.html"
-        hv.save(layout, filename, backend='bokeh')
-        webbrowser.open(filename)
-
-        # visualize_holoviews(self.__calculated_networks[0.0], res)
-
 
 def simple_flow_network_to_nxnetwork(network: SimpleFlowNetwork):
     nodes, edges = network.get_network_state()

@@ -44,9 +44,15 @@ class Network(ABC):
     def calculate(self):
         pass
 
-    @abstractmethod
     def visualize(self):
-        pass
+        if not self.is_calculated:
+            raise ValueError("Network not calculated.")
+
+        layout = self._get_hv_network()
+
+        filename = "graph.html"
+        hv.save(layout, filename, backend='bokeh')
+        webbrowser.open(filename)
 
     def export(self, path):
         pass

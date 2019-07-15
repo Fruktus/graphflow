@@ -67,9 +67,9 @@ def main():
     os.chdir(base_path)
 
     if args.network_model == 'simple':
-        __run_simple(args.path_to_network_file, args)
+        __run_simple(args)
     elif args.network_model == 'extended':
-        __run_extended(args.path_to_network_file, args)
+        __run_extended(args)
     elif args.network_model == 'epanet':
         __run_epanet(args)
     elif args.network_model == 'epidemic':

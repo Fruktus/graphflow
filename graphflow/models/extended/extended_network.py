@@ -34,16 +34,6 @@ class ExtendedNetwork(Network):
 
         self._is_calculated = True
 
-    def visualize(self):
-        if not self.is_calculated:
-            raise ValueError("Network not calculated.")
-
-        layout = self._get_hv_network(color_by="hits")
-
-        filename = "graph.html"
-        hv.save(layout, filename, backend='bokeh')
-        webbrowser.open(filename)
-
     # TODO implement
     def export(self, path):
         if not self.is_calculated:
