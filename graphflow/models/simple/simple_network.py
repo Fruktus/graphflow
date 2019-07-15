@@ -1,13 +1,10 @@
+from pathlib import Path
+
 from graphflow.analysis.metric_utils import apply_all_metrics
 from graphflow.analysis.network_utils import export_csv
 from graphflow.models.network import Network
 from graphflow.models.simple import simple_model_utils
 from graphflow.models.simple.simple_model import SimpleFlowNetwork
-from pathlib import Path
-
-import holoviews as hv
-import webbrowser
-import os
 
 
 class SimpleNetwork(Network):

@@ -1,7 +1,7 @@
 # pylint: disable=E1101
 
-import matplotlib.pyplot as plt
 import networkx as nx
+import matplotlib.pyplot as plt
 
 from graphflow.models.simple.simple_model import SimpleFlowNetwork
 from graphflow.models.simple.simple_model_utils import __build_raw_network

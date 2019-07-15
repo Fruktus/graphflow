@@ -1,12 +1,10 @@
-import webbrowser
-import holoviews as hv
+
+from pathlib import Path
 
 from graphflow.analysis.metric_utils import apply_all_metrics
-from graphflow.models.extended.extended_model_utils import to_json as extended_to_json
 from graphflow.models.network import Network
 from graphflow.models.extended import extended_model_utils
 from graphflow.models.extended.extended_model import ExtendedFlowNetwork
-from pathlib import Path
 
 
 class ExtendedNetwork(Network):
@@ -34,14 +32,15 @@ class ExtendedNetwork(Network):
 
         self._is_calculated = True
 
+
     # TODO implement
     def export(self, path):
         if not self.is_calculated:
             raise ValueError("Network not calculated.")
 
         # possible other formats than csv maybe ?
-        solved_network = self.__network.calculate_network_state()
-        json = extended_to_json(solved_network)
+        # solved_network = self.__network.calculate_network_state()
+        # json = extended_to_json(solved_network)
 
 
 def extended_flow_network_to_nxnetwork(network: ExtendedFlowNetwork):
