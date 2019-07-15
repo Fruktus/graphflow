@@ -1,3 +1,5 @@
+# pylint: skip-file
+
 from enum import Enum
 import networkx as nx
 
