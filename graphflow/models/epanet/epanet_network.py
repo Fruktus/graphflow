@@ -30,7 +30,7 @@ class EpanetNetwork(Network):
             apply_all_metrics(self._model, nx_network, self._metrics)
 
             # TODO - holoviews
-            visualize_holoviews(epanet_flow_network, res)
+            # visualize_holoviews(epanet_flow_network, res)
 
         if self.__network.simulation_type == SimulationType.PRESSURE \
                 or self.__network.simulation_type == SimulationType.QUALITY:

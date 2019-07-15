@@ -61,7 +61,7 @@ def visualize_epidemic(network, simulation_investigation: EoN.Simulation_Investi
     metrics_dict = {}
     node_count = {'S': ([], []), 'I': ([], []), 'R': ([], [])}
 
-    layout = nx.layout.spring_layout(nx_network)
+    graph_layout = nx.layout.spring_layout(nx_network)
     for time in time_steps:
         statuses = simulation_investigation.get_statuses(time=time)
         nx.set_node_attributes(network, statuses, 'Status')
@@ -72,7 +72,7 @@ def visualize_epidemic(network, simulation_investigation: EoN.Simulation_Investi
                             if metric not in ('bottom', 'top')})
         metrics_dict[time] = labels
 
-        graph = hv.Graph.from_networkx(network, layout).opts(node_color='Status', cmap=color_map)
+        graph = hv.Graph.from_networkx(network, graph_layout).opts(node_color='Status', cmap=color_map)
         graph_dict[time] = graph
 
         for status in possible_statuses:

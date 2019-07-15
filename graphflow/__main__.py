@@ -1,8 +1,12 @@
 import argparse
+import os
 import sys
+
+from pathlib import Path
 
 from graphflow.models.epanet.epanet_model import SimulationType
 from graphflow.models.epanet.epanet_network import EpanetNetwork
+from graphflow.models.epidemic.epidemic_network import EpidemicNetwork
 from graphflow.models.extended.extended_network import ExtendedNetwork
 from graphflow.models.simple.simple_network import SimpleNetwork
 
@@ -48,7 +52,7 @@ def main():
     epidemic_subparser.add_argument('type', help='simulation type - sir or sis, ')
     epidemic_subparser.add_argument('-transrate', help='transmission rate, ', type=float, default=2.0)
     epidemic_subparser.add_argument('-recrate', help='recovery rate, ', type=float, default=1.0)
-    epidemic_subparser.add_argument('-tmax', help='max simulation time, ', type=int, default=100)
+    epidemic_subparser.add_argument('-tmax', help='max simulation time, ', type=int, default=2)
     epidemic_subparser.add_argument('--metric', '-m', action='append',
                                     help='metric to use, can be specified multiple times')
     epidemic_subparser.add_argument('--visualize', action='store_true', default=False,
@@ -58,6 +62,9 @@ def main():
     else:
         Gui().start()
         sys.exit()
+
+    base_path = Path(__file__).parent
+    os.chdir(base_path)
 
     if args.network_model == 'simple':
         __run_simple(args.path_to_network_file, args)
@@ -69,7 +76,7 @@ def main():
         __run_epidemic(args)
 
 
-def __run_simple(graph_filepath, args):
+def __run_simple(args):
 
     network = SimpleNetwork(args.path_to_network_file, args.metric)
 
@@ -79,7 +86,7 @@ def __run_simple(graph_filepath, args):
         network.visualize()
 
 
-def __run_extended(graph_filepath, args):
+def __run_extended(args):
 
     network = ExtendedNetwork(args.path_to_network_file, args.metric)
 
@@ -99,7 +106,7 @@ def __run_epanet(args):
                 and hasattr(args, 'magnitude')
                 and hasattr(args, 'depth')):
             raise ValueError('No all arguments have been passed')
-        network = EpanetNetwork(args.path_to_netowrk_file, args.metric, SimulationType.EARTHQUAKE,
+        network = EpanetNetwork(args.path_to_network_file, args.metric, SimulationType.EARTHQUAKE,
                                 epicenter=(args.epicenter_x, args.epicenter_y),
                                 magnitude=args.magnitude,
                                 depth=args.dept)
@@ -107,13 +114,13 @@ def __run_epanet(args):
     elif args.simulation_type == 'pressure':
         if not hasattr(args, 'time'):
             raise ValueError('No time range has been passed')
-        network = EpanetNetwork(args.path_to_netowrk_file, args.metric, SimulationType.PRESSURE,
+        network = EpanetNetwork(args.path_to_network_file, args.metric, SimulationType.PRESSURE,
                                 time=args.time)
 
     elif args.simulation_type == 'quality':
         if not hasattr(args, 'trace_node'):
             raise ValueError('No  trace node has been passed')
-        network = EpanetNetwork(args.path_to_netowrk_file, args.metric, SimulationType.QUALITY,
+        network = EpanetNetwork(args.path_to_network_file, args.metric, SimulationType.QUALITY,
                                 trace_node=args.trace_node)
 
     else:
@@ -127,7 +134,7 @@ def __run_epanet(args):
 
 def __run_epidemic(args):
 
-    network = EpanetNetwork(args.path_to_netowrk_file, args.metric, args.type, args.transrate, args.recrate, args.tmax)
+    network = EpidemicNetwork(args.path_to_network_file, args.metric, args.type, args.transrate, args.recrate, args.tmax)
 
     network.calculate()
 
