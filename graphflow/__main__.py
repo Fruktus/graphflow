@@ -45,6 +45,8 @@ def main():
     epanet_subparser.add_argument('--depth', help='depth of earthquake in meters', type=int, nargs='?')
     epanet_subparser.add_argument('--metric', '-m', action='append',
                                   help='metric to use, can be specified multiple times')
+    epanet_subparser.add_argument('--visualize', action='store_true', default=False,
+                                  help='whether to visualize results')
 
     epidemic_subparser = subparser.add_parser('epidemic')
     epidemic_subparser.add_argument('path_to_network_file',
@@ -98,18 +100,16 @@ def __run_extended(args):
 
 def __run_epanet(args):
 
-    network = None
-
     if args.simulation_type == 'earthquake':
-        if not (hasattr(args, 'epicenter_x')
-                and hasattr(args, 'epicenter_y')
-                and hasattr(args, 'magnitude')
-                and hasattr(args, 'depth')):
+        if not (args.epicenter_x
+                and args.epicenter_y
+                and args.magnitude
+                and args.depth):
             raise ValueError('No all arguments have been passed')
         network = EpanetNetwork(args.path_to_network_file, args.metric, SimulationType.EARTHQUAKE,
                                 epicenter=(args.epicenter_x, args.epicenter_y),
                                 magnitude=args.magnitude,
-                                depth=args.dept)
+                                depth=args.depth)
 
     elif args.simulation_type == 'pressure':
         if not hasattr(args, 'time'):
