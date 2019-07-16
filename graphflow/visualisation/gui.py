@@ -8,13 +8,8 @@ from graphflow.models.epanet.epanet_network import EpanetNetwork
 from graphflow.models.epidemic.epidemic_network import EpidemicNetwork
 from graphflow.models.extended.extended_network import ExtendedNetwork
 
-from graphflow.models.epanet.epanet_model_vis import draw_epicenter_plot, draw_fragility_curve_plot,\
-    draw_distance_to_epicenter_plot, save_animation, draw_peak_ground_acceleration_plot,\
-    draw_peak_ground_velocity_plot, draw_repair_rate_plot, draw_repair_rate_x_pipe_length,\
-    draw_probability_of_minor_leak, draw_probability_of_major_leak, draw_damage_states_plot, show_plots
 from graphflow.models.simple.simple_network import SimpleNetwork
 
-from graphflow.visualisation.generic_vis import visualize_holoviews
 import graphflow.analysis.metrics as mtr
 
 
@@ -73,6 +68,8 @@ class Gui:
         calculate_button.pack(side=tk.LEFT, padx=5, pady=5)
         export_button = Button(button_frame, text='export', command=lambda: self._export_data())
         export_button.pack(side=tk.LEFT, padx=5, pady=5)
+        visualize_button = Button(button_frame, text='visualize', command=lambda: self._visualize_data())
+        visualize_button.pack(side=tk.LEFT, padx=5, pady=5)
         button_frame.pack(side=tk.BOTTOM, fill=tk.X, expand=True)
 
         cb = self._generate_metrics_checklist(frame)
@@ -93,6 +90,8 @@ class Gui:
         export_button = Button(buttonframe, text='export', command=lambda: self._export_data())
         export_button.pack(side=tk.LEFT, padx=5, pady=5)
         buttonframe.pack(side=tk.BOTTOM, fill=tk.X, expand=True)
+        visualize_button = Button(buttonframe, text='visualize', command=lambda: self._visualize_data())
+        visualize_button.pack(side=tk.LEFT, padx=5, pady=5)
 
         cb = self._generate_metrics_checklist(frame)
         cb.pack(side=tk.LEFT, padx=5, pady=5)
@@ -110,8 +109,12 @@ class Gui:
 
         export_button = Button(buttonframe, text='export', command=lambda: self._export_data())
         export_button.pack(side=tk.LEFT, padx=5, pady=5)
+        visualize_button = Button(buttonframe, text='visualize', command=lambda: self._visualize_data())
+        visualize_button.pack(side=tk.LEFT, padx=5, pady=5)
 
         buttonframe.pack(side=tk.BOTTOM, fill=tk.X, expand=True)
+
+
 
         # checklist #
         cb = self._generate_metrics_checklist(frame)
@@ -222,6 +225,8 @@ class Gui:
         export_button.pack(side=tk.LEFT, padx=5, pady=5)
         animation_button = Button(buttonframe, text='animate', command=lambda: self._export_epidemic_animation())
         animation_button.pack(side=tk.LEFT, padx=5, pady=5)
+        visualize_button = Button(buttonframe, text='visualize', command=lambda: self._visualize_data())
+        visualize_button.pack(side=tk.LEFT, padx=5, pady=5)
         buttonframe.pack(side=tk.BOTTOM, fill=tk.X, expand=True)
 
         cb = self._generate_metrics_checklist(frame)
@@ -286,6 +291,13 @@ class Gui:
         if path:
             self.root.calculated_network.export(path)
 
+    def _visualize_data(self):
+        if not hasattr(self.root, 'calculated_network'):
+            messagebox.showerror('Error', 'No data to export')
+            return
+
+        self.root.calculated_network.visualize()
+
     def _export_epidemic_animation(self):
         if not hasattr(self.root, 'epidemic_result'):
             messagebox.showerror('Error', 'No data to export')
@@ -305,7 +317,6 @@ class Gui:
         self.root.calculated_network = SimpleNetwork(self.root.filename, metrics)
 
         self.root.calculated_network.calculate()
-        self.root.calculated_network.visualize()
 
     def _calculate_extended(self, metrics: [str] = None):
         if not hasattr(self.root, 'filename'):
@@ -315,7 +326,6 @@ class Gui:
         self.root.calculated_network = ExtendedNetwork(self.root.filename, metrics)
 
         self.root.calculated_network.calculate()
-        self.root.calculated_network.visualize()
 
     def _calculate_epanet(self, sim_type, epix=None, epiy=None, magnitude=None, depth=None,
                           time=None, trace_node=None, metrics: [str] = None):
@@ -350,30 +360,6 @@ class Gui:
             raise ValueError('Bad simulation type')
 
         self.root.calculated_network.calculate()
-        self.root.calculated_network.visualize()
-
-    def _visualize_epanet(self, sim_type):
-        if not hasattr(self.root, 'epanet_network'):
-            messagebox.showerror('Error', 'No data to show')
-            return
-
-        if hasattr(self.root, 'calculated_metrics'):
-            visualize_holoviews(self.root.epanet_network, self.root.calculated_metrics)
-
-        if sim_type == 'pressure' or sim_type == 'quality':
-            save_animation(self.root.epanet_network, frames=100, fps=1)
-        elif sim_type == 'earthquake':
-            draw_epicenter_plot(self.root.epanet_network)
-            draw_fragility_curve_plot(self.root.root.epanet_network)
-            draw_distance_to_epicenter_plot(self.root.epanet_network)
-            draw_peak_ground_acceleration_plot(self.root.epanet_network)
-            draw_peak_ground_velocity_plot(self.root.epanet_network)
-            draw_repair_rate_plot(self.root.epanet_network)
-            draw_repair_rate_x_pipe_length(self.root.epanet_network)
-            draw_probability_of_minor_leak(self.root.epanet_network)
-            draw_probability_of_major_leak(self.root.epanet_network)
-            draw_damage_states_plot(self.root.epanet_network)
-            show_plots()
 
     def _calculate_epidemic(self, metrics: [str] = None, ntype: str = 'sis', transrate: float = 2.0,
                             recrate: float = 1.0, tmax: float = 100):
@@ -385,7 +371,6 @@ class Gui:
                                                        ntype, transrate, recrate, tmax)
 
         self.root.calculated_network.calculate()
-        self.root.calculated_network.visualize()
 
     def start(self):
         self.root.mainloop()
