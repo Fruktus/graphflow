@@ -16,7 +16,6 @@ from graphflow.models.simple.simple_network import SimpleNetwork
 
 from graphflow.visualisation.generic_vis import visualize_holoviews
 import graphflow.analysis.metrics as mtr
-from graphflow.analysis.network_utils import export_csv
 
 
 class ChecklistBox(tk.Frame):
@@ -256,7 +255,7 @@ class Gui:
         tmax_frame = ttk.Frame(input_frame, relief=tk.SUNKEN)
         tmax_box = Entry(tmax_frame, width=8)
         tmax_box.pack(side=tk.RIGHT, padx=5, pady=5)
-        tmax_box.insert(0, '100')
+        tmax_box.insert(0, '2')
         Label(tmax_frame, text='max simulation time').pack(side=tk.RIGHT, padx=5, pady=5)
         tmax_frame.pack(fill=tk.X, expand=True)
 
@@ -278,14 +277,14 @@ class Gui:
         return ChecklistBox(frame, metrics, bd=1, relief="sunken", background="white")
 
     def _export_data(self):
-        if not hasattr(self.root, 'calculated_metrics'):
+        if not hasattr(self.root, 'calculated_network'):
             messagebox.showerror('Error', 'No data to export')
             return
         path = filedialog.asksaveasfilename(title="Select file",
                                             defaultextension='.csv', filetypes=(("CSV", "*.csv"),
                                                                                 ("all files", "*.*")))
         if path:
-            export_csv(path, self.root.calculated_metrics)
+            self.root.calculated_network.export(path)
 
     def _export_epidemic_animation(self):
         if not hasattr(self.root, 'epidemic_result'):
@@ -303,20 +302,20 @@ class Gui:
             messagebox.showerror('Error', 'No network file selected')
             return
 
-        network = SimpleNetwork(self.root.filename, metrics)
+        self.root.calculated_network = SimpleNetwork(self.root.filename, metrics)
 
-        network.calculate()
-        network.visualize()
+        self.root.calculated_network.calculate()
+        self.root.calculated_network.visualize()
 
     def _calculate_extended(self, metrics: [str] = None):
         if not hasattr(self.root, 'filename'):
             messagebox.showerror('Error', 'No network file selected')
             return
 
-        network = ExtendedNetwork(self.root.filename, metrics)
+        self.root.calculated_network = ExtendedNetwork(self.root.filename, metrics)
 
-        network.calculate()
-        network.visualize()
+        self.root.calculated_network.calculate()
+        self.root.calculated_network.visualize()
 
     def _calculate_epanet(self, sim_type, epix=None, epiy=None, magnitude=None, depth=None,
                           time=None, trace_node=None, metrics: [str] = None):
@@ -324,35 +323,34 @@ class Gui:
             messagebox.showerror('Error', 'No network file selected')
             return
 
-        network = None
+        self.root.calculated_network = None
 
         if sim_type == 'earthquake':
             if sim_type == 'earthquake':
                 if not (epix and epiy and magnitude and depth):
                     raise ValueError('No all arguments have been passed')
-            network = EpanetNetwork(self.root.filename, metrics, SimulationType.EARTHQUAKE,
-                                    epicenter=(epix, epiy),
-                                    magnitude=magnitude,
-                                    depth=depth)
+                self.root.calculated_network = EpanetNetwork(self.root.filename, metrics, SimulationType.EARTHQUAKE,
+                                                             epicenter=(epix, epiy),
+                                                             magnitude=magnitude,
+                                                             depth=depth)
 
         elif sim_type == 'pressure':
             if not time:
                 raise ValueError('No time range has been passed')
-            network = EpanetNetwork(self.root.filename, metrics, SimulationType.PRESSURE,
-                                    time=time)
+            self.root.calculated_network = EpanetNetwork(self.root.filename, metrics, SimulationType.PRESSURE,
+                                                         time=time)
 
         elif sim_type == 'quality':
             if not trace_node:
                 raise ValueError('No  trace node has been passed')
-            network = EpanetNetwork(self.root.filename, metrics, SimulationType.QUALITY,
-                                    trace_node=trace_node)
+            self.root.calculated_network = EpanetNetwork(self.root.filename, metrics, SimulationType.QUALITY,
+                                                         trace_node=trace_node)
 
         else:
             raise ValueError('Bad simulation type')
 
-        network.calculate()
-
-        network.visualize()
+        self.root.calculated_network.calculate()
+        self.root.calculated_network.visualize()
 
     def _visualize_epanet(self, sim_type):
         if not hasattr(self.root, 'epanet_network'):
@@ -383,11 +381,11 @@ class Gui:
             messagebox.showerror('Error', 'No network file selected')
             return
 
-        network = EpidemicNetwork(self.root.filename, metrics,
-                                  ntype, transrate, recrate, tmax)
+        self.root.calculated_network = EpidemicNetwork(self.root.filename, metrics,
+                                                       ntype, transrate, recrate, tmax)
 
-        network.calculate()
-        network.visualize()
+        self.root.calculated_network.calculate()
+        self.root.calculated_network.visualize()
 
     def start(self):
         self.root.mainloop()
