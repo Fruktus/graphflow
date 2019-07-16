@@ -41,6 +41,7 @@ class Network(ABC):
 
         filename = "graph.html"
         hv.save(layout, filename, backend='bokeh')
+        self._add_metric_list(filename)
         webbrowser.open(filename)
 
     def export(self, path):
@@ -68,7 +69,6 @@ class Network(ABC):
         return holomap
 
     def _add_metric_list(self, path_to_html):
-        # TODO make it dynamic - no adding to HTML then, we have to use holoviews
         with open(path_to_html, "a") as file:
             for name, metric in list(self._calculated_networks.values())[0].graph.items():
                 file.write("{}: {}<br>".format(name, metric))
