@@ -3,19 +3,19 @@ from tkinter import Tk, ttk, filedialog, Button, messagebox, Entry, Label
 import tkinter as tk
 import re
 
-from graphflow.models.epanet.epanet_model import EpanetFlowNetwork, SimulationType
-from graphflow.models.simple.simple_model_utils import from_json
-from graphflow.models.extended.extended_model_utils import from_json as extended_from_json
-from graphflow.models.epidemic.epidemic_simulation import Simulation
-from graphflow.models.epidemic.epidemic_runner import Parser
+from graphflow.models.epanet.epanet_model import SimulationType
+from graphflow.models.epanet.epanet_network import EpanetNetwork
+from graphflow.models.epidemic.epidemic_network import EpidemicNetwork
+from graphflow.models.extended.extended_network import ExtendedNetwork
+
 from graphflow.models.epanet.epanet_model_vis import draw_epicenter_plot, draw_fragility_curve_plot,\
     draw_distance_to_epicenter_plot, save_animation, draw_peak_ground_acceleration_plot,\
     draw_peak_ground_velocity_plot, draw_repair_rate_plot, draw_repair_rate_x_pipe_length,\
     draw_probability_of_minor_leak, draw_probability_of_major_leak, draw_damage_states_plot, show_plots
+from graphflow.models.simple.simple_network import SimpleNetwork
 
-from graphflow.visualisation.generic_vis import visualize_holoviews, visualize_epidemic
+from graphflow.visualisation.generic_vis import visualize_holoviews
 import graphflow.analysis.metrics as mtr
-from graphflow.analysis.metric_utils import calculate_metric_array
 from graphflow.analysis.network_utils import export_csv
 
 
@@ -272,8 +272,8 @@ class Gui:
         metrics = dir(mtr)
         regex = re.compile('__*')
         metrics = [x for x in metrics if not regex.match(x)]
-        metrics.remove('get_nx_network')
         metrics.remove('nx')
+        metrics.remove('Network')
 
         return ChecklistBox(frame, metrics, bd=1, relief="sunken", background="white")
 
@@ -303,31 +303,20 @@ class Gui:
             messagebox.showerror('Error', 'No network file selected')
             return
 
-        with open(self.root.filename) as file:
-            json_network = file.read()
-            network = from_json(json_network)
+        network = SimpleNetwork(self.root.filename, metrics)
 
-            self.root.solved_network = network.calculate_network_state()
-
-            if metrics:
-                self.root.calculated_metrics = calculate_metric_array('simple', self.root.solved_network, metrics)
-
-                visualize_holoviews(self.root.solved_network, self.root.calculated_metrics)
+        network.calculate()
+        network.visualize()
 
     def _calculate_extended(self, metrics: [str] = None):
         if not hasattr(self.root, 'filename'):
             messagebox.showerror('Error', 'No network file selected')
             return
 
-        with open(self.root.filename) as file:
-            json_network = file.read()
-            network = extended_from_json(json_network)
-            solved_network = network.calculate_network_state()
+        network = ExtendedNetwork(self.root.filename, metrics)
 
-            if metrics:
-                self.root.calculated_metrics = calculate_metric_array('simple', solved_network, metrics)
-
-                visualize_holoviews(solved_network, self.root.calculated_metrics)
+        network.calculate()
+        network.visualize()
 
     def _calculate_epanet(self, sim_type, epix=None, epiy=None, magnitude=None, depth=None,
                           time=None, trace_node=None, metrics: [str] = None):
@@ -335,30 +324,35 @@ class Gui:
             messagebox.showerror('Error', 'No network file selected')
             return
 
+        network = None
+
         if sim_type == 'earthquake':
-            if not (epix and epiy and magnitude and depth):
-                raise ValueError('No all arguments have been passed')
-            epanet_flow_network = EpanetFlowNetwork(self.root.filename, SimulationType.EARTHQUAKE,
-                                                    epicenter=(epix, epiy),
-                                                    magnitude=magnitude,
-                                                    depth=depth)
+            if sim_type == 'earthquake':
+                if not (epix and epiy and magnitude and depth):
+                    raise ValueError('No all arguments have been passed')
+            network = EpanetNetwork(self.root.filename, metrics, SimulationType.EARTHQUAKE,
+                                    epicenter=(epix, epiy),
+                                    magnitude=magnitude,
+                                    depth=depth)
+
         elif sim_type == 'pressure':
             if not time:
                 raise ValueError('No time range has been passed')
-            epanet_flow_network = EpanetFlowNetwork(self.root.filename, SimulationType.PRESSURE, time=time)
+            network = EpanetNetwork(self.root.filename, metrics, SimulationType.PRESSURE,
+                                    time=time)
+
         elif sim_type == 'quality':
             if not trace_node:
                 raise ValueError('No  trace node has been passed')
-            epanet_flow_network = EpanetFlowNetwork(self.root.filename, SimulationType.QUALITY,
-                                                    trace_node=trace_node)
+            network = EpanetNetwork(self.root.filename, metrics, SimulationType.QUALITY,
+                                    trace_node=trace_node)
+
         else:
             raise ValueError('Bad simulation type')
 
-        epanet_flow_network.run_simulation()
-        if metrics:
-            self.root.calculated_metrics = calculate_metric_array('epanet', epanet_flow_network, metrics)
+        network.calculate()
 
-        self.root.epanet_network = epanet_flow_network
+        network.visualize()
 
     def _visualize_epanet(self, sim_type):
         if not hasattr(self.root, 'epanet_network'):
@@ -389,17 +383,11 @@ class Gui:
             messagebox.showerror('Error', 'No network file selected')
             return
 
-        epidemic_params = Parser()
-        epidemic_params.parse_input(ntype, self.root.filename, transrate, recrate, tmax)
-        simulation_config = epidemic_params.get_simulation_config()
+        network = EpidemicNetwork(self.root.filename, metrics,
+                                  ntype, transrate, recrate, tmax)
 
-        my_sim = Simulation(simulation_config)
-        simulation_investigation = my_sim.run_simulation()
-
-        if metrics:
-            self.root.calculated_metrics = calculate_metric_array('simple', my_sim.get_network(), metrics)
-
-            visualize_epidemic(my_sim.get_network(), simulation_investigation, metrics)
+        network.calculate()
+        network.visualize()
 
     def start(self):
         self.root.mainloop()

@@ -3,13 +3,12 @@ from pathlib import Path
 import pytest
 
 from graphflow.analysis.metrics import *
-from graphflow.models.simple.simple_model_utils import from_json
 from graphflow.models.simple.simple_network import SimpleNetwork
 
 
 @pytest.fixture(scope='module')
 def test_network():
-    network = SimpleNetwork("../examples/simple/example_network.json", None)
+    network = SimpleNetwork('../examples/simple/example_network.json', None)
 
     return network.get_nx_network()
 
