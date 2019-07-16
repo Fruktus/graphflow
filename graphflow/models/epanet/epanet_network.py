@@ -17,11 +17,11 @@ class EpanetNetwork(Network):
     def get_nx_network(self):
         return self.__network.get_networkx_graph()
 
-    # TODO implement
     def calculate(self):
         self.__network.run_simulation()
 
-    # TODO implement
+        self._is_calculated = True
+
     def visualize(self):
         if not self.is_calculated:
             raise ValueError("Network not calculated.")
@@ -30,8 +30,7 @@ class EpanetNetwork(Network):
             nx_network = self.get_nx_network()
             apply_all_metrics(self._model, nx_network, self._metrics)
 
-            # TODO - holoviews
-            # visualize_holoviews(epanet_flow_network, res)
+        # TODO - holoviews
 
         if self.__network.simulation_type == SimulationType.PRESSURE \
                 or self.__network.simulation_type == SimulationType.QUALITY:
