@@ -46,7 +46,7 @@ def main():
     epanet_subparser.add_argument('--metric', '-m', action='append',
                                   help='metric to use, can be specified multiple times')
     epanet_subparser.add_argument('--visualize', action='store_true', default=False,
-                                    help='whether to visualize results')
+                                  help='whether to visualize results')
 
     epidemic_subparser = subparser.add_parser('epidemic')
     epidemic_subparser.add_argument('path_to_network_file',
