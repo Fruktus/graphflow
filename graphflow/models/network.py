@@ -1,4 +1,5 @@
 # pylint: skip-file
+import csv
 import webbrowser
 
 from abc import ABC, abstractmethod
@@ -45,10 +46,33 @@ class Network(ABC):
         webbrowser.open(filename)
 
     def export(self, path):
-        pass
+        if self.is_calculated and self.metrics:
+            with open(path, 'w', newline='') as csvfile:
+                writer = csv.writer(csvfile, quotechar='|', quoting=csv.QUOTE_MINIMAL)
+                networks = self._calculated_networks
+
+                writer.writerow(['time', 'metrics'] + list(list(networks.values())[0].nodes()))
+
+                for time, net in networks.items():
+                    data = list(net.nodes(data=True))
+                    # [(0, {'foo': 'bar'}), (1, {'time': '5pm'}), (2, {})]
+
+                    metrics = {}
+                    for nodes in data:
+                        for name, v in nodes[1].items():
+                            if name not in metrics:
+                                metrics[name] = {}
+                            metrics[name][nodes[0]] = v
+                    # {'foo': {0: 'bar', 1: 'els'}, 'bar': {0: 'bar', 1: 'els'}}
+
+                    for name, nodes in metrics.items():
+                        row = [time, name]
+                        for _, value in nodes.items():
+                            row.append(value)
+                        writer.writerow(row)
 
     def _get_hv_network(self, color_by=None, color_map=None):
-        '''Returns holoviews object from network'''
+        """Returns holoviews object from network"""
 
         hv.extension('bokeh')
 

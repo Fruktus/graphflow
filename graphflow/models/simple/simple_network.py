@@ -4,7 +4,6 @@ from pathlib import Path
 import holoviews as hv
 
 from graphflow.analysis.metric_utils import apply_all_metrics
-from graphflow.analysis.network_utils import export_csv
 from graphflow.models.network import Network
 from graphflow.models.simple import simple_model_utils
 from graphflow.models.simple.simple_model import SimpleFlowNetwork
@@ -34,13 +33,6 @@ class SimpleNetwork(Network):
             apply_all_metrics(self._model, self._metrics, self._calculated_networks[0.0])
 
         self._is_calculated = True
-
-    # TODO implement
-    def export(self, path):
-        if not self.is_calculated:
-            raise ValueError("Network not calculated.")
-
-        export_csv(path, self._calculated_networks[0.0])
 
 
 def simple_flow_network_to_nxnetwork(network: SimpleFlowNetwork):
