@@ -45,8 +45,8 @@ class EpidemicNetwork(Network):
 
         nx_network = self.get_nx_network()
 
-        del nx_network.graph['top']
-        del nx_network.graph['bottom']
+        for key in list(nx_network.graph.keys()):
+            del nx_network.graph[key]
 
         for time, s, i, r in zip(self.__time_steps, self.__S, self.__I, self.__R):
             self._calculated_networks[time] = deepcopy(nx_network)
@@ -70,8 +70,10 @@ class EpidemicNetwork(Network):
 
         color_map = {'S': 'yellow', 'I': 'red', 'R': 'green'}
         layout = self._get_hv_network(color_by="status", color_map=color_map) + \
-            self._get_hv_plot(color_map) + \
-            self._get_metrics_plot()
+            self._get_hv_plot(color_map)
+
+        if list(self._calculated_networks.values())[0].graph.keys():
+            layout += self._get_metrics_plot()
 
         filename = "graph.html"
         hv.save(layout, filename, backend='bokeh')
