@@ -44,16 +44,20 @@ class EpidemicNetwork(Network):
             self.__R = [0 for i in self.__time_steps]
 
         nx_network = self.get_nx_network()
+
+        del nx_network.graph['top']
+        del nx_network.graph['bottom']
+
         for time, s, i, r in zip(self.__time_steps, self.__S, self.__I, self.__R):
             self._calculated_networks[time] = deepcopy(nx_network)
 
             if self._metrics:
                 apply_all_metrics(self._model, self._metrics, self._calculated_networks[time])
 
-            self._calculated_networks[time].graph['S'] = s
-            self._calculated_networks[time].graph['I'] = i
-            if self.__simulation_investigation.SIR:
-                self._calculated_networks[time].graph['R'] = r
+            # self._calculated_networks[time].graph['S'] = s
+            # self._calculated_networks[time].graph['I'] = i
+            # if self.__simulation_investigation.SIR:
+            #     self._calculated_networks[time].graph['R'] = r
 
             statuses = self.__simulation_investigation.get_statuses(time=time)
             nx.set_node_attributes(self._calculated_networks[time], statuses, 'status')
@@ -65,7 +69,9 @@ class EpidemicNetwork(Network):
             raise ValueError("Network not calculated.")
 
         color_map = {'S': 'yellow', 'I': 'red', 'R': 'green'}
-        layout = self._get_hv_network(color_by="status", color_map=color_map) + self._get_hv_plot(color_map)
+        layout = self._get_hv_network(color_by="status", color_map=color_map) + \
+            self._get_hv_plot(color_map) + \
+            self._get_metrics_plot()
 
         filename = "graph.html"
         hv.save(layout, filename, backend='bokeh')
@@ -89,6 +95,24 @@ class EpidemicNetwork(Network):
 
         ndoverlay = hv.NdOverlay(curve_dict)
         distribution = hv.HoloMap({i: (ndoverlay * hv.VLine(i)).relabel(group='Counts')
+                                   for i in self.__time_steps}, kdims='Time').opts(width=400, height=400, padding=0.1)
+
+        return distribution
+
+    def _get_metrics_plot(self):
+        metric_names = [name for name in list(self._calculated_networks.values())[0].graph.keys()]
+        metric_dict = {}
+        for metric_name in metric_names:
+            metric_dict[metric_name] = []
+        for time, network in self._calculated_networks.items():
+            for name, metric in network.graph.items():
+                metric_dict[name].append(metric)
+        curve_dict = {}
+        for metric_name in metric_names:
+            curve_dict[metric_name] = hv.Curve((self.__time_steps, metric_dict[metric_name]), kdims='Time', vdims='Value')
+
+        ndoverlay = hv.NdOverlay(curve_dict)
+        distribution = hv.HoloMap({i: (ndoverlay * hv.VLine(i)).relabel(group='Metrics')
                                    for i in self.__time_steps}, kdims='Time').opts(width=400, height=400, padding=0.1)
 
         return distribution

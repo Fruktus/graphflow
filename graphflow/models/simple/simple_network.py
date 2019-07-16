@@ -1,5 +1,7 @@
 # pylint: skip-file
+import webbrowser
 from pathlib import Path
+import holoviews as hv
 
 from graphflow.analysis.metric_utils import apply_all_metrics
 from graphflow.analysis.network_utils import export_csv
