@@ -1,6 +1,7 @@
 import networkx as nx
 
 import graphflow.analysis.metrics as mtr
+import graphflow.analysis.epidemic_metrics as emtr
 
 
 def calculate_metric(ntype, name, network):
@@ -14,6 +15,8 @@ def calculate_metric(ntype, name, network):
         if ntype == 'epanet':
             return name, getattr(mtr, name)(network)
         if ntype == 'epidemic':
+            if not hasattr(mtr, name):
+                return name, getattr(emtr, name)
             return name, getattr(mtr, name)(network)
         raise TypeError('unknown network type')
     except KeyError:

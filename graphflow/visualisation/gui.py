@@ -114,8 +114,6 @@ class Gui:
 
         buttonframe.pack(side=tk.BOTTOM, fill=tk.X, expand=True)
 
-
-
         # checklist #
         cb = self._generate_metrics_checklist(frame)
         cb.pack(side=tk.LEFT, padx=5, pady=5)
@@ -149,7 +147,7 @@ class Gui:
         depth_box_frame.pack(fill=tk.X, expand=True, padx=5, pady=5)
 
         viseq_button = Button(eq_frame, text='visualize',
-                              command=lambda: self._visualize_epanet('earthquake'))
+                              command=lambda: self._visualize_data())
         viseq_button.pack(side=tk.RIGHT, padx=5, pady=5)
         calculate_button = Button(eq_frame, text='calculate',
                                   command=lambda: self._calculate_epanet('earthquake',
@@ -173,7 +171,7 @@ class Gui:
         time_box_frame.pack(fill=tk.X, expand=True, padx=5, pady=5)
 
         vispr_button = Button(pr_frame, text='visualize',
-                              command=lambda: self._visualize_epanet('pressure'))
+                              command=lambda: self._visualize_data())
         vispr_button.pack(side=tk.RIGHT, padx=5, pady=5)
         calculate_button = Button(pr_frame, text='calculate',
                                   command=lambda: self._calculate_epanet('pressure',
@@ -194,7 +192,7 @@ class Gui:
         tn_box_frame.pack(fill=tk.X, expand=True, padx=5, pady=5)
 
         visql_button = Button(ql_frame, text='visualize',
-                              command=lambda: self._visualize_epanet('quality'))
+                              command=lambda: self._visualize_data())
         visql_button.pack(side=tk.RIGHT, padx=5, pady=5)
         calculate_button = Button(ql_frame, text='calculate',
                                   command=lambda: self._calculate_epanet('quality', trace_node=tn_box.get(),
@@ -229,7 +227,7 @@ class Gui:
         visualize_button.pack(side=tk.LEFT, padx=5, pady=5)
         buttonframe.pack(side=tk.BOTTOM, fill=tk.X, expand=True)
 
-        cb = self._generate_metrics_checklist(frame)
+        cb = self._generate_metrics_checklist(frame, epidemic=True)
         cb.pack(side=tk.LEFT, padx=5, pady=5)
 
         input_frame = ttk.Frame(frame, relief=tk.FLAT)
@@ -271,13 +269,18 @@ class Gui:
         root.filename = filedialog.askopenfilename(title="Select network file", **kwargs)
 
     @staticmethod
-    def _generate_metrics_checklist(frame):
+    def _generate_metrics_checklist(frame, epidemic=False):
         # metrics = ("Author", "John", "Mohan", "James", "Ankur", "Robert")
         metrics = dir(mtr)
         regex = re.compile('__*')
         metrics = [x for x in metrics if not regex.match(x)]
         metrics.remove('nx')
         metrics.remove('Network')
+
+        if epidemic:
+            metrics.append('estimate_SIR_probability')
+            metrics.append('infected_neighbours')
+            metrics.append('estimate_infection_times')
 
         return ChecklistBox(frame, metrics, bd=1, relief="sunken", background="white")
 
