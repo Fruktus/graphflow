@@ -10,6 +10,23 @@ from graphflow.models.simple.simple_model import SimpleFlowNetwork
 
 
 class SimpleNetwork(Network):
+    """
+    SimpleNetwork implements simple model.
+
+    Args:
+        path_to_network: path to file containing network in JSON format.
+        metrics: used metrics as list of strings. Each name has to be name of one of the functions in on of the
+            ``graphflow.analysis.metrics.py`` file
+        *args: not used in this model
+        **kwargs: not used in this model
+
+    Examples:
+        >>> network = SimpleNetwork('network.json', ['degree_centrality', 'diameter'])
+        >>> network.calculate()
+        >>> network.visualize()
+        >>> network.export('exported.csv')
+    """
+
     def __init__(self, path_to_network: str, metrics: [str], *args, **kwargs):
         self._model = 'simple'
         self._metrics = metrics
@@ -36,5 +53,6 @@ class SimpleNetwork(Network):
 
 
 def simple_flow_network_to_nxnetwork(network: SimpleFlowNetwork):
+    """Converts SimpleFlowNetwork to networkx graph"""
     nodes, edges = network.get_network_state()
     return simple_model_utils.__build_string_network(nodes, edges)

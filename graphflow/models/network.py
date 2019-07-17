@@ -9,6 +9,11 @@ import holoviews as hv
 
 
 class Network(ABC):
+    """
+    Abstract class for every model (simple, extended, epidemic, epanet)
+
+    Delivers easy to use interface for every model.
+    """
     _model: str
     _is_calculated: bool = False
     _metrics: [str] = None
@@ -16,25 +21,36 @@ class Network(ABC):
 
     @property
     def model(self):
+        """Returns model as string. It can be one of: 'simple', 'extended', 'epidemic' or 'epanet'"""
         return self._model
 
     @property
     def metrics(self):
+        """Returns used metrics as list of strings"""
         return self._metrics
 
     @property
     def is_calculated(self):
+        """Returns bool indication if the network has been calculated"""
         return self._is_calculated
 
     @abstractmethod
     def get_nx_network(self):
+        """Returns base network from the model as networkx graph"""
         pass
 
     @abstractmethod
     def calculate(self):
+        """Calculates network and applies all metrics."""
         pass
 
     def visualize(self):
+        """
+            Visualises calculated network
+
+            Raises:
+                ValueError: Network is not calculated
+        """
         if not self.is_calculated:
             raise ValueError("Network not calculated.")
 
@@ -45,35 +61,56 @@ class Network(ABC):
         self._add_metric_list(filename)
         webbrowser.open(filename)
 
-    def export(self, path):
-        if self.is_calculated and self.metrics:
-            with open(path, 'w', newline='') as csvfile:
-                writer = csv.writer(csvfile, quotechar='|', quoting=csv.QUOTE_MINIMAL)
-                networks = self._calculated_networks
+    def export(self, filename: str):
+        """
+        Exports network as CSV file
 
-                writer.writerow(['time', 'metrics'] + list(list(networks.values())[0].nodes()))
+        Args:
+            filename: exported file
 
-                for time, net in networks.items():
-                    data = list(net.nodes(data=True))
-                    # [(0, {'foo': 'bar'}), (1, {'time': '5pm'}), (2, {})]
+        Raises:
+            ValueError: Network is not calculated
+        """
+        if not self.is_calculated:
+            raise ValueError("Network not calculated.")
 
-                    metrics = {}
-                    for nodes in data:
-                        for name, v in nodes[1].items():
-                            if name not in metrics:
-                                metrics[name] = {}
-                            metrics[name][nodes[0]] = v
-                    # {'foo': {0: 'bar', 1: 'els'}, 'bar': {0: 'bar', 1: 'els'}}
+        with open(filename, 'w', newline='') as csvfile:
+            writer = csv.writer(csvfile, quotechar='|', quoting=csv.QUOTE_MINIMAL)
+            networks = self._calculated_networks
 
-                    for name, nodes in metrics.items():
-                        row = [time, name]
-                        for _, value in nodes.items():
-                            row.append(value)
-                        writer.writerow(row)
+            writer.writerow(['time', 'metrics'] + list(list(networks.values())[0].nodes()))
+
+            for time, net in networks.items():
+                data = list(net.nodes(data=True))
+                # [(0, {'foo': 'bar'}), (1, {'time': '5pm'}), (2, {})]
+
+                metrics = {}
+                for nodes in data:
+                    for name, v in nodes[1].items():
+                        if name not in metrics:
+                            metrics[name] = {}
+                        metrics[name][nodes[0]] = v
+                # {'foo': {0: 'bar', 1: 'els'}, 'bar': {0: 'bar', 1: 'els'}}
+
+                for name, nodes in metrics.items():
+                    row = [time, name]
+                    for _, value in nodes.items():
+                        row.append(value)
+                    writer.writerow(row)
 
     def _get_hv_network(self, color_by=None, color_map=None):
-        """Returns holoviews object from network"""
+        """
+        Returns holovies graph of th network
 
+        Args:
+            color_by: Node attribute by by which value it will be colored. If None nodes will not be colored.
+                Defaults to None
+            color_map: Dictionary {attribute: color} shows what color will nodes have. If color_by is None it will
+                be ignored. If None default colors will be used, which vary depending on color_by attribute value
+
+        Returns:
+            holoviews.HoloMap: holoviews object representing plot
+        """
         hv.extension('bokeh')
 
         graph_dict = {}
@@ -93,6 +130,15 @@ class Network(ABC):
         return holomap
 
     def _add_metric_list(self, path_to_html):
+        """
+        Appends to html list of all not node specific metrics.
+
+        Html is should have been created before and should already contain network visualization.
+
+        Args:
+            path_to_html: path to html to append
+
+        """
         with open(path_to_html, "a") as file:
             for name, metric in list(self._calculated_networks.values())[0].graph.items():
                 file.write("{}: {}<br>".format(name, metric))
