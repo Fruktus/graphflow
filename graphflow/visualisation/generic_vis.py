@@ -38,7 +38,7 @@ def visualize_holoviews(network: Network, metrics: [tuple] = None):
 
     renderer = hv.renderer('bokeh')
     plot = renderer.get_plot(network_graph).state
-    output_file("graph_demo.html")
+    output_file("graph.html")
     show(plot)
 
 
@@ -63,11 +63,12 @@ def visualize_epidemic(network, simulation_investigation: EoN.Simulation_Investi
     metrics_dict = {}
     node_count = {'S': ([], []), 'I': ([], []), 'R': ([], [])}
 
+    apply_all_metrics("epidemic", metrics, nx_network)
+
     graph_layout = nx.layout.spring_layout(nx_network)
     for time in time_steps:
         statuses = simulation_investigation.get_statuses(time=time)
         nx.set_node_attributes(network, statuses, 'Status')
-        apply_all_metrics("epidemic", metrics, nx_network)
 
         labels = hv.Labels({(0, i/2-0.9): "{}: {}".format(metric, value)
                             for i, (metric, value) in enumerate(nx_network.graph.items())
@@ -93,6 +94,6 @@ def visualize_epidemic(network, simulation_investigation: EoN.Simulation_Investi
 
     layout = (holomap + distribution + labels_holomap).cols(2)
 
-    filename = "graph_demo.html"
+    filename = "graph.html"
     hv.save(layout, filename, backend='bokeh')
     webbrowser.open(filename)

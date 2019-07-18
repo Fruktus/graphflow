@@ -240,6 +240,7 @@ class Gui:
 
         type_box.insert(tk.END, 'sir')
         type_box.insert(tk.END, 'sis')
+        type_box.select_set(0)
 
         transrate_frame = ttk.Frame(input_frame, relief=tk.SUNKEN)
         transrate_box = Entry(transrate_frame, width=8)
