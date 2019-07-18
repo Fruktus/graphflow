@@ -12,6 +12,28 @@ from graphflow.models.network import Network
 
 
 class EpidemicNetwork(Network):
+    """
+    EpidemicNetwork implements epidemic model, using EoN library. Both SIR and SIS models are supported.
+
+    Args:
+        path_to_network: Path to file containing network in GML format. Each node requires attributes: 'infected'
+            (for SIR ans SIS) and 'recovered' (for SIR only). Each of them is either 0 or 1.
+        metrics: Used metrics as list of strings. Each name has to be name of one of the functions in on of the
+            ``graphflow.analysis.metrics.py`` and ``graphflow.analysis.epidemic_metrics.py`` files
+        *args: Specify model (SIR or SIS) and simulation parameters:
+            model (str): 'sis' or 'sir'
+            transmission (float): Transmission rate per edge
+            recovery (float): Recovery rate per node
+            maxtime (int): Maximal simulation time. Not used in SIR model.
+        **kwargs: Not used in this model
+
+    Examples:
+        >>> network = EpidemicNetwork('network.txt', ['degree_centrality', 'diameter'], 'sis', 2.0, 1.0, 2)
+        >>> network.calculate()
+        >>> network.visualize()
+        >>> network.export('exported.csv')
+    """
+
     def __init__(self, path_to_network: str, metrics: [str], *args, **kwargs):
         self._model = 'epidemic'
         self._metrics = metrics
@@ -54,11 +76,6 @@ class EpidemicNetwork(Network):
             if self._metrics:
                 apply_all_metrics(self._model, self._metrics, self._calculated_networks[time])
 
-            # self._calculated_networks[time].graph['S'] = s
-            # self._calculated_networks[time].graph['I'] = i
-            # if self.__simulation_investigation.SIR:
-            #     self._calculated_networks[time].graph['R'] = r
-
             statuses = self.__simulation_investigation.get_statuses(time=time)
             nx.set_node_attributes(self._calculated_networks[time], statuses, 'status')
 
@@ -80,19 +97,28 @@ class EpidemicNetwork(Network):
         self._add_metric_list(filename)
         webbrowser.open(filename)
 
-    # TODO implement
-    def export(self, path):
-        if not self.is_calculated:
-            raise ValueError("Network not calculated.")
+    def _get_hv_plot(self, color_map: dict):
+        """
+        Creates holoviews plot for each of the S, I and R states
 
-    def _get_hv_plot(self, color_map):
+        Plot shows how many nodes are Susceptible (S), Infected (I) and Recovered (R) over time. It also contains
+        line to mark in which moment in time we are.
+
+        Args:
+            color_map: dictionary {state: color}, shows how to color nodes. state can be 'S', 'I' or 'R'
+
+        Returns:
+            holoviews.HoloMap: holoviews object representing plot
+
+        """
+
         curve_dict = {}
-        curve_dict['S'] = hv.Curve((self.__time_steps, self.__S), kdims='Time', vdims='Count')\
+        curve_dict['Susceptible'] = hv.Curve((self.__time_steps, self.__S), kdims='Time', vdims='Count')\
             .opts(color=color_map['S'])
-        curve_dict['I'] = hv.Curve((self.__time_steps, self.__I), kdims='Time', vdims='Count').opts(
+        curve_dict['Infected '] = hv.Curve((self.__time_steps, self.__I), kdims='Time', vdims='Count').opts(
             color=color_map['I'])
         if self.__simulation_investigation.SIR:
-            curve_dict['R'] = hv.Curve((self.__time_steps, self.__R), kdims='Time', vdims='Count').opts(
+            curve_dict['Recovered '] = hv.Curve((self.__time_steps, self.__R), kdims='Time', vdims='Count').opts(
                 color=color_map['R'])
 
         ndoverlay = hv.NdOverlay(curve_dict)
@@ -102,6 +128,13 @@ class EpidemicNetwork(Network):
         return distribution
 
     def _get_metrics_plot(self):
+        """
+            Creates holoviews plot for every not node specific metric over time
+
+        Returns:
+            holoviews.HoloMap: holoviews object representing plot
+
+        """
         metric_names = [name for name in list(self._calculated_networks.values())[0].graph.keys()]
         metric_dict = {}
         for metric_name in metric_names:

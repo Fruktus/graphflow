@@ -8,6 +8,23 @@ from graphflow.models.extended.extended_model import ExtendedFlowNetwork
 
 
 class ExtendedNetwork(Network):
+    """
+    ExtendedNetwork implements extended model.
+
+    Args:
+        path_to_network: path to file containing network in JSON format.
+        metrics: used metrics as list of strings. Each name has to be name of one of the functions in on of the
+            ``graphflow.analysis.metrics.py`` file
+        *args: not used in this model
+        **kwargs: not used in this model
+
+    Examples:
+        >>> network = ExtendedNetwork('network.json', ['degree_centrality', 'diameter'])
+        >>> network.calculate()
+        >>> network.visualize()
+        >>> network.export('exported.csv')
+    """
+
     def __init__(self, path_to_network: str, metrics: [str], *args, **kwargs):
         self._model = 'extended'
         self._metrics = metrics
@@ -33,16 +50,7 @@ class ExtendedNetwork(Network):
         self._is_calculated = True
 
 
-    # TODO implement
-    def export(self, path):
-        if not self.is_calculated:
-            raise ValueError("Network not calculated.")
-
-        # possible other formats than csv maybe ?
-        # solved_network = self.__network.calculate_network_state()
-        # json = extended_to_json(solved_network)
-
-
 def extended_flow_network_to_nxnetwork(network: ExtendedFlowNetwork):
+    """Converts ExtendedFlowNetwork to networkx graph"""
     nodes, edges = network.get_network_state()
     return extended_model_utils.__build_string_network(nodes, edges)
