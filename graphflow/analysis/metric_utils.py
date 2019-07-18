@@ -16,7 +16,7 @@ def calculate_metric(ntype, name, network):
             return name, getattr(mtr, name)(network)
         if ntype == 'epidemic':
             if not hasattr(mtr, name):
-                return name, getattr(emtr, name)
+                return name, getattr(emtr, name)(network)
             return name, getattr(mtr, name)(network)
         raise TypeError('unknown network type')
     except KeyError:

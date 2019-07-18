@@ -3,7 +3,7 @@ import random
 import networkx as nx
 
 # get raw networkx graph and generates 'infected' and 'recovered' labels values for each node with given probability
-# input can be: samples/raw_graph_sample 0.2 0.1
+# input can be: samples/raw_graph_sample.gml 0.2 0.1
 
 INPUT_NAME = sys.argv[1]
 G = nx.read_gml(INPUT_NAME)

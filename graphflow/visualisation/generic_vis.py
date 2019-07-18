@@ -38,7 +38,7 @@ def visualize_holoviews(network: Network, metrics: [tuple] = None):
 
     renderer = hv.renderer('bokeh')
     plot = renderer.get_plot(network_graph).state
-    output_file("graph.html")
+    output_file("graph_demo.html")
     show(plot)
 
 
@@ -93,6 +93,6 @@ def visualize_epidemic(network, simulation_investigation: EoN.Simulation_Investi
 
     layout = (holomap + distribution + labels_holomap).cols(2)
 
-    filename = "graph.html"
+    filename = "graph_demo.html"
     hv.save(layout, filename, backend='bokeh')
     webbrowser.open(filename)

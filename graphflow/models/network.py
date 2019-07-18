@@ -40,7 +40,7 @@ class Network(ABC):
 
         layout = self._get_hv_network()
 
-        filename = "graph.html"
+        filename = "graph_demo.html"
         hv.save(layout, filename, backend='bokeh')
         self._add_metric_list(filename)
         webbrowser.open(filename)

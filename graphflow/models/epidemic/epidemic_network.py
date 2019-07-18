@@ -75,7 +75,7 @@ class EpidemicNetwork(Network):
         if list(self._calculated_networks.values())[0].graph.keys():
             layout += self._get_metrics_plot()
 
-        filename = "graph.html"
+        filename = "graph_demo.html"
         hv.save(layout, filename, backend='bokeh')
         self._add_metric_list(filename)
         webbrowser.open(filename)
