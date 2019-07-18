@@ -276,7 +276,6 @@ class Gui:
         regex = re.compile('__*')
         metrics = [x for x in metrics if not regex.match(x)]
         metrics.remove('nx')
-        metrics.remove('Network')
 
         if epidemic:
             metrics.append('estimate_SIR_probability')
