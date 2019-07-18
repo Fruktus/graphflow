@@ -1,4 +1,5 @@
 # pylint: skip-file
+"""Provides graphical interface for module"""
 from tkinter import Tk, ttk, filedialog, Button, messagebox, Entry, Label
 import tkinter as tk
 import re
@@ -276,7 +277,6 @@ class Gui:
         regex = re.compile('__*')
         metrics = [x for x in metrics if not regex.match(x)]
         metrics.remove('nx')
-        metrics.remove('Network')
 
         if epidemic:
             metrics.append('estimate_SIR_probability')

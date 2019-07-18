@@ -1,3 +1,4 @@
+"""Acts as a library of all available networks"""
 import networkx as nx
 
 
@@ -330,7 +331,7 @@ def static_load_centrality(network: nx.Graph):
     return nx.algorithms.centrality.load_centrality(network)
 
 
-def subgraph(network: nx.Graph):
+def static_subgraph(network: nx.Graph):
     r"""Returns subgraph centrality for each node in G.
 
     Subgraph centrality  of a node `n` is the sum of weighted closed
@@ -349,7 +350,7 @@ def subgraph(network: nx.Graph):
     return nx.algorithms.centrality.subgraph_centrality(network.to_undirected())
 
 
-def harmonic_centrality(network: nx.Graph):
+def static_harmonic_centrality(network: nx.Graph):
     r"""Compute harmonic centrality for nodes.
 
     Harmonic centrality [1]_ of a node `u` is the sum of the reciprocal

@@ -1,4 +1,4 @@
-"""contains metrics specific for epidemic networks"""
+"""Contains metrics specific for epidemic networks"""
 from sys import maxsize
 
 import networkx as nx
@@ -6,7 +6,7 @@ from EoN import estimate_SIR_prob_size
 from EoN import Simulation_Investigation
 
 
-def estimate_sir_size(network, trans_prob):
+def estimate_sir_size(network, trans_prob=0.5):
     """Calculates estimated sir outbreak size
     Args:
         network: networkx graph
@@ -22,21 +22,40 @@ def estimate_sir_size(network, trans_prob):
     # and size of epidemics assuming constant transmission probability p
 
 
-def infected_neighbours(network: nx.Graph, time: float, eon_investigation: Simulation_Investigation):
+# def infected_neighbours(network: nx.Graph, time: float, eon_investigation: Simulation_Investigation):
+#     """Counts infected, recovered and susceptible neighbours for all nodes
+#     Args:
+#         network: networkx Graph
+#         time: point in time to calculate metric for
+#         eon_investigation: object containing history data for all nodes
+#
+#     Returns:
+#         dict: dictionary keyed by nodes id into dict of neighbours counts with given status (S,I,R)"""
+#     statuses = {}
+#     for node in network.nodes():
+#         statuses[node] = {'S_neighbours': 0, 'I_neighbours': 0, 'R_neighbours': 0}
+#         neighbours = network.neighbors(node)  # id's
+#         for nb in neighbours:
+#             statuses[node][eon_investigation.node_status(nb, time=time)] += 1
+#     return statuses
+
+def infected_neighbours(network: nx.Graph):
     """Counts infected, recovered and susceptible neighbours for all nodes
     Args:
         network: networkx Graph
-        time: point in time to calculate metric for
-        eon_investigation: object containing history data for all nodes
 
     Returns:
         dict: dictionary keyed by nodes id into dict of neighbours counts with given status (S,I,R)"""
     statuses = {}
     for node in network.nodes():
-        statuses[node] = {'S_neighbours': 0, 'I_neighbours': 0, 'R_neighbours': 0}
-        neighbours = network.neighbors(node)
+        statuses[node] = {'S': 0, 'I': 0, 'R': 0}
+        neighbours = network.neighbors(node)  # id's
+        status = nx.get_node_attributes(network, 'status')
         for nb in neighbours:
-            statuses[node][eon_investigation.node_status(nb, time=time)] += 1
+            statuses[node][status[nb]] += 1
+        statuses[node]['S_neighbours'] = statuses[node].pop('S')
+        statuses[node]['I_neighbours'] = statuses[node].pop('I')
+        statuses[node]['R_neighbours'] = statuses[node].pop('R')
     return statuses
 
 
@@ -51,12 +70,12 @@ def estimate_infection_times(network: nx.Graph, time: float, eon_investigation: 
             dict: dictionary keyed by nodes id into estimate"""
     # use nx to get all shortest paths, use eon for estimating probability of infection
     estimates = {}
-    for n in network.nodes():
-        estimates[n] = {'est_inf_time': 0}
-        if eon_investigation.node_status(n, time=time) != 'I':
-            estimates[n]['est_inf_time'] = maxsize
-            statuses = nx.shortest_path_length(network, source=n)
-            for k, v in statuses.items():
-                if eon_investigation.node_status(k, time=time) == 'I' and v < estimates[n]['est_inf_time']:
-                    estimates[n]['est_inf_time'] = v
+    for node in network.nodes():
+        estimates[node] = {'est_inf_time': 0}
+        if eon_investigation.node_status(node, time=time) != 'I':
+            estimates[node]['est_inf_time'] = maxsize
+            statuses = nx.shortest_path_length(network, source=node)
+            for key, value in statuses.items():
+                if eon_investigation.node_status(key, time=time) == 'I' and value < estimates[node]['est_inf_time']:
+                    estimates[node]['est_inf_time'] = value
     return estimates
