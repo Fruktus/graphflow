@@ -1,3 +1,4 @@
+"""Acts as a library of all available networks"""
 import networkx as nx
 
 

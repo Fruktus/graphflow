@@ -1,3 +1,4 @@
+"""Contains utilities used for calculating networks"""
 import networkx as nx
 
 import graphflow.analysis.metrics as mtr

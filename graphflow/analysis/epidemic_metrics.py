@@ -1,4 +1,4 @@
-"""contains metrics specific for epidemic networks"""
+"""Contains metrics specific for epidemic networks"""
 from sys import maxsize
 
 import networkx as nx
@@ -51,12 +51,12 @@ def estimate_infection_times(network: nx.Graph, time: float, eon_investigation: 
             dict: dictionary keyed by nodes id into estimate"""
     # use nx to get all shortest paths, use eon for estimating probability of infection
     estimates = {}
-    for n in network.nodes():
-        estimates[n] = {'est_inf_time': 0}
-        if eon_investigation.node_status(n, time=time) != 'I':
-            estimates[n]['est_inf_time'] = maxsize
-            statuses = nx.shortest_path_length(network, source=n)
-            for k, v in statuses.items():
-                if eon_investigation.node_status(k, time=time) == 'I' and v < estimates[n]['est_inf_time']:
-                    estimates[n]['est_inf_time'] = v
+    for node in network.nodes():
+        estimates[node] = {'est_inf_time': 0}
+        if eon_investigation.node_status(node, time=time) != 'I':
+            estimates[node]['est_inf_time'] = maxsize
+            statuses = nx.shortest_path_length(network, source=node)
+            for key, value in statuses.items():
+                if eon_investigation.node_status(key, time=time) == 'I' and value < estimates[node]['est_inf_time']:
+                    estimates[node]['est_inf_time'] = value
     return estimates
