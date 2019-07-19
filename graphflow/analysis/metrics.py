@@ -94,11 +94,6 @@ def static_density(network: nx.Graph):
     return edges / (vertices * (vertices - 1))
 
 
-<<<<<<< graphflow/analysis/metrics.py
-# TODO This one works weird. It has to be either changed or removed
-def modularity(network):
-    """Returns: None, Yields sets of nodes, one for each community."""
-=======
 def static_modularity(network):
     r"""Find communities in graph using Clauset-Newman-Moore greedy modularity
     maximization. This method currently supports the Graph class and does not
@@ -120,7 +115,6 @@ def static_modularity(network):
         >>> c = list(greedy_modularity_communities(G))
         >>> sorted(c[0])
         [8, 14, 15, 18, 20, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33]"""
->>>>>>> graphflow/analysis/metrics.py
     return nx.algorithms.community.modularity_max.greedy_modularity_communities(network)
 
 
