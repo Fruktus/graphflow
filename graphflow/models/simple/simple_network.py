@@ -46,10 +46,9 @@ class SimpleNetwork(Network):
         # dict of calculated networks - {time:network}
         self._calculated_networks[0.0] = simple_flow_network_to_nxnetwork(new_network)
 
-        if self._metrics:
-            apply_all_metrics(self._model, self._metrics, self._calculated_networks[0.0])
-
         self._is_calculated = True
+        self._apply_static_metrics(self._calculated_networks[0.0])
+        self._apply_dynamic_metrics()
 
 
 def simple_flow_network_to_nxnetwork(network: SimpleFlowNetwork):

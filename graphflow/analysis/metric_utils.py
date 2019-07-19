@@ -70,7 +70,6 @@ def apply_all_metrics(ntype, names: [str], network):
     for metric in names:
         apply_metric(ntype, metric, network)
 
-
 def metric_list(model: str = 'general', metric_type: str = 'all'):
     """
     Returns list of available metrics

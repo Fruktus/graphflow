@@ -15,7 +15,6 @@ from graphflow.visualisation.gui import Gui
 
 def main():
     import graphflow.analysis.metric_utils as mu
-    print(mu.metric_list('all', 'all'))
 
     parser = argparse.ArgumentParser('python3 -m graphflow', fromfile_prefix_chars='@')
     subparser = parser.add_subparsers(help='network models', dest='network_model')

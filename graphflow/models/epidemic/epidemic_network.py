@@ -53,6 +53,7 @@ class EpidemicNetwork(Network):
         return self.__my_sim.get_network()
 
     def calculate(self):
+
         self.__simulation_investigation = self.__my_sim.run_simulation()
 
         if self.__simulation_investigation.SIR:
@@ -66,6 +67,7 @@ class EpidemicNetwork(Network):
             self.__R = [0 for i in self.__time_steps]
 
         nx_network = self.get_nx_network()
+        self._apply_static_metrics()
 
         for key in list(nx_network.graph.keys()):
             del nx_network.graph[key]
@@ -79,6 +81,7 @@ class EpidemicNetwork(Network):
             statuses = self.__simulation_investigation.get_statuses(time=time)
             nx.set_node_attributes(self._calculated_networks[time], statuses, 'status')
 
+        self._apply_dynamic_metrics()
         self._is_calculated = True
 
     def visualize(self):

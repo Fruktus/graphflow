@@ -7,6 +7,8 @@ from abc import ABC, abstractmethod
 import networkx as nx
 import holoviews as hv
 
+from graphflow.analysis.metric_utils import get_metric
+
 
 class Network(ABC):
     """
@@ -18,6 +20,7 @@ class Network(ABC):
     _is_calculated: bool = False
     _metrics: [str] = None
     _calculated_networks = {}
+    _static_metrics = {}
 
     @property
     def model(self):
@@ -25,14 +28,26 @@ class Network(ABC):
         return self._model
 
     @property
+    def is_calculated(self):
+        """Returns bool indication if the network has been calculated"""
+        return self._is_calculated
+
+    @property
     def metrics(self):
         """Returns used metrics as list of strings"""
         return self._metrics
 
     @property
-    def is_calculated(self):
-        """Returns bool indication if the network has been calculated"""
-        return self._is_calculated
+    def calculated_networks(self):
+        """
+        Returns calculated metrics
+
+        Raises:
+            ValueError: Network is not calculated
+        """
+        if not self.is_calculated:
+            raise ValueError("Network not calculated")
+        return self._calculated_networks
 
     @abstractmethod
     def get_nx_network(self):
@@ -98,6 +113,45 @@ class Network(ABC):
                         row.append(value)
                     writer.writerow(row)
 
+    def _apply_static_metrics(self, network):
+        """
+        Applies all static metrics to `network` as attributes and fills
+        `_static_metrics` dictionary with not node specific metrics.
+        """
+        if not self.metrics:
+            return
+
+        for name in self.metrics:
+            fun, model, metric_type = get_metric(name, details=True)
+            if metric_type == 'static':
+                value = fun(network)
+                if isinstance(value, dict):
+                    nx.set_node_attributes(network, value, name)
+                else:
+                    self._static_metrics[name] = value
+
+    def _apply_dynamic_metrics(self):
+        """
+        Applies all dynamic metrics to `_calculated_graphs` dictionary as node attributes and not node specific
+        metrics as graph attributes
+        """
+        if not self.metrics:
+            return
+
+        funs = []
+        for name in self.metrics:
+            fun, model, metric_type = get_metric(name, details=True)
+            if metric_type == 'dynamic':
+                funs.append(fun)
+
+        for network in self.calculated_networks:
+            for fun in funs:
+                value = fun(network)
+                if isinstance(value, dict):
+                    nx.set_node_attributes(network, value, name)
+                else:
+                    network.graph[name] = value
+
     def _get_hv_network(self, color_by=None, color_map=None):
         """
         Returns holovies graph of th network
@@ -140,5 +194,5 @@ class Network(ABC):
 
         """
         with open(path_to_html, "a") as file:
-            for name, metric in list(self._calculated_networks.values())[0].graph.items():
+            for name, metric in self._static_metrics.values():
                 file.write("{}: {}<br>".format(name, metric))

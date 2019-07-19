@@ -41,6 +41,7 @@ class ExtendedNetwork(Network):
 
     def calculate(self):
         new_network = self.__network.calculate_network_state()
+        self._apply_static_metrics(new_network)
         # dict of calculated networks - {time:network}
         self._calculated_networks[0.0] = extended_flow_network_to_nxnetwork(new_network)
 
@@ -48,6 +49,7 @@ class ExtendedNetwork(Network):
             apply_all_metrics(self._model, self._calculated_networks[0.0], self._metrics)
 
         self._is_calculated = True
+        self._apply_dynamic_metrics()
 
 
 def extended_flow_network_to_nxnetwork(network: ExtendedFlowNetwork):

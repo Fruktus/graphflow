@@ -5,11 +5,11 @@ This file contains general metrics which are available for all models.
 
 The following describes all metrics not only general.
 
-Metric is recognised by functions name. Names have to start
-with either ``static_`` or ``dynamic_`` after which is metric name in snake_case. The first word states if the metric
-is static - can be calculated only once, or dynamic - depends on graphs state and has to be calculated for each time
-step. The graphs themselves are not dynamic meaning that they can't remove/add nodes and edges during simulation but
-their state - nodes attributes mostly can change. Thus dynamic metrics.
+Metric is recognised by functions name. Names have to start with either ``static_`` or ``dynamic_`` after which is
+metric name in snake_case. The first word states if the metric is static - can be calculated only once, or
+dynamic - depends on graphs state and has to be calculated for each time step. The graphs themselves are not dynamic
+meaning that they can't remove/add nodes and edges during simulation but their state - nodes attributes mostly can
+change. Thus dynamic metrics.
 
 Each metric is function with similar pattern:
 
