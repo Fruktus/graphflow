@@ -24,9 +24,16 @@ import graphflow.analysis.epidemic_metrics as emtr
 MODULE_DICT = {'general': mtr, 'epidemic': emtr}
 
 
-def calculate_metric(ntype, name, network):
-    """calls available metrics (those in this document)
-       returns results (mostly dicts and numerical values"""
+def calculate_metric(ntype: str, name: str, network: nx.Graph):
+    """Calculates metric given by its string name for specific network type
+
+    Args:
+        ntype: the network model to use
+        name: metric name
+        network: networkx graph
+
+    Returns:
+        tuple: contains two fields, first is name, second is the value returned from metric"""
     try:
         if ntype == 'simple':
             return name, getattr(mtr, name)(network)
@@ -44,9 +51,17 @@ def calculate_metric(ntype, name, network):
         return None
 
 
-def calculate_metric_array(ntype: str, network, array: [str]):
-    """same as calculate_metric, but processes an array instead of a single metric.
-       returns an array containing the results (dicts or values)"""
+def calculate_metric_array(ntype: str, network: nx.Graph, array: [str]):
+    """Same as calculate_metric, but can process string array of metrics
+
+    Args:
+        ntype: the network model to use
+        network: networkx graph
+        array: array of metric names to calculate
+
+    Returns:
+        array: an array of tuples as in calculate_metric
+        """
     arr = []
     for i in array:
         res = calculate_metric(ntype, i, network)

@@ -1,4 +1,5 @@
 # pylint: skip-file
+"""Contains abstract implementation of network model"""
 import csv
 import webbrowser
 

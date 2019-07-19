@@ -64,7 +64,7 @@ class EpidemicNetwork(Network):
             self.__R = self.__R[1:]
         else:
             self.__time_steps, self.__S, self.__I = self.__simulation_investigation.summary()
-            self.__R = [0 for i in self.__time_steps]
+            self.__R = [0 for _ in self.__time_steps]
 
         nx_network = self.get_nx_network()
         self._apply_static_metrics()
@@ -115,11 +115,11 @@ class EpidemicNetwork(Network):
 
         """
 
-        curve_dict = {}
-        curve_dict['Susceptible'] = hv.Curve((self.__time_steps, self.__S), kdims='Time', vdims='Count')\
-            .opts(color=color_map['S'])
-        curve_dict['Infected '] = hv.Curve((self.__time_steps, self.__I), kdims='Time', vdims='Count').opts(
-            color=color_map['I'])
+        curve_dict = {'Susceptible': hv.Curve((self.__time_steps, self.__S), kdims='Time', vdims='Count')\
+                      .opts(color=color_map['S']),
+                      'Infected ': hv.Curve((self.__time_steps, self.__I), kdims='Time', vdims='Count').opts(
+                          color=color_map['I'])}
+
         if self.__simulation_investigation.SIR:
             curve_dict['Recovered '] = hv.Curve((self.__time_steps, self.__R), kdims='Time', vdims='Count').opts(
                 color=color_map['R'])

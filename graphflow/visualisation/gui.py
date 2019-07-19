@@ -1,4 +1,5 @@
 # pylint: skip-file
+"""Provides graphical interface for module"""
 from tkinter import Tk, ttk, filedialog, Button, messagebox, Entry, Label
 import tkinter as tk
 import re
