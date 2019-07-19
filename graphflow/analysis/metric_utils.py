@@ -25,7 +25,8 @@ MODULE_DICT = {'general': mtr, 'epidemic': emtr}
 
 # TODO change how metrics are stored and calculated
 
-def calculate_metric(ntype: str, name: str, network: nx.Graph):
+
+def calculate_metric(name: str, network: nx.Graph):
     """Calculates metric given by its string name for specific network type
 
     Args:
