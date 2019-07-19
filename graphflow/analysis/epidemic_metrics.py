@@ -1,4 +1,4 @@
-"""Contains metrics specific for epidemic networks"""
+"""Metrics for epidemic model. See `graphflow.analysis.metrics.py` for details."""
 from sys import maxsize
 
 import networkx as nx
