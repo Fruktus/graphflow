@@ -5,7 +5,7 @@ Basically other files in this package connected with metrics shouldn't be used. 
 module is responsible for using them.
 
 Attributes:
-    metrics_dict (dict): Dictionary containing all metrics. {name: (function, model, metric_type)}, where:
+    METRICS_DICT (dict): Dictionary containing all metrics. {name: (function, model, metric_type)}, where:
         name (str): Metric name
         function (function): Metric as function. See `graphflow.analysis.metrics`
         model (str): Simulation model. Can be one of: 'simple', 'extended', 'epidemic', 'epanet'
@@ -21,7 +21,7 @@ import networkx as nx
 import graphflow.analysis.metrics as mtr
 import graphflow.analysis.epidemic_metrics as emtr
 
-module_dict = {'general': mtr, 'epidemic': emtr}
+MODULE_DICT = {'general': mtr, 'epidemic': emtr}
 
 
 def calculate_metric(ntype, name, network):
@@ -69,6 +69,7 @@ def apply_metric(ntype, name, network):
 def apply_all_metrics(ntype, names: [str], network):
     for metric in names:
         apply_metric(ntype, metric, network)
+
 
 def metric_list(model: str = 'general', metric_type: str = 'all'):
     """
@@ -119,7 +120,7 @@ def metric_list(model: str = 'general', metric_type: str = 'all'):
 
     metrics = []
 
-    for name, (function, other_model, other_type) in metrics_dict.items():
+    for name, (_, other_model, other_type) in METRICS_DICT.items():
         if other_type in metric_types_to_check and other_model in models_to_check:
             metrics.append(name)
 
@@ -152,9 +153,8 @@ def get_metric(name: str, details: bool = False):
         graphflow.analysis.metrics
     """
     if details:
-        return metrics_dict[name]
-    else:
-        return metrics_dict[name][0]
+        return METRICS_DICT[name]
+    return METRICS_DICT[name][0]
 
 
 def __get_all_metrics_dict():
@@ -168,7 +168,7 @@ def __get_all_metrics_dict():
 
     return_dict = {}
 
-    for model, module in module_dict.items():
+    for model, module in MODULE_DICT.items():
         names = dir(module)
 
         for name in names:
@@ -181,4 +181,4 @@ def __get_all_metrics_dict():
     return return_dict
 
 
-metrics_dict = __get_all_metrics_dict()
+METRICS_DICT = __get_all_metrics_dict()

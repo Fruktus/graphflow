@@ -13,7 +13,7 @@ def test_network():
 
 
 def test_degree_centrality(test_network):
-    assert isinstance(degree_centrality(test_network), dict)
+    assert isinstance(static_degree_centrality(test_network), dict)
 
 
 def test_hits(test_network):
