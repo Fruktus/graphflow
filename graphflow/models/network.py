@@ -20,6 +20,7 @@ class Network(ABC):
     _is_calculated: bool = False
     _metrics: [str] = None
     _calculated_networks = {}
+    _calculated_metrics = {}
     _static_metrics = {}
 
     @property
@@ -38,13 +39,19 @@ class Network(ABC):
         return self._metrics
 
     @property
-    def calculated_networks(self):
+    def calculated_metrics(self):
         """
         Returns calculated metrics
 
         Raises:
             ValueError: Network is not calculated
         """
+        if not self.is_calculated:
+            raise ValueError("Network not calculated")
+        return self._calculated_metrics
+
+    @property
+    def calculated_networks(self):
         if not self.is_calculated:
             raise ValueError("Network not calculated")
         return self._calculated_networks
