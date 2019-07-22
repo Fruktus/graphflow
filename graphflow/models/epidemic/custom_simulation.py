@@ -14,8 +14,6 @@ from collections import Counter
 #                     #
 #######################
 
-SEED = None
-PROBABILITY = 50
 
 def _truncated_exponential_(rate, T):
     r'''returns a number between 0 and T from an
@@ -49,11 +47,11 @@ class myQueue(object):
     Previously I used a class of events, but sorting using the __lt__ function
     I wrote was significantly slower than simply using tuples.
     '''
-
     def __init__(self, tmax=float("Inf")):
         self._Q_ = []
         self.tmax = tmax
         self.counter = 0  # tie-breaker for putting things in priority queue
+        self.randinit = False
 
     def add(self, time, function, args={}):
         r'''time is the time of the event.  args are the arguments of the
@@ -65,10 +63,17 @@ class myQueue(object):
     def pop_and_run(self):
         r'''Pops the next event off the queue and performs the function'''
         t, counter, function, args = heapq.heappop(self._Q_)
-        if SEED:  # TODO implement rest of it, in the sir
-            if random.randint(100) > PROBABILITY:
-                # args[8] = 'I' # figure out how to access status, different networks have it on different positions
-                pass
+
+        if 'seed' in args:
+            if 'status' in args and args['seed']:
+                if not self.randinit:
+                    random.seed(args.seed)
+                    self.randinit = True
+                probability = 50 if not args['probability'] else args['probability']
+                if random.randint(100) > probability:
+                    args.status = 'I'
+            args.pop('seed')
+            args.pop('probability')
         # print(function, ' ', args)
         function(t, **args)
 
@@ -1745,12 +1750,12 @@ def _trans_and_rec_time_Markovian_const_trans_(node, sus_neighbors, tau, rec_rat
     # trans_delay = {}
     # for v in transmission_recipients:
     #    trans_delay[v] = _truncated_exponential_(tau, duration)
-    return trans_delay, duration
+    # return trans_delay, duration
 
 
 def fast_SIR(G, tau, gamma, initial_infecteds=None, initial_recovereds=None,
              rho=None, tmin=0, tmax=float('Inf'), transmission_weight=None,
-             recovery_weight=None, return_full_data=False):
+             recovery_weight=None, return_full_data=False, seed=None, probability=None):
     r'''
     fast SIR simulation for exponentially distributed infection and
     recovery times
@@ -1873,7 +1878,8 @@ def fast_SIR(G, tau, gamma, initial_infecteds=None, initial_recovereds=None,
                                   initial_infecteds=initial_infecteds,
                                   initial_recovereds=initial_recovereds,
                                   rho=rho, tmin=tmin, tmax=tmax,
-                                  return_full_data=return_full_data)
+                                  return_full_data=return_full_data,
+                                  seed=seed, probability=probability)
     else:
         # the transmission rate is tau for all edges.  We can use this
         # to speed up the code.
@@ -1901,7 +1907,7 @@ def fast_nonMarkov_SIR(G, trans_time_fxn=None,
                        initial_infecteds=None,
                        initial_recovereds=None,
                        rho=None, tmin=0, tmax=float('Inf'),
-                       return_full_data=False):
+                       return_full_data=False, seed=None, probability=None):
     r'''
     A modification of the algorithm in figure A.3 of Kiss, Miller, &
     Simon to allow for user-defined rules governing time of
@@ -2115,7 +2121,8 @@ def fast_nonMarkov_SIR(G, trans_time_fxn=None,
                                                'R': R, 'Q': Q, 'status': status, 'rec_time': rec_time,
                                                'pred_inf_time': pred_inf_time, 'transmissions': transmissions,
                                                'trans_and_rec_time_fxn': trans_and_rec_time_fxn,
-                                               'trans_and_rec_time_args': trans_and_rec_time_args
+                                               'trans_and_rec_time_args': trans_and_rec_time_args,
+                                               'probability': probability, 'seed': seed
                                                }
               )
 
@@ -2434,7 +2441,7 @@ def _process_rec_SIS_(time, node, times, recovery_times, S, I, status):
 
 def fast_SIS(G, tau, gamma, initial_infecteds=None, rho=None, tmin=0, tmax=100,
              transmission_weight=None, recovery_weight=None,
-             return_full_data=False):
+             return_full_data=False, seed=None, probability=None):
     r'''Fast SIS simulations for epidemics on weighted or unweighted
     networks, allowing edge and node weights to scale the transmission
     and recovery rates.  Assumes exponentially distributed times to recovery
@@ -2546,7 +2553,8 @@ def fast_SIS(G, tau, gamma, initial_infecteds=None, rho=None, tmin=0, tmax=100,
               args={'G': G, 'source': None, 'target': u, 'times': times,
                     'S': S, 'I': I, 'Q': Q, 'status': status, 'rec_time': rec_time, 'infection_times': infection_times,
                     'recovery_times': recovery_times, 'transmissions': transmissions,
-                    'trans_rate_fxn': trans_rate_fxn, 'rec_rate_fxn': rec_rate_fxn}
+                    'trans_rate_fxn': trans_rate_fxn, 'rec_rate_fxn': rec_rate_fxn, 'seed': seed,
+                    'probability': probability}
         )
     while Q:
         Q.pop_and_run()

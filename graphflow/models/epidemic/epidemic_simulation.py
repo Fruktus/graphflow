@@ -7,8 +7,10 @@ from graphflow.models.epidemic import epidemic_runner
 class Simulation:
     simulation_params: epidemic_runner.ExperimentParameters
 
-    def __init__(self, sim_params):
+    def __init__(self, sim_params, seed=None, probability=None):
         self.simulation_params = sim_params
+        self.seed = seed
+        self.probability = probability
 
     def get_network(self):
         return self.simulation_params.network
@@ -25,7 +27,9 @@ class Simulation:
                                   tmax=float('Inf'),
                                   transmission_weight=None,
                                   recovery_weight=None,
-                                  return_full_data=True)
+                                  return_full_data=True,
+                                  seed=self.seed,
+                                  probability=self.probability)
 
         elif self.simulation_params.simulation_type == epidemic_runner.EpidemicSimulationType.SIS:
             simulation = fast_SIS(self.simulation_params.network,
@@ -37,7 +41,10 @@ class Simulation:
                                   tmax=self.simulation_params.tmax,
                                   transmission_weight=None,
                                   recovery_weight=None,
-                                  return_full_data=True)
+                                  return_full_data=True,
+                                  seed=self.seed,
+                                  probability=self.probability
+                                  )
 
         else:
             raise NotImplementedError
