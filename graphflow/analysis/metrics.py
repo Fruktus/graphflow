@@ -25,6 +25,7 @@ Returns:
 
 import networkx as nx
 
+
 # general metrics
 def static_degree_centrality(network: nx.Graph):
     r"""Compute the degree centrality for nodes.

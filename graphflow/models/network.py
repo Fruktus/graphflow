@@ -20,8 +20,7 @@ class Network(ABC):
     _model: str
     _is_calculated: bool = False
     _metrics: [str] = None
-    _calculated_networks = {}
-    _calculated_metrics = {}
+    _dynamic_metrics = {}
     _static_metrics = {}
 
     @property
