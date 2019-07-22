@@ -3,7 +3,6 @@ import webbrowser
 from pathlib import Path
 import holoviews as hv
 
-from graphflow.analysis.metric_utils import apply_all_metrics
 from graphflow.models.network import Network
 from graphflow.models.simple import simple_model_utils
 from graphflow.models.simple.simple_model import SimpleFlowNetwork
@@ -43,12 +42,12 @@ class SimpleNetwork(Network):
 
     def calculate(self):
         new_network = self.__network.calculate_network_state()
-        # dict of calculated networks - {time:network}
+        # dict of calculated networks - {time: network}
         self._calculated_networks[0.0] = simple_flow_network_to_nxnetwork(new_network)
 
         self._is_calculated = True
         self._apply_static_metrics(self._calculated_networks[0.0])
-        self._apply_dynamic_metrics()
+        self._apply_dynamic_metrics(self._calculated_networks[0.0])
 
 
 def simple_flow_network_to_nxnetwork(network: SimpleFlowNetwork):

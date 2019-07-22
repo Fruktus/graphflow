@@ -4,6 +4,7 @@ from tkinter import Tk, ttk, filedialog, Button, messagebox, Entry, Label
 import tkinter as tk
 import re
 
+from graphflow.analysis.metric_utils import metric_list
 from graphflow.models.epanet.epanet_model import SimulationType
 from graphflow.models.epanet.epanet_network import EpanetNetwork
 from graphflow.models.epidemic.epidemic_network import EpidemicNetwork
@@ -272,16 +273,10 @@ class Gui:
 
     @staticmethod
     def _generate_metrics_checklist(frame, epidemic=False):
-        # metrics = ("Author", "John", "Mohan", "James", "Ankur", "Robert")
-        metrics = dir(mtr)
-        regex = re.compile('__*')
-        metrics = [x for x in metrics if not regex.match(x)]
-        metrics.remove('nx')
+        metrics = metric_list()
 
         if epidemic:
-            metrics.append('estimate_SIR_probability')
-            metrics.append('infected_neighbours')
-            metrics.append('estimate_infection_times')
+            metrics += metric_list(model='general')
 
         return ChecklistBox(frame, metrics, bd=1, relief="sunken", background="white")
 
