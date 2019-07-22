@@ -67,7 +67,7 @@ class EpidemicNetwork(Network):
             self.__R = [0 for _ in self.__time_steps]
 
         nx_network = self.get_nx_network()
-        self._apply_static_metrics()
+        self._apply_static_metrics(nx_network)
 
         for key in list(nx_network.graph.keys()):
             del nx_network.graph[key]
