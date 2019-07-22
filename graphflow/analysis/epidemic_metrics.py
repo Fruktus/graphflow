@@ -3,20 +3,30 @@ from sys import maxsize
 
 import networkx as nx
 from EoN import estimate_SIR_prob_size
-from EoN import Simulation_Investigation
+
+# TODO change all metrics so that they work according to docstrings, add static/dynamic to each function
 
 
-def estimate_sir_size(network, trans_prob=0.5):
-    """Calculates estimated sir outbreak size
+def estimate_sir_size(network, **kwargs):
+    """
+    Calculates estimated sir outbreak size
     Args:
         network: networkx graph
-        trans_prob: float (0-1), probability of disease spreading further
+        **kwargs:
+            trans_prob: float (0-1), probability of disease spreading further
 
         Raises:
             ValueError: Network is not calculated
 
     Returns:
-         float: value between 0 and 1 estimating probability and proportion of infected"""
+         float: value between 0 and 1 estimating probability and proportion of infected
+
+    See Also:
+        'graphflow.analysis.metrics'
+    """
+
+    trans_prob = kwargs.get('trans_prob', 0.5)
+
     return estimate_SIR_prob_size(network, trans_prob)[0]
     # Uses percolation to estimate the probability
     # and size of epidemics assuming constant transmission probability p
@@ -39,13 +49,21 @@ def estimate_sir_size(network, trans_prob=0.5):
 #             statuses[node][eon_investigation.node_status(nb, time=time)] += 1
 #     return statuses
 
-def infected_neighbours(network: nx.Graph):
-    """Counts infected, recovered and susceptible neighbours for all nodes
+def infected_neighbours(network: nx.Graph, **kwargs):
+    """
+    Counts infected, recovered and susceptible neighbours for all nodes
     Args:
         network: networkx Graph
-
+        **kwargs:
+            state (dict): Required if `network` doesn't have 'state' for each node. See: 'graphflow.analysis.metrics'
     Returns:
-        dict: dictionary keyed by nodes id into dict of neighbours counts with given status (S,I,R)"""
+        dict: dictionary keyed by nodes id into dict of neighbours counts with given status (S,I,R)
+
+    See Also:
+        'graphflow.analysis.metrics'
+    """
+    state = kwargs.get('state')
+
     statuses = {}
     for node in network.nodes():
         statuses[node] = {'S': 0, 'I': 0, 'R': 0}
@@ -59,15 +77,22 @@ def infected_neighbours(network: nx.Graph):
     return statuses
 
 
-def estimate_infection_times(network: nx.Graph, time: float, eon_investigation: Simulation_Investigation):
+def estimate_infection_times(network: nx.Graph, **kwargs):
     """Uses average shortest paths to estimate time in steps to infection of given node
         Args:
             network: networkx Graph
-            time: point in time to calculate metric for
-            eon_investigation: object containing history data for all nodes
+            **kwargs:
+                time: point in time to calculate metric for
+                eon_investigation: object containing history data for all nodes
 
         Returns:
-            dict: dictionary keyed by nodes id into estimate"""
+            dict: dictionary keyed by nodes id into estimate
+
+        See Also:
+            'graphflow.analysis.metrics'
+        """
+    state = kwargs.get('state')
+
     # use nx to get all shortest paths, use eon for estimating probability of infection
     estimates = {}
     for node in network.nodes():

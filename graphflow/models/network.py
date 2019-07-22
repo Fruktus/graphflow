@@ -15,12 +15,13 @@ class Network(ABC):
     """
     Abstract class for every model (simple, extended, epidemic, epanet)
 
-    Delivers easy to use interface for every model.
+    Delivers easy to use interface and unified for every model.
     """
+
     _model: str
     _is_calculated: bool = False
-    _metrics: [str] = None
-    _dynamic_metrics = {}
+    _metrics: [str]
+    _calculated_networks = {}
     _static_metrics = {}
 
     @property
@@ -37,24 +38,6 @@ class Network(ABC):
     def metrics(self):
         """Returns used metrics as list of strings"""
         return self._metrics
-
-    @property
-    def calculated_metrics(self):
-        """
-        Returns calculated metrics
-
-        Raises:
-            ValueError: Network is not calculated
-        """
-        if not self.is_calculated:
-            raise ValueError("Network not calculated")
-        return self._calculated_metrics
-
-    @property
-    def calculated_networks(self):
-        if not self.is_calculated:
-            raise ValueError("Network not calculated")
-        return self._calculated_networks
 
     @abstractmethod
     def get_nx_network(self):
@@ -76,11 +59,11 @@ class Network(ABC):
         if not self.is_calculated:
             raise ValueError("Network not calculated.")
 
-        layout = self._get_hv_network()
+        layout = self._get_hv_network() + self._get_metrics_plot()
 
         filename = "graph.html"
         hv.save(layout, filename, backend='bokeh')
-        self._add_metric_list(filename)
+        self._add_metric_list(filename, self._static_metrics)
         webbrowser.open(filename)
 
     def export(self, filename: str):
@@ -122,8 +105,8 @@ class Network(ABC):
 
     def _apply_static_metrics(self, network):
         """
-        Applies all static metrics to `network` as attributes and fills
-        `_static_metrics` dictionary with not node specific metrics.
+        Applies all static metrics to `network` as attributes and fills `_static_metrics` dictionary with not node
+        specific metrics.
         """
         if not self.metrics:
             return
@@ -137,27 +120,25 @@ class Network(ABC):
                 else:
                     self._static_metrics[name] = value
 
-    def _apply_dynamic_metrics(self):
+    def _apply_dynamic_metrics(self, network):
         """
-        Applies all dynamic metrics to `_calculated_graphs` dictionary as node attributes and not node specific
-        metrics as graph attributes
+        Applies all dynamic metrics to `network` as node attributes and not node specific metrics as graph attributes
         """
         if not self.metrics:
             return
 
         funs = []
         for name in self.metrics:
-            fun, model, metric_type = get_metric(name, details=True)
+            fun, _, metric_type = get_metric(name, details=True)
             if metric_type == 'dynamic':
                 funs.append(fun)
 
-        for network in self.calculated_networks:
-            for fun in funs:
-                value = fun(network)
-                if isinstance(value, dict):
-                    nx.set_node_attributes(network, value, name)
-                else:
-                    network.graph[name] = value
+        for fun, name in zip(funs, self.metrics):
+            value = fun(network)
+            if isinstance(value, dict):
+                nx.set_node_attributes(network, value, name)
+            else:
+                network.graph[name] = value
 
     def _get_hv_network(self, color_by=None, color_map=None):
         """
@@ -190,16 +171,42 @@ class Network(ABC):
 
         return holomap
 
-    def _add_metric_list(self, path_to_html):
+    def _get_metrics_plot(self, color_map: dict = {}, label_map: dict = {}):
         """
-        Appends to html list of all not node specific metrics.
+            Creates holoviews plot for every not node specific metric over time
 
-        Html is should have been created before and should already contain network visualization.
+        Returns:
+            holoviews.HoloMap: holoviews object representing plot
+
+        """
+        metric_names = [name for name in next(iter(self._calculated_networks.values())).graph.keys()]
+        curve_dict = {}
+        for metric_name in metric_names:
+            name = label_map.get(metric_name, metric_name)
+            curve_dict[name] = hv.Curve((list(self._calculated_networks.keys()),
+                                                list(map(lambda x: x.graph[metric_name],
+                                                         self._calculated_networks.values()))),
+                                               kdims='Time', vdims='Value')
+            if metric_name in color_map:
+                curve_dict[name].opts(color=color_map[metric_name])
+
+        ndoverlay = hv.NdOverlay(curve_dict)
+        distribution = hv.HoloMap({i: (ndoverlay * hv.VLine(i)).relabel(group='Metrics')
+                                   for i in self._calculated_networks.keys()}, kdims='Time')\
+            .opts(width=400, height=400, padding=0.1)
+
+        return distribution
+
+    def _add_metric_list(self, path_to_html: str, metrics_to_add: dict):
+        """
+        Appends to html list of all metrics
+
+        Html should have been created before and should already contain network visualization.
 
         Args:
             path_to_html: path to html to append
-
+            metrics_to_add: dictionary of metrics to add {name: value}
         """
         with open(path_to_html, "a") as file:
-            for name, metric in self._static_metrics.values():
+            for name, metric in metrics_to_add.items():
                 file.write("{}: {}<br>".format(name, metric))

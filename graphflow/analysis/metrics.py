@@ -15,6 +15,10 @@ Each metric is function with similar pattern:
 
 Args:
     network (graph): NetworkX graph on which metric will be calculated
+    **kwargs: Some metrics (not in this file) require additional arguments. Most common is:
+        state (dict): Required if `network` doesn't have certain attribute for each node (atribute depend on metric).
+        Dictionary of node state. Key is node ID, value is node state represented as another dictionary
+        {name: value} where name is attribute name, value is its value
 
 Returns:
     One of the following (depending on metric):

@@ -1,7 +1,6 @@
 # pylint: skip-file
 from pathlib import Path
 
-from graphflow.analysis.metric_utils import apply_all_metrics
 from graphflow.models.network import Network
 from graphflow.models.extended import extended_model_utils
 from graphflow.models.extended.extended_model import ExtendedFlowNetwork
