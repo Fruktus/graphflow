@@ -13,7 +13,7 @@ class ExtendedNetwork(Network):
     Args:
         path_to_network: path to file containing network in JSON format.
         metrics: used metrics as list of strings. Each name has to be name of one of the functions in on of the
-            ``graphflow.analysis.metrics.py`` file
+            ``graphflow.analysis.metrics`` file
         *args: not used in this model
         **kwargs: not used in this model
 
