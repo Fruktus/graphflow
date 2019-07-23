@@ -68,7 +68,7 @@ class myQueue(object):
         if 'seed' in args:
             args.pop('seed')
             args.pop('probability')
-        if 'status' in args and 'G' in args:
+        if 'status' in args and 'G' in args and self.seed:
             _random_change_status(args['G'], self.probability)
 
         function(t, **args)
