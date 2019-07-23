@@ -103,4 +103,5 @@ class EpidemicNetwork(Network):
         filename = "graph.html"
         hv.save(layout, filename, backend='bokeh')
         self._add_metric_list(filename, self._static_metrics)
+        lg.info('visualization done')
         webbrowser.open(filename)

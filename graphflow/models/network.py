@@ -167,7 +167,7 @@ class Network(ABC):
                     .opts(node_color=color_by)
             graph_dict[time] = graph
 
-        holomap = hv.HoloMap(graph_dict, kdims='Time').opts(width=400, height=400, padding=0.1).relabel(group='Network')
+        holomap = hv.HoloMap(graph_dict, kdims='Time').opts(width=700, height=700, padding=0.1).relabel(group='Network')
 
         return holomap
 
