@@ -12,7 +12,7 @@ class EpanetNetwork(Network):
     Args:
         path_to_network: Path to file containing network in inp format.
         metrics: Used metrics as list of strings. Each name has to be name of one of the functions in on of the
-            ``graphflow.analysis.metrics.py`` file
+            ``graphflow.analysis.metrics`` file
         *args: Only first one used to specify simulation type
             type (epanet_model.SimulationType): Simulation type. Can be one of: ``EARTHQUAKE``, ``PRESSURE``
             or ``QUALITY``
