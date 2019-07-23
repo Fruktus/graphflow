@@ -1,10 +1,8 @@
-"""Metrics for epidemic model. See `graphflow.analysis.metrics.py` for details."""
+"""Metrics for epidemic model. See `graphflow.analysis.metrics` for details."""
 from sys import maxsize
 
 import networkx as nx
 from EoN import estimate_SIR_prob_size
-
-# TODO change all metrics so that they work according to docstrings, add static/dynamic to each function
 
 
 def estimate_sir_size(network, **kwargs):
@@ -12,11 +10,13 @@ def estimate_sir_size(network, **kwargs):
     Calculates estimated sir outbreak size
     Args:
         network: networkx graph
-        **kwargs:
-            trans_prob: float (0-1), probability of disease spreading further
+        **kwargs: See below
 
         Raises:
             ValueError: Network is not calculated
+
+    Keyword Args:
+        trans_prob: float (0-1), probability of disease spreading further
 
     Returns:
          float: value between 0 and 1 estimating probability and proportion of infected
@@ -54,15 +54,17 @@ def infected_neighbours(network: nx.Graph, **kwargs):
     Counts infected, recovered and susceptible neighbours for all nodes
     Args:
         network: networkx Graph
-        **kwargs:
-            state (dict): Required if `network` doesn't have 'state' for each node. See: 'graphflow.analysis.metrics'
+        **kwargs: See below
+
+    Keyword Args:
+        state (dict): Required if `network` doesn't have 'state' for each node. See: 'graphflow.analysis.metrics'
+
     Returns:
         dict: dictionary keyed by nodes id into dict of neighbours counts with given status (S,I,R)
 
     See Also:
         'graphflow.analysis.metrics'
     """
-    state = kwargs.get('state')
 
     statuses = {}
     for node in network.nodes():
@@ -81,9 +83,11 @@ def estimate_infection_times(network: nx.Graph, **kwargs):
     """Uses average shortest paths to estimate time in steps to infection of given node
         Args:
             network: networkx Graph
-            **kwargs:
-                time: point in time to calculate metric for
-                eon_investigation: object containing history data for all nodes
+            **kwargs: See below
+
+        Keyword Args:
+            time: point in time to calculate metric for
+            eon_investigation: object containing history data for all nodes
 
         Returns:
             dict: dictionary keyed by nodes id into estimate
@@ -91,7 +95,8 @@ def estimate_infection_times(network: nx.Graph, **kwargs):
         See Also:
             'graphflow.analysis.metrics'
         """
-    state = kwargs.get('state')
+    time = kwargs.get('time')
+    eon_investigation = kwargs.get('eon_investigation')
 
     # use nx to get all shortest paths, use eon for estimating probability of infection
     estimates = {}

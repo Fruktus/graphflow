@@ -74,8 +74,8 @@ def metric_list(model: str = 'general', metric_type: str = 'all'):
     Returns list of available metrics
 
     Each metric is different function in one of the modules:
-     - `graphflow.analysis.metrics.py` - contains detailed description of metrics
-     - `graphflow.analysis.epidemic_metrics.py`
+     - `graphflow.analysis.metrics` - contains detailed description of metrics
+     - `graphflow.analysis.epidemic_metrics`
 
     Args:
         model: Network model. Can be one of 'simple', 'extended', 'epidemic', 'epanet', 'general' or 'all'. Choosing
@@ -89,7 +89,7 @@ def metric_list(model: str = 'general', metric_type: str = 'all'):
         ValueError: Wrong argument - either ``metric_type`` or ``model``
 
     See Also:
-        graphflow.analysis.metrics.py
+        graphflow.analysis.metrics
     """
 
     if model == 'general':
