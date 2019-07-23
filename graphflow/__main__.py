@@ -58,7 +58,7 @@ def main():
     epidemic_subparser.add_argument('--transmission_rate', help='transmission rate', type=float, default=2.0)
     epidemic_subparser.add_argument('--recovery_rate', help='recovery rate', type=float, default=1.0)
     epidemic_subparser.add_argument('--transmission_probability', help='transmission_probability',
-                                    type=float, default=0.6)
+                                    type=float, default=0.2)
     epidemic_subparser.add_argument('--max_time', '-t', help='max simulation time, ', type=float, default=2.0)
     epidemic_subparser.add_argument('--metric', '-m', action='append',
                                     help='metric to use, can be specified multiple times')
