@@ -1,6 +1,7 @@
 import argparse
 import os
 import sys
+import logging
 
 from pathlib import Path
 
@@ -14,6 +15,7 @@ from graphflow.visualisation.gui import Gui
 
 
 def main():
+    logging.basicConfig(level=logging.INFO, format='{asctime} {name:<10} {levelname:10s} {message}', style='{')
     parser = argparse.ArgumentParser('python3 -m graphflow', fromfile_prefix_chars='@')
     subparser = parser.add_subparsers(help='network models', dest='network_model')
 
