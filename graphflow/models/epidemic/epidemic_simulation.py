@@ -30,7 +30,8 @@ class Simulation:
                                   transmission_weight=None,
                                   recovery_weight=None,
                                   return_full_data=True,
-                                  )
+                                  seed=self.seed,
+                                  probability=self.probability)
 
         elif self.simulation_params.simulation_type == epidemic_runner.EpidemicSimulationType.SIS and \
                 self.simulation_params.algorithm == epidemic_runner.Algorithm.FAST:

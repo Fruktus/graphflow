@@ -47,11 +47,13 @@ class myQueue(object):
     Previously I used a class of events, but sorting using the __lt__ function
     I wrote was significantly slower than simply using tuples.
     '''
-    def __init__(self, tmax=float("Inf")):
+    def __init__(self, tmax=float("Inf"), seed=None, probability=0.5):
         self._Q_ = []
         self.tmax = tmax
         self.counter = 0  # tie-breaker for putting things in priority queue
-        self.randinit = False
+        self.seed = seed
+        self.probability = 0.5
+        random.seed(self.seed)
 
     def add(self, time, function, args={}):
         r'''time is the time of the event.  args are the arguments of the
@@ -63,18 +65,12 @@ class myQueue(object):
     def pop_and_run(self):
         r'''Pops the next event off the queue and performs the function'''
         t, counter, function, args = heapq.heappop(self._Q_)
-
         if 'seed' in args:
-            if 'status' in args and args['seed']:
-                if not self.randinit:
-                    random.seed(args.seed)
-                    self.randinit = True
-                probability = 50 if not args['probability'] else args['probability']
-                if random.randint(100) > probability:
-                    args.status = 'I'
             args.pop('seed')
             args.pop('probability')
-        # print(function, ' ', args)
+        if 'status' in args and 'G' in args and self.seed:
+            _random_change_status(args['G'], self.probability)
+
         function(t, **args)
 
     def __len__(self):
@@ -216,6 +212,17 @@ class _ListDict_(object):
 
     def update_total_weight(self):
         self._total_weight = sum(self.weight[item] for item in self.items)
+
+
+def _random_change_status(nxnet: nx.Graph, probability: float, retries: int = 4):
+    nodes = list(nxnet.nodes(data=True))
+    if random.random() > 1-probability:
+        for i in range(retries):
+            node = nodes[random.randint(0, len(nodes) - 1)]
+            if node[1]['infected'] != 1:
+                attr = {node[0]: {'infected': 1, 'recovered': 0}}
+                nx.set_node_attributes(nxnet, attr)
+                break
 
 
 def _transform_to_node_history_(infection_times, recovery_times, tmin, SIR=True):
@@ -1658,7 +1665,7 @@ def _process_trans_SIR_(time, G, source, target, times, S, I, R, Q, status,
             inf_time = time + trans_delay[v]
             if inf_time <= rec_time[target] and inf_time < pred_inf_time[v] and inf_time <= Q.tmax:
                 Q.add(inf_time, _process_trans_SIR_,
-                      args={'G': G, 'target': target, 'source': v, 'times': times, 'S': S, 'I': I, 'R': R, 'Q': Q,
+                      args={'G': G, 'source': target, 'target': v, 'times': times, 'S': S, 'I': I, 'R': R, 'Q': Q,
                             'status': status, 'rec_time': rec_time, 'pred_inf_time': pred_inf_time,
                             'transmissions': transmissions, 'trans_and_rec_time_fxn': trans_and_rec_time_fxn,
                             'trans_and_rec_time_args': trans_and_rec_time_args
@@ -1895,7 +1902,8 @@ def fast_SIR(G, tau, gamma, initial_infecteds=None, initial_recovereds=None,
                                   initial_infecteds=initial_infecteds,
                                   initial_recovereds=initial_recovereds,
                                   rho=rho, tmin=tmin, tmax=tmax,
-                                  return_full_data=return_full_data)
+                                  return_full_data=return_full_data,
+                                  seed=seed, probability=probability)
 
 
 def fast_nonMarkov_SIR(G, trans_time_fxn=None,
@@ -2100,7 +2108,7 @@ def fast_nonMarkov_SIR(G, trans_time_fxn=None,
     # infection time defaults to \infty  --- this could be set to tmax,
     # probably with a slight improvement to performance.
 
-    Q = myQueue(tmax)
+    Q = myQueue(tmax, seed, probability)
 
     if initial_infecteds is None:  # create initial infecteds list if not given
         if rho is None:
@@ -2250,7 +2258,7 @@ def _process_trans_SIS_Markov(time, G, source, target, times, S, I, Q,
             _find_next_trans_SIS_Markov(Q, time, trans_rate_fxn(target, v),
                                         target, v, status, rec_time,
                                         trans_event_args=
-                                        {'G': G, 'target': target, 'source': v, 'times': times, 'S': S, 'I': I, 'Q': Q,
+                                        {'G': G, 'source': target, 'target': v, 'times': times, 'S': S, 'I': I, 'Q': Q,
                                          'status': status, 'rec_time': rec_time, 'infection_times': infection_times,
                                          'recovery_times': recovery_times, 'transmissions': transmissions,
                                          'trans_rate_fxn': trans_rate_fxn, 'rec_rate_fxn': rec_rate_fxn
@@ -2346,7 +2354,7 @@ def _process_trans_SIS_nonMarkov_(time, G, source, target, future_transmissions,
                 following_transmissions = trans_times[1:]
                 if trans_times:  # no point adding any if there are none
                     Q.add(trans_times[0], _process_trans_SIS_nonMarkov_,
-                          args={'G': G, 'target': target, 'source': v, 'future_transmissions': following_transmissions,
+                          args={'G': G, 'source': target, 'target': v, 'future_transmissions': following_transmissions,
                                 'times': times, 'S': S, 'I': I, 'Q': Q, 'status': status, 'rec_time': rec_time,
                                 'infection_times': infection_times, 'recovery_times': recovery_times,
                                 'transmissions': transmissions, 'trans_and_rec_time_fxn': trans_and_rec_time_fxn,
