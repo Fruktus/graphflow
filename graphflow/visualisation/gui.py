@@ -11,6 +11,8 @@ from graphflow.models.extended.extended_network import ExtendedNetwork
 
 from graphflow.models.simple.simple_network import SimpleNetwork
 
+# TODO change epidemic GUI: four possibilities - fast_sir, fast_sis, discrete_sir, discrete_sis. Args:
+#  for fast - no changes, for discrete - instead of transmission_rate and recovery_rate - transmission_probability
 
 class ChecklistBox(tk.Frame):
     def __init__(self, parent, choices, **kwargs):

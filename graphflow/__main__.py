@@ -53,10 +53,13 @@ def main():
     epidemic_subparser = subparser.add_parser('epidemic')
     epidemic_subparser.add_argument('path_to_network_file',
                                     help='path to network file which represents network in gml format')
-    epidemic_subparser.add_argument('type', help='simulation type - sir or sis, ')
-    epidemic_subparser.add_argument('-transrate', help='transmission rate, ', type=float, default=2.0)
-    epidemic_subparser.add_argument('-recrate', help='recovery rate, ', type=float, default=1.0)
-    epidemic_subparser.add_argument('-tmax', help='max simulation time, ', type=int, default=2)
+    epidemic_subparser.add_argument('simulation_type', help='simulation type - sir or sis')
+    epidemic_subparser.add_argument('algorithm', help='Algorithm to use - fast or discrete')
+    epidemic_subparser.add_argument('--transmission_rate', help='transmission rate', type=float, default=2.0)
+    epidemic_subparser.add_argument('--recovery_rate', help='recovery rate', type=float, default=1.0)
+    epidemic_subparser.add_argument('--transmission_probability', help='transmission_probability',
+                                    type=float, default=0.6)
+    epidemic_subparser.add_argument('--max_time', '-t', help='max simulation time, ', type=float, default=2.0)
     epidemic_subparser.add_argument('--metric', '-m', action='append',
                                     help='metric to use, can be specified multiple times')
     epidemic_subparser.add_argument('--visualize', action='store_true', default=False,
@@ -137,7 +140,12 @@ def __run_epanet(args):
 def __run_epidemic(args):
 
     network = EpidemicNetwork(args.path_to_network_file, args.metric,
-                              args.type, args.transrate, args.recrate, args.tmax)
+                              simulation_type=args.simulation_type,
+                              algorithm=args.algorithm,
+                              transmission_rate=args.transmission_rate,
+                              recovery_rate=args.recovery_rate,
+                              transmission_probability=args.transmission_probability,
+                              max_time=args.max_time)
 
     network.calculate()
 

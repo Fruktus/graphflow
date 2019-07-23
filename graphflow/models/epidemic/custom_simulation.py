@@ -652,7 +652,7 @@ def basic_discrete_SIS(G, p, initial_infecteds=None, rho=None,
     # else it is assumed to be a list of nodes.
 
     if return_full_data:
-        transmissions = {}
+        transmissions = []
         node_history = defaultdict(lambda: ([tmin], ['S']))
         for u in initial_infecteds:
             node_history[u] = ([tmin], ['I'])
