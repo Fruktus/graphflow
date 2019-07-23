@@ -1,6 +1,7 @@
 # pylint: skip-file
 import webbrowser
 from copy import deepcopy
+import logging as lg
 
 import networkx as nx
 import holoviews as hv
@@ -8,6 +9,8 @@ import holoviews as hv
 from graphflow.models.epidemic.epidemic_runner import Parser
 from graphflow.models.epidemic.epidemic_simulation import Simulation
 from graphflow.models.network import Network
+
+lg.getLogger('epidemic')
 
 
 class EpidemicNetwork(Network):
@@ -52,7 +55,7 @@ class EpidemicNetwork(Network):
         return self.__my_sim.get_network()
 
     def calculate(self):
-
+        lg.info('starting calculation')
         self.__simulation_investigation = self.__my_sim.run_simulation()
 
         if self.__simulation_investigation.SIR:
@@ -85,8 +88,10 @@ class EpidemicNetwork(Network):
             nx.set_node_attributes(self._calculated_networks[time], statuses, 'status')
 
         self._is_calculated = True
+        lg.info('calculation complete')
 
     def visualize(self):
+        lg.info('starting visualization')
         if not self.is_calculated:
             raise ValueError("Network not calculated.")
 

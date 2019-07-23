@@ -30,6 +30,8 @@ class Simulation:
                                   return_full_data=True,
                                   seed=self.seed,
                                   probability=self.probability)
+                                  # seed=self.seed,
+                                  # probability=self.probability)
 
         elif self.simulation_params.simulation_type == epidemic_runner.EpidemicSimulationType.SIS:
             simulation = fast_SIS(self.simulation_params.network,
