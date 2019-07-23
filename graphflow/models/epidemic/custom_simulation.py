@@ -304,7 +304,7 @@ def _simple_test_transmission_(u, v, p):
     return random.random() < p
 
 
-def discrete_SIR(G, test_transmission=_simple_test_transmission_, args={},
+def discrete_SIR(G, test_transmission=_simple_test_transmission_, args=(),
                  initial_infecteds=None, initial_recovereds=None,
                  rho=None, tmin=0, tmax=float('Inf'),
                  return_full_data=False):
@@ -457,11 +457,11 @@ def discrete_SIR(G, test_transmission=_simple_test_transmission_, args={},
         infector = {}  # used for returning full data.  a waste of time otherwise
         for u in infecteds:
             for v in G.neighbors(u):
-                if susceptible[v] and test_transmission(u, v, **args):
+                if susceptible[v] and test_transmission(u, v, *args):
                     new_infecteds.add(v)
                     susceptible[v] = False
                     infector[v] = [u]
-                elif return_full_data and v in new_infecteds and test_transmission(u, v, **args):
+                elif return_full_data and v in new_infecteds and test_transmission(u, v, *args):
                     infector[v].append(u)
 
         if return_full_data:
@@ -656,7 +656,7 @@ def basic_discrete_SIS(G, p, initial_infecteds=None, rho=None,
         node_history = defaultdict(lambda: ([tmin], ['S']))
         for u in initial_infecteds:
             node_history[u] = ([tmin], ['I'])
-            transmissions.append(tmin, None, u)
+            transmissions.append((tmin, None, u))
     N = G.order()
     t = [tmin]
     S = [N - len(initial_infecteds)]
@@ -671,7 +671,7 @@ def basic_discrete_SIS(G, p, initial_infecteds=None, rho=None,
                 if v not in infecteds and random.random() < p:
                     if v not in new_infecteds:
                         new_infecteds.add(v)
-                        infector[v] = u
+                        infector[v] = [u]
                     else:
                         infector[v].append(u)
 
