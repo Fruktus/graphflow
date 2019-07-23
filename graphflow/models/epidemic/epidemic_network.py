@@ -92,10 +92,11 @@ class EpidemicNetwork(Network):
             if self.__simulation_investigation.SIR:
                 self._calculated_networks[time].graph['R'] = r
 
-            self._apply_dynamic_metrics(self._calculated_networks[time])
-
             statuses = self.__simulation_investigation.get_statuses(time=time)
             nx.set_node_attributes(self._calculated_networks[time], statuses, 'status')
+
+            # this method uses 'status' attribute added in two previous lines
+            self._apply_dynamic_metrics(self._calculated_networks[time])
 
         self._is_calculated = True
         lg.info('calculation complete')
