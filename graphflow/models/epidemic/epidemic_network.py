@@ -19,15 +19,21 @@ class EpidemicNetwork(Network):
             (for SIR ans SIS) and 'recovered' (for SIR only). Each of them is either 0 or 1.
         metrics: Used metrics as list of strings. Each name has to be name of one of the functions in on of the
             ``graphflow.analysis.metrics.py`` and ``graphflow.analysis.epidemic_metrics.py`` files
-        *args: Specify model (SIR or SIS) and simulation parameters:
-            model (str): 'sis' or 'sir'
-            transmission (float): Transmission rate per edge
-            recovery (float): Recovery rate per node
-            maxtime (int): Maximal simulation time. Not used in SIR model.
-        **kwargs: Not used in this model
+        *args: Not used in this model
+        **kwargs: See below
+
+    Keyword Args:
+        simulation_type (str): Required. 'sis' or 'sir'
+        algorithm (str): Required. 'fast' or 'discrete'
+        transmission_rate (float): Required for **fast** algorithm. Transmission rate per edge
+        recovery_rate (float): Required for **fast** algorithm. Recovery rate per node
+        transmission_probability (float): Required for **discrete** algorithm. Transmission probability
+        max_time (float): Maximal simulation time. Defaults to `Inf`. It has to be specified for SIS model since or it will
+            run infinitely.
 
     Examples:
-        >>> network = EpidemicNetwork('network.txt', ['degree_centrality', 'diameter'], 'sis', 2.0, 1.0, 2)
+        >>> network = EpidemicNetwork('network.txt', ['degree_centrality', 'diameter'], simulation_type='sis', \
+        ... algorithm='fast', transmission_rate=2.0, recovery_rate=1.0, max_time=2.0)
         >>> network.calculate()
         >>> network.visualize()
         >>> network.export('exported.csv')
@@ -37,13 +43,17 @@ class EpidemicNetwork(Network):
         self._model = 'epidemic'
         self._metrics = metrics
         self.__simulation_investigation = None
-        self.__time_steps = None
-        self.__S = None
-        self.__I = None
-        self.__R = None
+        self.__transmission_rate = kwargs.get('transmission_rate', None)
+        self.__recovery_rate = kwargs.get('recovery_rate', None)
+        self.__transmission_probability = kwargs.get('transmission_probability', None)
+        self.__max_time = kwargs.get('max_time', float('Inf'))
 
         epidemic_params = Parser()
-        epidemic_params.parse_input(args[0], path_to_network, *args[1:])
+        epidemic_params.parse_input(kwargs.get('simulation_type'), kwargs.get('algorithm'), path_to_network,
+                                    transmission_rate=self.__transmission_rate,
+                                    recovery_rate=self.__recovery_rate,
+                                    transmission_probability=self.__transmission_probability,
+                                    max_time=self.__max_time)
         simulation_config = epidemic_params.get_simulation_config()
 
         self.__my_sim = Simulation(simulation_config)
@@ -56,14 +66,14 @@ class EpidemicNetwork(Network):
         self.__simulation_investigation = self.__my_sim.run_simulation()
 
         if self.__simulation_investigation.SIR:
-            self.__time_steps, self.__S, self.__I, self.__R = self.__simulation_investigation.summary()
-            self.__time_steps = self.__time_steps[1:]
-            self.__S = self.__S[1:]
-            self.__I = self.__I[1:]
-            self.__R = self.__R[1:]
+            time_steps, S, I, R = self.__simulation_investigation.summary()
+            time_steps = time_steps[1:]
+            S = S[1:]
+            I = I[1:]
+            R = R[1:]
         else:
-            self.__time_steps, self.__S, self.__I = self.__simulation_investigation.summary()
-            self.__R = [0 for _ in self.__time_steps]
+            time_steps, S, I = self.__simulation_investigation.summary()
+            R = [0 for _ in time_steps]
 
         nx_network = self.get_nx_network()
         self._apply_static_metrics(nx_network)
@@ -71,7 +81,7 @@ class EpidemicNetwork(Network):
         for key in list(nx_network.graph.keys()):
             del nx_network.graph[key]
 
-        for time, s, i, r in zip(self.__time_steps, self.__S, self.__I, self.__R):
+        for time, s, i, r in zip(time_steps, S, I, R):
             self._calculated_networks[time] = deepcopy(nx_network)
 
             self._calculated_networks[time].graph['S'] = s

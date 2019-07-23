@@ -23,6 +23,7 @@ class Network(ABC):
     _metrics: [str]
     _calculated_networks = {}
     _static_metrics = {}
+    _network_properties = {}
 
     @property
     def model(self):
@@ -102,6 +103,9 @@ class Network(ABC):
                     for _, value in nodes.items():
                         row.append(value)
                     writer.writerow(row)
+
+    # TODO- change next 2 methods so that they use calculate_metric() function.
+    #  Also add kwargs to them (self._network_properties)
 
     def _apply_static_metrics(self, network):
         """
