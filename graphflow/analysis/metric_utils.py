@@ -43,17 +43,16 @@ def calculate_metric(name: str, network: nx.Graph, **kwargs):
     # it needs to be changed when new files with metrics are added
     if model == 'epidemic':
         return metric(network, **kwargs)
-    else:
-        return metric(network)
+    return metric(network)
 
 
-def calculate_metric_list(network: nx.Graph, metric_list):
+def calculate_metric_list(network: nx.Graph, metrics):
     """
     Same as calculate metric but accepts iterable of names (as strings)
 
     Args:
         network: networkx graph
-        metric_list: iterable of metrics
+        metrics: iterable of metrics
 
     Returns:
         list: list of calculated metrics
@@ -63,7 +62,7 @@ def calculate_metric_list(network: nx.Graph, metric_list):
     """
 
     arr = []
-    for i in metric_list:
+    for i in metrics:
         res = calculate_metric(i, network)
         if res:
             arr.append(res)
