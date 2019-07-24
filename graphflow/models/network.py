@@ -8,7 +8,7 @@ from abc import ABC, abstractmethod
 import networkx as nx
 import holoviews as hv
 
-from graphflow.analysis.metric_utils import get_metric
+from graphflow.analysis.metric_utils import get_metric, calculate_metric_list
 
 
 class Network(ABC):
@@ -104,9 +104,6 @@ class Network(ABC):
                         row.append(value)
                     writer.writerow(row)
 
-    # TODO- change next 2 methods so that they use calculate_metric() function.
-    #  Also add kwargs to them (self._network_properties)
-
     def _apply_static_metrics(self, network):
         """
         Applies all static metrics to `network` as attributes and fills `_static_metrics` dictionary with not node
@@ -115,14 +112,14 @@ class Network(ABC):
         if not self.metrics:
             return
 
-        for name in self.metrics:
-            fun, model, metric_type = get_metric(name, details=True)
-            if metric_type == 'static':
-                value = fun(network)
-                if isinstance(value, dict):
-                    nx.set_node_attributes(network, value, name)
-                else:
-                    self._static_metrics[name] = value
+        calculated_metrics = calculate_metric_list(network, self.metrics, metric_type='static',
+                                                   **self._network_properties)
+
+        for name, value in calculated_metrics.items():
+            if isinstance(value, dict):
+                nx.set_node_attributes(network, value, name)
+            else:
+                self._static_metrics[name] = value
 
     def _apply_dynamic_metrics(self, network):
         """
@@ -131,14 +128,10 @@ class Network(ABC):
         if not self.metrics:
             return
 
-        funs = []
-        for name in self.metrics:
-            fun, _, metric_type = get_metric(name, details=True)
-            if metric_type == 'dynamic':
-                funs.append(fun)
+        calculated_metrics = calculate_metric_list(network, self.metrics, metric_type='dynamic',
+                                                   **self._network_properties)
 
-        for fun, name in zip(funs, self.metrics):
-            value = fun(network)
+        for name, value in calculated_metrics.items():
             if isinstance(value, dict):
                 nx.set_node_attributes(network, value, name)
             else:

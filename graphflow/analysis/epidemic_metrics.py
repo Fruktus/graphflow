@@ -5,10 +5,8 @@ from sys import maxsize
 import networkx as nx
 from EoN import estimate_SIR_prob_size, estimate_directed_SIR_prob_size
 
-# TODO change all metrics so that they work according to docstrings, add static/dynamic to each function
 
-
-def static_estimate_probability(network, **kwargs):
+def static_epidemic_probability(network, **kwargs):
     """
     Estimates of epidemic probability
 
@@ -37,7 +35,6 @@ def static_estimate_probability(network, **kwargs):
     See Also:
         'graphflow.analysis.metrics'
     """
-
     simulation_type = kwargs.get('simulation_type', 'sir')
     algorithm = kwargs.get('algorithm', None)
     transmission_rate = kwargs.get('transmission_rate', None)
@@ -55,14 +52,16 @@ def static_estimate_probability(network, **kwargs):
 
         return estimate_directed_SIR_prob_size(network, transmission_rate, recovery_rate)[0]
 
-    elif algorithm == 'discrete':
+    if algorithm == 'discrete':
         if not transmission_probability:
             raise ValueError("Transmission probability not specified")
 
         return estimate_SIR_prob_size(network, transmission_probability)[0]
 
+    raise ValueError("Wrong (or not delivered) algorithm argument!")
 
-def static_estimate_attack_rate(network, **kwargs):
+
+def static_attack_rate(network, **kwargs):
     """
     Calculates attack_rate
 
@@ -109,14 +108,16 @@ def static_estimate_attack_rate(network, **kwargs):
 
         return estimate_directed_SIR_prob_size(network, transmission_rate, recovery_rate)[1]
 
-    elif algorithm == 'discrete':
+    if algorithm == 'discrete':
         if not transmission_probability:
             raise ValueError("Transmission probability not specified")
 
         return estimate_SIR_prob_size(network, transmission_probability)[1]
 
+    raise ValueError("Wrong (or not delivered) algorithm argument!")
 
-def infected_neighbours(network: nx.Graph, **kwargs):
+
+def dynamic_infected_neighbours(network: nx.Graph, **kwargs):
     """
     Counts infected neighbours for all nodes
 
@@ -142,7 +143,8 @@ def infected_neighbours(network: nx.Graph, **kwargs):
     return infected
 
 
-def estimate_infection_times(network: nx.Graph, **kwargs):
+# TODO make this thing work
+def static_estimated_infection_time(network: nx.Graph, **kwargs):
     """Uses average shortest paths to estimate time in steps to infection of given node
 
         Args:
@@ -155,7 +157,6 @@ def estimate_infection_times(network: nx.Graph, **kwargs):
         See Also:
             'graphflow.analysis.metrics'
         """
-
     status = nx.get_node_attributes(network, 'status')
 
     # use nx to get all shortest paths, use eon for estimating probability of infection
