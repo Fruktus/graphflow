@@ -91,7 +91,6 @@ class EpidemicNetwork(Network):
 
         if self.__simulation_investigation.SIR:
             time_steps, S, I, R = self.__simulation_investigation.summary()
-            time_steps = time_steps[1:]
         else:
             time_steps, S, I = self.__simulation_investigation.summary()
             R = [0 for _ in time_steps]
