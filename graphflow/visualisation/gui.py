@@ -211,13 +211,6 @@ class Gui:
                              command=lambda: self._load_file(self.root, filetypes=(("gml files", "*.gml"),
                                                                                    ("all files", "*.*"))))
         load_button.pack(side=tk.LEFT, padx=5, pady=5)
-        calculate_button = Button(buttonframe, text='calculate',
-                                  command=lambda: self._calculate_epidemic(ntype=types[type_box.curselection()[0]],
-                                                                           metrics=cb.get_checked_items(),
-                                                                           transrate=float(transrate_box.get()),
-                                                                           recrate=float(recrate_box.get()),
-                                                                           tmax=float(tmax_box.get())))
-        calculate_button.pack(side=tk.LEFT, padx=5, pady=5)
         export_button = Button(buttonframe, text='export', command=lambda: self._export_data())
         export_button.pack(side=tk.LEFT, padx=5, pady=5)
         animation_button = Button(buttonframe, text='animate', command=lambda: self._export_epidemic_animation())
@@ -296,7 +289,8 @@ class Gui:
                                                                            metrics=cb.get_checked_items(),
                                                                            transrate=float(transrate_box.get()),
                                                                            recrate=float(recrate_box.get()),
-                                                                           tmax=float(tmax_box.get())))
+                                                                           tmax=float(tmax_box.get()),
+                                                                           tprob=float(transprob_box.get())))
         calculate_button.pack(padx=5, pady=5)
 
         discrete.pack(padx=5, pady=5)
@@ -397,13 +391,15 @@ class Gui:
         self.root.calculated_network.calculate()
 
     def _calculate_epidemic(self, algorithm: str, metrics: [str] = None, ntype: str = 'sis', transrate: float = 2.0,
-                            recrate: float = 1.0, tmax: float = 100):
+                            recrate: float = 1.0, tmax: float = 100, tprob = 0.5):
         if not hasattr(self.root, 'filename'):
             messagebox.showerror('Error', 'No network file selected')
             return
 
-        self.root.calculated_network = EpidemicNetwork(self.root.filename, metrics,
-                                                       ntype, transrate, recrate, tmax, algorithm=algorithm)
+        self.root.calculated_network = EpidemicNetwork(self.root.filename, metrics=metrics,
+                                                       simulation_type=ntype, transmission_rate=transrate,
+                                                       recovery_rate=recrate, max_time=tmax, algorithm=algorithm,
+                                                       transmission_probability=tprob)
 
         self.root.calculated_network.calculate()
 
