@@ -1,20 +1,29 @@
 # pylint: skip-file
+"""
+Module that handles parsing epidemic arguments.
 
+See Also:
+    graphflow.models.epidemic.epidemic_network
+    https://epidemicsonnetworks.readthedocs.io/en/latest/EoN.html
+"""
 from enum import Enum
 import networkx as nx
 
 
 class EpidemicSimulationType(Enum):
+    """Enum for possible simulation types: 'sis' and 'sir'"""
     SIR = 'sir'
     SIS = 'sis'
 
 
 class Algorithm(Enum):
+    """Enum for possible algorithms: 'fast' and 'discrete'"""
     FAST = 'fast'
     DISCRETE = 'discrete'
 
 
 class ExperimentParameters:
+    """Class to hold experiment parameters. Doesn't have any other functionality"""
 
     def __init__(self,
                  simulation_type,
@@ -39,6 +48,8 @@ class ExperimentParameters:
 
 
 class Parser:
+    """Class for parsing epidemic parameters and checking if they are correct"""
+
     sym_type: EpidemicSimulationType
     algorithm: Algorithm
     network: nx.Graph
@@ -50,8 +61,20 @@ class Parser:
     max_time: float
     simulation_input_data: ExperimentParameters
 
+    def __init__(self):
+        self.parsed = False
+
     def parse_input(self, sim_type, algorithm, path_to_network,
                     transmission_rate=None, recovery_rate=None, transmission_probability=None, max_time=float('Inf')):
+        """
+        Parses arguments and checks if they are correct
+
+        Has to be called before `get_simulation_config`. See `graphflow.models.epidemic.epidemic_network` for details
+            about arguments.
+
+        Raises:
+            ValueError: Invalid arguments
+        """
 
         # simulation type
         self.sym_type = None
@@ -108,7 +131,23 @@ class Parser:
         # max simulation time
         self.max_time = max_time
 
+        self.parsed = True
+
     def get_simulation_config(self):
+        """
+        Fills and returns `ExperimentParameters`
+
+        Has to be called **after** `parse_input()`
+
+        Returns:
+            ExperimentParameters: Class that holds all necessary parameters for epidemic simulation
+
+        Raises:
+            ValueError: Argument has not been parsed yet. Call `parse_input()` first.
+        """
+        if not self.parsed:
+            raise ValueError("Arguments not parsed!")
+
         self.simulation_input_data = ExperimentParameters(simulation_type=self.sym_type,
                                                           algorithm=self.algorithm,
                                                           network=self.network,

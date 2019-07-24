@@ -1,4 +1,5 @@
 # pylint: skip-file
+""""Contains implementation for epidemic model"""
 import webbrowser
 from copy import deepcopy
 import logging as lg

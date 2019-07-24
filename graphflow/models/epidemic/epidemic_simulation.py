@@ -1,24 +1,53 @@
+"""
+Contains implementation that runs simulation using EoN library functions.
+
+See Also:
+    graphflow.models.epidemic.epidemic_network
+    https://epidemicsonnetworks.readthedocs.io/en/latest/EoN.html
+"""
+
 import uuid
 # from EoN import fast_SIR, fast_SIS, basic_discrete_SIR, basic_discrete_SIS
 from graphflow.models.epidemic.custom_simulation import fast_SIR, fast_SIS, basic_discrete_SIR, basic_discrete_SIS
-from graphflow.models.epidemic import epidemic_runner
+from graphflow.models.epidemic.epidemic_runner import *
 
 
+# TODO add seed and probability description
 class Simulation:
-    simulation_params: epidemic_runner.ExperimentParameters
+    """
+    Class that runs epidemic simulation using EoN library functions
 
-    def __init__(self, sim_params, seed=None, probability=None):
+    Args:
+        sim_params: Simulation parameters
+        seed:
+        probability:
+
+    See Also:
+        graphflow.models.epidemic.epidemic_runner
+        graphflow.models.epidemic.epidemic_network
+        https://epidemicsonnetworks.readthedocs.io/en/latest/EoN.html
+    """
+    simulation_params: ExperimentParameters
+
+    def __init__(self, sim_params: ExperimentParameters, seed=None, probability=None):
         self.simulation_params = sim_params
         self.seed = seed
         self.probability = probability
 
     def get_network(self):
+        """Returns NetworkX graph on which simulation is ran"""
         return self.simulation_params.network
 
-    def run_simulation(self, save_to_file=False):
+    def run_simulation(self, save_to_file: bool = False):
+        """
+        Runs simulation using EoN library functions
 
-        if self.simulation_params.simulation_type == epidemic_runner.EpidemicSimulationType.SIR and \
-                self.simulation_params.algorithm == epidemic_runner.Algorithm.FAST:
+        Args:
+            save_to_file: If True saves result as mp4 file
+        """
+
+        if self.simulation_params.simulation_type == EpidemicSimulationType.SIR and \
+                self.simulation_params.algorithm == Algorithm.FAST:
             simulation = fast_SIR(self.simulation_params.network,
                                   tau=self.simulation_params.transmission_rate,
                                   gamma=self.simulation_params.recovery_rate,
@@ -33,8 +62,8 @@ class Simulation:
                                   seed=self.seed,
                                   probability=self.probability)
 
-        elif self.simulation_params.simulation_type == epidemic_runner.EpidemicSimulationType.SIS and \
-                self.simulation_params.algorithm == epidemic_runner.Algorithm.FAST:
+        elif self.simulation_params.simulation_type == EpidemicSimulationType.SIS and \
+                self.simulation_params.algorithm == Algorithm.FAST:
             simulation = fast_SIS(self.simulation_params.network,
                                   self.simulation_params.transmission_rate,
                                   self.simulation_params.recovery_rate,
@@ -47,8 +76,8 @@ class Simulation:
                                   return_full_data=True,
                                   )
 
-        elif self.simulation_params.simulation_type == epidemic_runner.EpidemicSimulationType.SIR and \
-                self.simulation_params.algorithm == epidemic_runner.Algorithm.DISCRETE:
+        elif self.simulation_params.simulation_type == EpidemicSimulationType.SIR and \
+                self.simulation_params.algorithm == Algorithm.DISCRETE:
             simulation = basic_discrete_SIR(G=self.simulation_params.network,
                                             p=self.simulation_params.transmission_probability,
                                             initial_infecteds=self.simulation_params.initial_infected,
@@ -58,8 +87,8 @@ class Simulation:
                                             return_full_data=True
                                             )
 
-        elif self.simulation_params.simulation_type == epidemic_runner.EpidemicSimulationType.SIS and \
-                self.simulation_params.algorithm == epidemic_runner.Algorithm.DISCRETE:
+        elif self.simulation_params.simulation_type == EpidemicSimulationType.SIS and \
+                self.simulation_params.algorithm == Algorithm.DISCRETE:
             simulation = basic_discrete_SIS(G=self.simulation_params.network,
                                             p=self.simulation_params.transmission_probability,
                                             initial_infecteds=self.simulation_params.initial_infected,
