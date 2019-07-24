@@ -34,11 +34,14 @@ def calculate_metric(name: str, network: nx.Graph, **kwargs):
         **kwargs: additional arguments required for some metrics
 
     Returns:
-        dict or int/float - calculated metric. Dictctionary when metric is calculated for each node, number if metric
+        dict or int/float - calculated metric. Dictionary when metric is calculated for each node, number if metric
             is property of entire graph
+
+    See Also:
+        get_metric(name, details)
     """
 
-    metric, model, _ = get_metric(name)
+    metric, model, _ = get_metric(name, details=True)
 
     # it needs to be changed when new files with metrics are added
     if model == 'epidemic':
@@ -46,27 +49,32 @@ def calculate_metric(name: str, network: nx.Graph, **kwargs):
     return metric(network)
 
 
-def calculate_metric_list(network: nx.Graph, metrics):
+def calculate_metric_list(network: nx.Graph, metrics: [str], metric_type: str = 'all', **kwargs):
     """
-    Same as calculate metric but accepts iterable of names (as strings)
+    Same as calculate metric but accepts iterable of names (as strings).
 
     Args:
-        network: networkx graph
-        metrics: iterable of metrics
+        network: NetworkX graph
+        metrics: Iterable of metrics
+        metric_type: Metric type. Can be 'static', 'dynamic' or 'all'. Defaults to 'all'
+        **kwargs: additional arguments required for some metrics
 
     Returns:
-        list: list of calculated metrics
+        dict: Dictionary {name: value} of calculated metrics. Values are calculated using
+            `calculate_metric(name, network, **kwargs)` function
 
     See Also:
-        `calculate_metric(name, network, **kwargs)`
+        calculate_metric(name, network, **kwargs)
+        metric_list(model, metric_type)
     """
 
-    arr = []
-    for i in metrics:
-        res = calculate_metric(i, network)
+    metrics_to_calculate = set(metrics) & set(metric_list(model='all', metric_type=metric_type))
+    dictionary = {}
+    for name in metrics_to_calculate:
+        res = calculate_metric(name, network, **kwargs)
         if res:
-            arr.append(res)
-    return arr
+            dictionary[name] = res
+    return dictionary
 
 
 def metric_list(model: str = 'general', metric_type: str = 'all'):
@@ -79,8 +87,9 @@ def metric_list(model: str = 'general', metric_type: str = 'all'):
 
     Args:
         model: Network model. Can be one of 'simple', 'extended', 'epidemic', 'epanet', 'general' or 'all'. Choosing
-            'general' will return metrics available for all models.'
-        metric_type: Get only static, dynamic or all metrics. Can be one of: 'static', 'dynamic', 'all'
+            'general' will return metrics available for all models. Defaults to 'general'
+        metric_type: Get only static, dynamic or all metrics. Can be one of: 'static', 'dynamic', 'all'. Defaults to
+        'all'
 
     Returns:
         [str]: List of strings representing names of metrics
@@ -160,7 +169,7 @@ def __get_all_metrics_dict():
     Prepares dictionary containing all metrics (as functions) along with their type and model.
 
     Returns:
-        dict: Metric dictionary ``{name: (function, model, metric_type)}``
+        dict: Metric dictionary `{name: (function, model, metric_type)}`
     """
     prefixes = ('static', 'dynamic')
 
