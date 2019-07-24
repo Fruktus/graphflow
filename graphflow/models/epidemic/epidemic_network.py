@@ -27,7 +27,7 @@ class EpidemicNetwork(Network):
         path_to_network: Path to file containing network in GML format. Each node requires attributes: 'infected'
             (for SIR ans SIS) and 'recovered' (for SIR only). Each of them is either 0 or 1.
         metrics: Used metrics as list of strings. Each name has to be name of one of the functions in on of the
-            ``graphflow.analysis.metrics.py`` and ``graphflow.analysis.epidemic_metrics.py`` files
+            ``graphflow.analysis.metrics`` and ``graphflow.analysis.epidemic_metrics`` files
         *args: Not used in this model
         **kwargs: See below
 

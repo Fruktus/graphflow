@@ -1,5 +1,4 @@
-"""Metrics for epidemic model. See `graphflow.analysis.metrics.py` for details."""
-
+"""Metrics for epidemic model. See `graphflow.analysis.metrics` for details."""
 from sys import maxsize
 
 import networkx as nx
@@ -78,6 +77,9 @@ def static_attack_rate(network, **kwargs):
         recovery_rate (float): Required for **fast**. Recovery rate
         transmission_probability (float): Required for 'discrete'. Transmission probability. Values between 0 and 1
 
+    Keyword Args:
+        trans_prob: float (0-1), probability of disease spreading further
+
     Returns:
          float: value between 0 and 1 estimating probability and proportion of infected
 
@@ -123,7 +125,10 @@ def dynamic_infected_neighbours(network: nx.Graph, **kwargs):
 
     Args:
         network: networkx Graph
-        **kwargs: Not used here
+        **kwargs: See below
+
+    Keyword Args:
+        state (dict): Required if `network` doesn't have 'state' for each node. See: 'graphflow.analysis.metrics'
 
     Returns:
         dict: dictionary keyed by nodes id into dict of neighbours counts with given status (S,I,R)
@@ -149,7 +154,11 @@ def static_estimated_infection_time(network: nx.Graph, **kwargs):
 
         Args:
             network: networkx Graph
-            **kwargs: Not used here
+            **kwargs: See below
+
+        Keyword Args:
+            time: point in time to calculate metric for
+            eon_investigation: object containing history data for all nodes
 
         Returns:
             dict: dictionary keyed by nodes id into estimate
