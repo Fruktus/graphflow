@@ -1,7 +1,7 @@
 # pylint: skip-file
-import webbrowser
+""""Contains implementation for simple model"""
+
 from pathlib import Path
-import holoviews as hv
 
 from graphflow.models.network import Network
 from graphflow.models.simple import simple_model_utils

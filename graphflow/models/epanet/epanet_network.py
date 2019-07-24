@@ -1,4 +1,6 @@
 # pylint: skip-file
+""""Contains implementation for epanet model"""
+
 from graphflow.models.epanet.epanet_model import EpanetFlowNetwork, SimulationType
 from graphflow.models.network import Network
 from graphflow.models.epanet import epanet_model_vis
@@ -29,6 +31,9 @@ class EpanetNetwork(Network):
             >>> network.calculate()
             >>> network.visualize()
             >>> network.export('exported.csv')
+
+        See Also:
+            https://pypi.org/project/EPANET/
     """
 
     def __init__(self, path_to_network: str, metrics: [str], *args, **kwargs):
@@ -47,7 +52,8 @@ class EpanetNetwork(Network):
 
         self._calculated_networks[0.0] = self.get_nx_network()
         if self._metrics:
-            apply_all_metrics(self._model, self._calculated_networks[0.0], self._metrics)
+            self._apply_static_metrics(self._calculated_networks[0.0])
+            self._apply_dynamic_metrics(self._calculated_networks[0.0])
 
         self._is_calculated = True
 

@@ -15,7 +15,15 @@ class Network(ABC):
     """
     Abstract class for every model (simple, extended, epidemic, epanet)
 
-    Delivers easy to use interface and unified for every model.
+    Delivers easy to use and unified inteface for every model
+
+    This class has basic implementation for some methods, mostly ones that are generic enough to be used in all models.
+    Being abstract this class can't be instantiated. There are four classes that inherit form this one:
+        - graphflow.models.simple.simple_network.SimpleNetwork
+        - graphflow.models.extended.extended_network.ExtendedNetwork
+        - graphflow.models.epidemic.epidemic_network.EpidemicNetwork
+        = graphflow.models.epanet.epanet_network.EpanetNetwork
+    See their descriptions for details.
     """
 
     _model: str
