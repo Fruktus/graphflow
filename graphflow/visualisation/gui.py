@@ -11,8 +11,6 @@ from graphflow.models.extended.extended_network import ExtendedNetwork
 
 from graphflow.models.simple.simple_network import SimpleNetwork
 
-# TODO change epidemic GUI: four possibilities - fast_sir, fast_sis, discrete_sir, discrete_sis. Args:
-#  for fast - no changes, for discrete - instead of transmission_rate and recovery_rate - transmission_probability
 
 class ChecklistBox(tk.Frame):
     def __init__(self, parent, choices, **kwargs):
@@ -231,40 +229,79 @@ class Gui:
         cb = self._generate_metrics_checklist(frame, epidemic=True)
         cb.pack(side=tk.LEFT, padx=5, pady=5)
 
-        input_frame = ttk.Frame(frame, relief=tk.FLAT)
+        settings_frame = ttk.Frame(frame, relief=tk.FLAT)
 
-        type_frame = ttk.Frame(input_frame, relief=tk.SUNKEN)
+        input_frame = ttk.Frame(settings_frame, relief=tk.SOLID)
+
+        type_frame = ttk.Frame(input_frame, relief=tk.FLAT)
         type_box = tk.Listbox(type_frame, width=6, height=2)
         type_box.pack(fill=tk.X, expand=True, side=tk.RIGHT, padx=5, pady=5)
         Label(type_frame, text='network type').pack(side=tk.RIGHT, padx=5, pady=5)
-        type_frame.pack(fill=tk.X, expand=True)
+        type_frame.pack(fill=tk.X, expand=True, padx=1, pady=1)
 
         type_box.insert(tk.END, 'sir')
         type_box.insert(tk.END, 'sis')
         type_box.select_set(0)
 
-        transrate_frame = ttk.Frame(input_frame, relief=tk.SUNKEN)
-        transrate_box = Entry(transrate_frame, width=8)
-        transrate_box.pack(side=tk.RIGHT, padx=5, pady=5)
-        transrate_box.insert(0, '2.0')
-        Label(transrate_frame, text='transmission rate').pack(side=tk.RIGHT, padx=5, pady=5)
-        transrate_frame.pack(fill=tk.X, expand=True)
-
-        recrate_frame = ttk.Frame(input_frame, relief=tk.SUNKEN)
-        recrate_box = Entry(recrate_frame, width=8)
-        recrate_box.pack(side=tk.RIGHT, padx=5, pady=5)
-        recrate_box.insert(0, '1.0')
-        Label(recrate_frame, text='recovery rate').pack(side=tk.RIGHT, padx=5, pady=5)
-        recrate_frame.pack(fill=tk.X, expand=True)
-
-        tmax_frame = ttk.Frame(input_frame, relief=tk.SUNKEN)
+        tmax_frame = ttk.Frame(input_frame, relief=tk.FLAT)
         tmax_box = Entry(tmax_frame, width=8)
         tmax_box.pack(side=tk.RIGHT, padx=5, pady=5)
         tmax_box.insert(0, '2')
         Label(tmax_frame, text='max simulation time').pack(side=tk.RIGHT, padx=5, pady=5)
-        tmax_frame.pack(fill=tk.X, expand=True)
+        tmax_frame.pack(fill=tk.X, expand=True, padx=1, pady=1)
 
-        input_frame.pack(side=tk.RIGHT, padx=5, pady=5)
+        input_frame.pack(padx=5, pady=5)
+
+        non_discrete = ttk.Frame(settings_frame, relief=tk.SOLID)
+        Label(non_discrete, text='non-discrete algorithm').pack(padx=5, pady=5)
+
+        transrate_frame = ttk.Frame(non_discrete, relief=tk.FLAT)
+        transrate_box = Entry(transrate_frame, width=8)
+        transrate_box.pack(side=tk.RIGHT, padx=5, pady=5)
+        transrate_box.insert(0, '2.0')
+        Label(transrate_frame, text='transmission rate').pack(side=tk.RIGHT, padx=5, pady=5)
+        transrate_frame.pack(fill=tk.X, expand=True, padx=1)
+
+        recrate_frame = ttk.Frame(non_discrete, relief=tk.FLAT)
+        recrate_box = Entry(recrate_frame, width=8)
+        recrate_box.pack(side=tk.RIGHT, padx=5, pady=5)
+        recrate_box.insert(0, '1.0')
+        Label(recrate_frame, text='recovery rate').pack(side=tk.RIGHT, padx=5, pady=5)
+        recrate_frame.pack(fill=tk.X, expand=True, padx=1)
+
+        calculate_button = Button(non_discrete, text='calculate',
+                                  command=lambda: self._calculate_epidemic(algorithm='fast',
+                                                                           ntype=types[type_box.curselection()[0]],
+                                                                           metrics=cb.get_checked_items(),
+                                                                           transrate=float(transrate_box.get()),
+                                                                           recrate=float(recrate_box.get()),
+                                                                           tmax=float(tmax_box.get())))
+        calculate_button.pack(padx=5, pady=5)
+
+        non_discrete.pack(padx=5, pady=5)
+
+        discrete = ttk.Frame(settings_frame, relief=tk.SOLID)
+        Label(discrete, text='discrete algorithm').pack(padx=5, pady=5)
+
+        transprob_frame = ttk.Frame(discrete, relief=tk.FLAT)
+        transprob_box = Entry(transprob_frame, width=8)
+        transprob_box.pack(side=tk.RIGHT, padx=5, pady=5)
+        transprob_box.insert(0, '0.3')
+        Label(transprob_frame, text='transmission probability').pack(side=tk.RIGHT, padx=5, pady=5)
+        transprob_frame.pack(fill=tk.X, expand=True, padx=1)
+
+        calculate_button = Button(discrete, text='calculate',
+                                  command=lambda: self._calculate_epidemic(algorithm='discrete',
+                                                                           ntype=types[type_box.curselection()[0]],
+                                                                           metrics=cb.get_checked_items(),
+                                                                           transrate=float(transrate_box.get()),
+                                                                           recrate=float(recrate_box.get()),
+                                                                           tmax=float(tmax_box.get())))
+        calculate_button.pack(padx=5, pady=5)
+
+        discrete.pack(padx=5, pady=5)
+
+        settings_frame.pack(side=tk.RIGHT, padx=5, pady=5)
 
     @staticmethod
     def _load_file(root, **kwargs):
@@ -359,14 +396,14 @@ class Gui:
 
         self.root.calculated_network.calculate()
 
-    def _calculate_epidemic(self, metrics: [str] = None, ntype: str = 'sis', transrate: float = 2.0,
+    def _calculate_epidemic(self, algorithm: str, metrics: [str] = None, ntype: str = 'sis', transrate: float = 2.0,
                             recrate: float = 1.0, tmax: float = 100):
         if not hasattr(self.root, 'filename'):
             messagebox.showerror('Error', 'No network file selected')
             return
 
         self.root.calculated_network = EpidemicNetwork(self.root.filename, metrics,
-                                                       ntype, transrate, recrate, tmax)
+                                                       ntype, transrate, recrate, tmax, algorithm=algorithm)
 
         self.root.calculated_network.calculate()
 
