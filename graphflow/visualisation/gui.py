@@ -306,7 +306,7 @@ class Gui:
         metrics = metric_list()
 
         if epidemic:
-            metrics += metric_list(model='general')
+            metrics += metric_list(model='epidemic')
 
         return ChecklistBox(frame, metrics, bd=1, relief="sunken", background="white")
 
