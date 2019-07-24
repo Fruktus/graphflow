@@ -1,4 +1,6 @@
 # pylint: skip-file
+""""Contains implementation for extended model"""
+
 from pathlib import Path
 
 from graphflow.models.network import Network

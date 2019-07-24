@@ -1,4 +1,13 @@
 # pylint: skip-file
+"""
+Modified file from EoN library. We needed some features that the library did not provide. We did not modify any other
+file from this library. Also few functions where not working at all, thus they needed to be changed as well.
+
+This file uses other EoN module and will not work on itself.
+
+See Also:
+    https://epidemicsonnetworks.readthedocs.io/en/latest/EoN.html
+"""
 import networkx as nx
 import random
 import heapq
