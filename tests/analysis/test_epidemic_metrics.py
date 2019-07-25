@@ -17,22 +17,22 @@ def test_network():
     return network
 
 
-def test_static_epidemic_probability(test_network, **kwargs):
+def test_static_epidemic_probability(test_network):
     res = static_epidemic_probability(test_network, algorithm='discrete',
                                       transmission_probability=0.3)
     assert 0.0 <= res <= 1.0
 
 
-def test_static_attack_rate(test_network, **kwargs):
+def test_static_attack_rate(test_network):
     res = static_attack_rate(test_network, algorithm='discrete', transmission_probability=0.3)
     assert 0.0 <= res <= 1.0
 
 
-def test_static_estimated_infection_time(test_network, **kwargs):
+def test_static_estimated_infection_time(test_network):
     res = static_estimated_infection_time(test_network)
     assert isinstance(res, dict)
 
 
-def test_dynamic_infected_neighbours(test_network, **kwargs):
+def test_dynamic_infected_neighbours(test_network):
     res = dynamic_infected_neighbours(test_network)
     assert isinstance(res, dict)
