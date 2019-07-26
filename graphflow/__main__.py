@@ -60,6 +60,7 @@ def main():
     epidemic_subparser.add_argument('--transmission_probability', help='transmission_probability',
                                     type=float, default=0.2)
     epidemic_subparser.add_argument('--max_time', '-t', help='max simulation time, ', type=float, default=2.0)
+    epidemic_subparser.add_argument('--time_step_length', help='Length of time step', type=float, default=None)
     epidemic_subparser.add_argument('--metric', '-m', action='append',
                                     help='metric to use, can be specified multiple times')
     epidemic_subparser.add_argument('--visualize', action='store_true', default=False,
@@ -145,7 +146,8 @@ def __run_epidemic(args):
                               transmission_rate=args.transmission_rate,
                               recovery_rate=args.recovery_rate,
                               transmission_probability=args.transmission_probability,
-                              max_time=args.max_time)
+                              max_time=args.max_time,
+                              time_step_length=args.time_step_length)
 
     network.calculate()
 

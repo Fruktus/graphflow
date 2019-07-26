@@ -6,6 +6,7 @@ import logging as lg
 
 import networkx as nx
 import holoviews as hv
+import numpy as np
 
 from graphflow.models.epidemic.epidemic_runner import Parser
 from graphflow.models.epidemic.epidemic_simulation import Simulation
@@ -38,10 +39,18 @@ class EpidemicNetwork(Network):
         transmission_rate (float): Required for **fast** algorithm. Transmission rate per edge
         recovery_rate (float): Required for **fast** algorithm. Recovery rate per node
         transmission_probability (float): Required for **discrete** algorithm. Transmission probability
-        max_time (float): Maximal simulation time. Defaults to `Inf`. It has to be specified for SIS model since or it will
-            run infinitely.
+        max_time (float): Maximal simulation time. Defaults to `Inf`. It has to be specified for SIS model or it will
+            run infinitely
+        time_step_length (float): Only for **sir**. Length of a time step. If not specified time steps returned from EoN
+            functions will be used. It is recommended to deliver this argument for **fast** algorithms.Defaults to None.
+
+    Notes:
+        When using **fast** algorithms it is best to deliver `time_step_length` argument. Otherwise there will be
+        different space between steps, especially in **sir** type. Additionally steps will be vey close to each
+        other resulting in insanely long visualization.
 
     See Also:
+        graphflow.models.network
         https://epidemicsonnetworks.readthedocs.io/en/latest/EoN.html
 
     Examples:
@@ -60,6 +69,7 @@ class EpidemicNetwork(Network):
         recovery_rate = kwargs.get('recovery_rate', None)
         transmission_probability = kwargs.get('transmission_probability', None)
         max_time = kwargs.get('max_time', float('Inf'))
+        time_step_length = kwargs.get('time_step_length', None)
 
         self._network_properties['simulation_type'] = kwargs['simulation_type']
         self._network_properties['algorithm'] = kwargs['algorithm']
@@ -71,6 +81,8 @@ class EpidemicNetwork(Network):
             self._network_properties['transmission_probability'] = transmission_probability
         if max_time:
             self._network_properties['max_time'] = max_time
+        if time_step_length:
+            self._network_properties['time_step_length'] = time_step_length
 
         epidemic_params = Parser()
         epidemic_params.parse_input(kwargs['simulation_type'], kwargs['algorithm'], path_to_network,
@@ -85,7 +97,7 @@ class EpidemicNetwork(Network):
     def get_nx_network(self):
         return self.__my_sim.get_network()
 
-    def calculate(self):
+    def calculate(self, ):
         lg.info('starting calculation')
         self.__simulation_investigation = self.__my_sim.run_simulation()
 
@@ -106,8 +118,29 @@ class EpidemicNetwork(Network):
         for key in list(nx_network.graph.keys()):
             del nx_network.graph[key]
 
+        indexes = None
+        times = None
+        time_step_length = self._network_properties.get('time_step_length', None)
+        algorithm = self._network_properties['algorithm']
+        if algorithm == 'fast' and time_step_length:
+            bins = int(time_steps[-1] / time_step_length)
+            histogram = np.histogram(time_steps, bins=bins)
+            indexes = np.ndarray((bins,), dtype=int)
+            index = 0
+            for i, length in enumerate(histogram[0]):
+                indexes[i] = index
+                index += length
+            times = histogram[1]
+        else:
+            indexes = np.arange(time_steps.size)
+            times = time_steps
+
         first_iter = True
-        for time, s, i, r in zip(time_steps, S, I, R):
+        for index, time in zip(indexes, times):
+            s = S[index]
+            i = I[index]
+            r = R[index]
+
             self._calculated_networks[time] = deepcopy(nx_network)
 
             self._calculated_networks[time].graph['S'] = s
@@ -123,7 +156,7 @@ class EpidemicNetwork(Network):
                 self._apply_static_metrics(nx_network)
                 first_iter = False
 
-            # this method uses 'status' attribute added in two previous lines
+            # this method uses 'status' attribute added few lines above
             self._apply_dynamic_metrics(self._calculated_networks[time])
 
         self._is_calculated = True
@@ -147,4 +180,3 @@ class EpidemicNetwork(Network):
 
     def animate(self):
         return self.__my_sim.animation
-
