@@ -46,6 +46,10 @@ class Gui:
         self.root.style.theme_use("default")
         self.nb = ttk.Notebook(self.root)
 
+        self.calculated_network = None
+        self.filename = None
+        self.ntype = None
+
         self._add_simple_nb()
         self._add_epanet_nb()
         self._add_epidemic_nb()
@@ -58,7 +62,7 @@ class Gui:
 
         button_frame = ttk.Frame(frame, relief=tk.SUNKEN)
         load_button = Button(button_frame, text='load network',
-                             command=lambda: self._load_file(self.root, filetypes=(("json files", "*.json"),
+                             command=lambda: self._load_file(filetypes=(("json files", "*.json"),
                                                                                    ("all files", "*.*"))))
         load_button.pack(side=tk.LEFT, padx=5, pady=5)
         calculate_button = Button(button_frame, text='calculate',
@@ -94,7 +98,7 @@ class Gui:
 
         buttonframe = ttk.Frame(frame, relief=tk.SUNKEN)
         load_button = Button(buttonframe, text='load network',
-                             command=lambda: self._load_file(self.root, filetypes=(("json files", "*.json"),
+                             command=lambda: self._load_file(filetypes=(("json files", "*.json"),
                                                                                    ("all files", "*.*"))))
         load_button.pack(side=tk.LEFT, padx=5, pady=5)
         calculate_button = Button(buttonframe, text='calculate',
@@ -116,7 +120,7 @@ class Gui:
         # buttons #
         buttonframe = ttk.Frame(frame, relief=tk.SUNKEN)
         load_button = Button(buttonframe, text='load network',
-                             command=lambda: self._load_file(self.root, filetypes=(("epanet files", "*.inp"),
+                             command=lambda: self._load_file(filetypes=(("epanet files", "*.inp"),
                                                                                    ("all files", "*.*"))))
         load_button.pack(side=tk.LEFT, padx=5, pady=5)
 
@@ -222,7 +226,7 @@ class Gui:
 
         buttonframe = ttk.Frame(frame, relief=tk.SUNKEN)
         load_button = Button(buttonframe, text='load network',
-                             command=lambda: self._load_file(self.root, filetypes=(("gml files", "*.gml"),
+                             command=lambda: self._load_file(filetypes=(("gml files", "*.gml"),
                                                                                    ("all files", "*.*"))))
         load_button.pack(side=tk.LEFT, padx=5, pady=5)
         export_button = Button(buttonframe, text='export', command=lambda: self._export_data())
@@ -311,9 +315,9 @@ class Gui:
 
         settings_frame.pack(side=tk.RIGHT, padx=5, pady=5)
 
-    @staticmethod
-    def _load_file(root, **kwargs):
-        root.filename = filedialog.askopenfilename(title="Select network file", **kwargs)
+    def _load_file(self, **kwargs):
+        self.ntype = self.nb.tab(self.nb.select(), "text")
+        self.filename = filedialog.askopenfilename(title="Select network file", **kwargs)
 
     @staticmethod
     def _generate_metrics_checklist(frame, epidemic=False):
@@ -325,100 +329,99 @@ class Gui:
         return ChecklistBox(frame, metrics, bd=1, relief="sunken", background="white")
 
     def _export_data(self):
-        if not hasattr(self.root, 'calculated_network'):
+        if not self.calculated_network:
             messagebox.showerror('Error', 'No data to export')
             return
         path = filedialog.asksaveasfilename(title="Select file",
                                             defaultextension='.csv', filetypes=(("CSV", "*.csv"),
                                                                                 ("all files", "*.*")))
         if path:
-            self.root.calculated_network.export(path)
+            self.calculated_network.export(path)
 
     def _visualize_data(self):
-        if not hasattr(self.root, 'calculated_network'):
+        if not self.calculated_network:
             messagebox.showerror('Error', 'No data to export')
             return
 
-        self.root.calculated_network.visualize()
+        self.calculated_network.visualize()
 
     def _export_epidemic_animation(self):
-        if not hasattr(self.root, 'calculated_network'):
+        if not self.calculated_network:
             messagebox.showerror('Error', 'No data to export')
             return
 
         path = filedialog.asksaveasfilename(title="Select file", defaultextension='.mp4',
                                             filetypes=(("mp4", "*.mp4"), ("all files", "*.*")))
         if path:
-            animation = self.root.calculated_network.animate()
+            animation = self.calculated_network.animate()
             animation.save(path, fps=5, extra_args=['-vcodec', 'libx264'])
 
     def _calculate_simple(self, ntype: str, metrics: [str] = None):
         if ntype == 'extended':
             self._calculate_extended(metrics)
             return
-        if not hasattr(self.root, 'filename'):
+        if not self.filename or self.ntype != 'Simple':
             messagebox.showerror('Error', 'No network file selected')
             return
 
-        self.root.calculated_network = SimpleNetwork(self.root.filename, metrics)
+        self.calculated_network = SimpleNetwork(self.filename, metrics)
 
-        self.root.calculated_network.calculate()
+        self.calculated_network.calculate()
 
     def _calculate_extended(self, metrics: [str] = None):
-        if not hasattr(self.root, 'filename'):
+        if not self.filename or self.ntype != 'Simple':
             messagebox.showerror('Error', 'No network file selected')
             return
 
-        self.root.calculated_network = ExtendedNetwork(self.root.filename, metrics)
+        self.calculated_network = ExtendedNetwork(self.filename, metrics)
 
-        self.root.calculated_network.calculate()
+        self.calculated_network.calculate()
 
     def _calculate_epanet(self, sim_type, epix=None, epiy=None, magnitude=None, depth=None,
                           time=None, trace_node=None, metrics: [str] = None):
-        if not hasattr(self.root, 'filename'):
+        if not self.filename or self.ntype != 'Epanet':
             messagebox.showerror('Error', 'No network file selected')
             return
 
-        self.root.calculated_network = None
+        self.calculated_network = None
 
         if sim_type == 'earthquake':
             if sim_type == 'earthquake':
                 if not (epix and epiy and magnitude and depth):
                     raise ValueError('No all arguments have been passed')
-                self.root.calculated_network = EpanetNetwork(self.root.filename, metrics, SimulationType.EARTHQUAKE,
-                                                             epicenter=(epix, epiy),
-                                                             magnitude=magnitude,
-                                                             depth=depth)
+                self.calculated_network = EpanetNetwork(self.filename, metrics, SimulationType.EARTHQUAKE,
+                                                        epicenter=(epix, epiy),
+                                                        magnitude=magnitude,
+                                                        depth=depth)
 
         elif sim_type == 'pressure':
             if not time:
                 raise ValueError('No time range has been passed')
-            self.root.calculated_network = EpanetNetwork(self.root.filename, metrics, SimulationType.PRESSURE,
-                                                         time=time)
+            self.calculated_network = EpanetNetwork(self.filename, metrics, SimulationType.PRESSURE,
+                                                    time=time)
 
         elif sim_type == 'quality':
             if not trace_node:
                 raise ValueError('No  trace node has been passed')
-            self.root.calculated_network = EpanetNetwork(self.root.filename, metrics, SimulationType.QUALITY,
-                                                         trace_node=trace_node)
+            self.calculated_network = EpanetNetwork(self.filename, metrics, SimulationType.QUALITY,
+                                                    trace_node=trace_node)
 
         else:
             raise ValueError('Bad simulation type')
 
-        self.root.calculated_network.calculate()
+        self.calculated_network.calculate()
 
     def _calculate_epidemic(self, algorithm: str, metrics: [str] = None, ntype: str = 'sis', transrate: float = 2.0,
-                            recrate: float = 1.0, tmax: float = 100, tprob = 0.5):
-        if not hasattr(self.root, 'filename'):
+                            recrate: float = 1.0, tmax: float = 100, tprob=0.5):
+        if not self.filename or self.ntype != 'Epidemic':
             messagebox.showerror('Error', 'No network file selected')
             return
+        self.calculated_network = EpidemicNetwork(self.filename, metrics=metrics,
+                                                  simulation_type=ntype, transmission_rate=transrate,
+                                                  recovery_rate=recrate, max_time=tmax, algorithm=algorithm,
+                                                  transmission_probability=tprob)
 
-        self.root.calculated_network = EpidemicNetwork(self.root.filename, metrics=metrics,
-                                                       simulation_type=ntype, transmission_rate=transrate,
-                                                       recovery_rate=recrate, max_time=tmax, algorithm=algorithm,
-                                                       transmission_probability=tprob)
-
-        self.root.calculated_network.calculate()
+        self.calculated_network.calculate()
 
     def start(self):
         self.root.mainloop()
