@@ -47,7 +47,6 @@ class Gui:
         self.nb = ttk.Notebook(self.root)
 
         self._add_simple_nb()
-        self._add_extended_nb()
         self._add_epanet_nb()
         self._add_epidemic_nb()
 
@@ -63,7 +62,8 @@ class Gui:
                                                                                    ("all files", "*.*"))))
         load_button.pack(side=tk.LEFT, padx=5, pady=5)
         calculate_button = Button(button_frame, text='calculate',
-                                  command=lambda: self._calculate_simple(metrics=cb.get_checked_items()))
+                                  command=lambda: self._calculate_simple(ntype=str(type_box.curselection()),
+                                                                         metrics=cb.get_checked_items()))
         calculate_button.pack(side=tk.LEFT, padx=5, pady=5)
         export_button = Button(button_frame, text='export', command=lambda: self._export_data())
         export_button.pack(side=tk.LEFT, padx=5, pady=5)
@@ -73,6 +73,20 @@ class Gui:
 
         cb = self._generate_metrics_checklist(frame)
         cb.pack(side=tk.LEFT, padx=5, pady=5)
+
+        input_frame = ttk.Frame(frame, relief=tk.SOLID)
+
+        type_frame = ttk.Frame(input_frame, relief=tk.FLAT)
+        type_box = tk.Listbox(type_frame, width=10, height=2)
+        type_box.pack(fill=tk.X, expand=True, side=tk.RIGHT, padx=5, pady=5)
+        Label(type_frame, text='network type').pack(side=tk.RIGHT, padx=5, pady=5)
+        type_frame.pack(fill=tk.X, expand=True, padx=1, pady=1)
+
+        type_box.insert(tk.END, 'simple')
+        type_box.insert(tk.END, 'extended')
+        type_box.select_set(0)
+
+        input_frame.pack(padx=5, pady=5)
 
     def _add_extended_nb(self):
         frame = ttk.Frame(self.nb)
@@ -338,7 +352,10 @@ class Gui:
             animation = self.root.calculated_network.animate()
             animation.save(path, fps=5, extra_args=['-vcodec', 'libx264'])
 
-    def _calculate_simple(self, metrics: [str] = None):
+    def _calculate_simple(self, ntype: str, metrics: [str] = None):
+        if ntype == 'extended':
+            self._calculate_extended(metrics)
+            return
         if not hasattr(self.root, 'filename'):
             messagebox.showerror('Error', 'No network file selected')
             return
