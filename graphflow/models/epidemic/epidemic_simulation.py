@@ -35,6 +35,7 @@ class Simulation:
         self.simulation_params = sim_params
         self.seed = seed
         self.probability = probability
+        self.animation = None
 
     def get_network(self):
         """Returns NetworkX graph on which simulation is ran"""
@@ -102,10 +103,10 @@ class Simulation:
         else:
             raise NotImplementedError
 
-        animation = simulation.animate()
+        self.animation = simulation.animate()
 
         if save_to_file:
             unique_filename = str(uuid.uuid4())
-            animation.save(unique_filename + '.mp4', fps=5, extra_args=['-vcodec', 'libx264'])
+            self.animation.save(unique_filename + '.mp4', fps=5, extra_args=['-vcodec', 'libx264'])
 
         return simulation

@@ -328,14 +328,14 @@ class Gui:
         self.root.calculated_network.visualize()
 
     def _export_epidemic_animation(self):
-        if not hasattr(self.root, 'epidemic_result'):
+        if not hasattr(self.root, 'calculated_network'):
             messagebox.showerror('Error', 'No data to export')
             return
 
         path = filedialog.asksaveasfilename(title="Select file", defaultextension='.mp4',
                                             filetypes=(("mp4", "*.mp4"), ("all files", "*.*")))
         if path:
-            animation = self.root.epidemic_result.animate()
+            animation = self.root.calculated_network.animate()
             animation.save(path, fps=5, extra_args=['-vcodec', 'libx264'])
 
     def _calculate_simple(self, metrics: [str] = None):

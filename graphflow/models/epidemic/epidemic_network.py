@@ -145,3 +145,6 @@ class EpidemicNetwork(Network):
         lg.info('visualization done')
         webbrowser.open(filename)
 
+    def animate(self):
+        return self.__my_sim.animation
+

@@ -77,9 +77,6 @@ def static_attack_rate(network, **kwargs):
         recovery_rate (float): Required for **fast**. Recovery rate
         transmission_probability (float): Required for 'discrete'. Transmission probability. Values between 0 and 1
 
-    Keyword Args:
-        trans_prob: float (0-1), probability of disease spreading further
-
     Returns:
          float: value between 0 and 1 estimating probability and proportion of infected
 
@@ -156,10 +153,6 @@ def static_estimated_infection_time(network: nx.Graph, **kwargs):
             network: networkx Graph
             **kwargs: See below
 
-        Keyword Args:
-            time: point in time to calculate metric for
-            eon_investigation: object containing history data for all nodes
-
         Returns:
             dict: dictionary keyed by nodes id into estimate
 
@@ -167,7 +160,6 @@ def static_estimated_infection_time(network: nx.Graph, **kwargs):
             'graphflow.analysis.metrics'
         """
     status = nx.get_node_attributes(network, 'status')
-
     # use nx to get all shortest paths, use eon for estimating probability of infection
     estimates = {}
     for node in network.nodes():
