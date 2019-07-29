@@ -103,7 +103,7 @@ class Simulation:
         else:
             raise NotImplementedError
 
-        self.animation = simulation.animate()
+        self.animation = simulation.animate
 
         if save_to_file:
             unique_filename = str(uuid.uuid4())
