@@ -1,0 +1,667 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.6.3" />
+<title>graphflow.models.network API documentation</title>
+<meta name="description" content="Contains abstract implementation of network model" />
+<link href='https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css' rel='stylesheet'>
+<link href='https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/8.0.0/sanitize.min.css' rel='stylesheet'>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" rel="stylesheet">
+<style>.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{font-weight:bold}#index h4 + ul{margin-bottom:.6em}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase;cursor:pointer}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>graphflow.models.network</code></h1>
+</header>
+<section id="section-intro">
+<p>Contains abstract implementation of network model</p>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python"># pylint: skip-file
+&#34;&#34;&#34;Contains abstract implementation of network model&#34;&#34;&#34;
+import csv
+import webbrowser
+
+from abc import ABC, abstractmethod
+
+import networkx as nx
+import holoviews as hv
+
+from graphflow.analysis.metric_utils import get_metric
+
+
+class Network(ABC):
+    &#34;&#34;&#34;
+    Abstract class for every model (simple, extended, epidemic, epanet)
+
+    Delivers easy to use interface and unified for every model.
+    &#34;&#34;&#34;
+
+    _model: str
+    _is_calculated: bool = False
+    _metrics: [str]
+    _calculated_networks = {}
+    _static_metrics = {}
+    _network_properties = {}
+
+    @property
+    def model(self):
+        &#34;&#34;&#34;Returns model as string. It can be one of: &#39;simple&#39;, &#39;extended&#39;, &#39;epidemic&#39; or &#39;epanet&#39;&#34;&#34;&#34;
+        return self._model
+
+    @property
+    def is_calculated(self):
+        &#34;&#34;&#34;Returns bool indication if the network has been calculated&#34;&#34;&#34;
+        return self._is_calculated
+
+    @property
+    def metrics(self):
+        &#34;&#34;&#34;Returns used metrics as list of strings&#34;&#34;&#34;
+        return self._metrics
+
+    @abstractmethod
+    def get_nx_network(self):
+        &#34;&#34;&#34;Returns base network from the model as networkx graph&#34;&#34;&#34;
+        pass
+
+    @abstractmethod
+    def calculate(self):
+        &#34;&#34;&#34;Calculates network and applies all metrics.&#34;&#34;&#34;
+        pass
+
+    def visualize(self):
+        &#34;&#34;&#34;
+            Visualises calculated network
+
+            Raises:
+                ValueError: Network is not calculated
+        &#34;&#34;&#34;
+        if not self.is_calculated:
+            raise ValueError(&#34;Network not calculated.&#34;)
+
+        layout = self._get_hv_network() + self._get_metrics_plot()
+
+        filename = &#34;graph.html&#34;
+        hv.save(layout, filename, backend=&#39;bokeh&#39;)
+        self._add_metric_list(filename, self._static_metrics)
+        webbrowser.open(filename)
+
+    def export(self, filename: str):
+        &#34;&#34;&#34;
+        Exports network as CSV file
+
+        Args:
+            filename: exported file
+
+        Raises:
+            ValueError: Network is not calculated
+        &#34;&#34;&#34;
+        if not self.is_calculated:
+            raise ValueError(&#34;Network not calculated.&#34;)
+
+        with open(filename, &#39;w&#39;, newline=&#39;&#39;) as csvfile:
+            writer = csv.writer(csvfile, quotechar=&#39;|&#39;, quoting=csv.QUOTE_MINIMAL)
+            networks = self._calculated_networks
+
+            writer.writerow([&#39;time&#39;, &#39;metrics&#39;] + list(list(networks.values())[0].nodes()))
+
+            for time, net in networks.items():
+                data = list(net.nodes(data=True))
+                # [(0, {&#39;foo&#39;: &#39;bar&#39;}), (1, {&#39;time&#39;: &#39;5pm&#39;}), (2, {})]
+
+                metrics = {}
+                for nodes in data:
+                    for name, v in nodes[1].items():
+                        if name not in metrics:
+                            metrics[name] = {}
+                        metrics[name][nodes[0]] = v
+                # {&#39;foo&#39;: {0: &#39;bar&#39;, 1: &#39;els&#39;}, &#39;bar&#39;: {0: &#39;bar&#39;, 1: &#39;els&#39;}}
+
+                for name, nodes in metrics.items():
+                    row = [time, name]
+                    for _, value in nodes.items():
+                        row.append(value)
+                    writer.writerow(row)
+
+    # TODO- change next 2 methods so that they use calculate_metric() function.
+    #  Also add kwargs to them (self._network_properties)
+
+    def _apply_static_metrics(self, network):
+        &#34;&#34;&#34;
+        Applies all static metrics to `network` as attributes and fills `_static_metrics` dictionary with not node
+        specific metrics.
+        &#34;&#34;&#34;
+        if not self.metrics:
+            return
+
+        for name in self.metrics:
+            fun, model, metric_type = get_metric(name, details=True)
+            if metric_type == &#39;static&#39;:
+                value = fun(network)
+                if isinstance(value, dict):
+                    nx.set_node_attributes(network, value, name)
+                else:
+                    self._static_metrics[name] = value
+
+    def _apply_dynamic_metrics(self, network):
+        &#34;&#34;&#34;
+        Applies all dynamic metrics to `network` as node attributes and not node specific metrics as graph attributes
+        &#34;&#34;&#34;
+        if not self.metrics:
+            return
+
+        funs = []
+        for name in self.metrics:
+            fun, _, metric_type = get_metric(name, details=True)
+            if metric_type == &#39;dynamic&#39;:
+                funs.append(fun)
+
+        for fun, name in zip(funs, self.metrics):
+            value = fun(network)
+            if isinstance(value, dict):
+                nx.set_node_attributes(network, value, name)
+            else:
+                network.graph[name] = value
+
+    def _get_hv_network(self, color_by=None, color_map=None):
+        &#34;&#34;&#34;
+        Returns holovies graph of th network
+
+        Args:
+            color_by: Node attribute by by which value it will be colored. If None nodes will not be colored.
+                Defaults to None
+            color_map: Dictionary {attribute: color} shows what color will nodes have. If color_by is None it will
+                be ignored. If None default colors will be used, which vary depending on color_by attribute value
+
+        Returns:
+            holoviews.HoloMap: holoviews object representing plot
+        &#34;&#34;&#34;
+        hv.extension(&#39;bokeh&#39;)
+
+        graph_dict = {}
+        graph_layout = nx.drawing.layout.spring_layout(list(self._calculated_networks.values())[0])
+        for time, graph in self._calculated_networks.items():
+
+            if color_map:
+                graph = hv.Graph.from_networkx(self._calculated_networks[time], graph_layout)\
+                    .opts(node_color=color_by, cmap=color_map)
+            else:
+                graph = hv.Graph.from_networkx(self._calculated_networks[time], graph_layout)\
+                    .opts(node_color=color_by)
+            graph_dict[time] = graph
+
+        holomap = hv.HoloMap(graph_dict, kdims=&#39;Time&#39;).opts(width=700, height=700, padding=0.1).relabel(group=&#39;Network&#39;)
+
+        return holomap
+
+    def _get_metrics_plot(self, color_map: dict = {}, label_map: dict = {}):
+        &#34;&#34;&#34;
+            Creates holoviews plot for every not node specific metric over time
+
+        Returns:
+            holoviews.HoloMap: holoviews object representing plot
+
+        &#34;&#34;&#34;
+        metric_names = [name for name in next(iter(self._calculated_networks.values())).graph.keys()]
+        curve_dict = {}
+        for metric_name in metric_names:
+            name = label_map.get(metric_name, metric_name)
+            curve_dict[name] = hv.Curve((list(self._calculated_networks.keys()),
+                                                list(map(lambda x: x.graph[metric_name],
+                                                         self._calculated_networks.values()))),
+                                               kdims=&#39;Time&#39;, vdims=&#39;Value&#39;)
+            if metric_name in color_map:
+                curve_dict[name].opts(color=color_map[metric_name])
+
+        ndoverlay = hv.NdOverlay(curve_dict)
+        distribution = hv.HoloMap({i: (ndoverlay * hv.VLine(i)).relabel(group=&#39;Metrics&#39;)
+                                   for i in self._calculated_networks.keys()}, kdims=&#39;Time&#39;)\
+            .opts(width=400, height=400, padding=0.1)
+
+        return distribution
+
+    def _add_metric_list(self, path_to_html: str, metrics_to_add: dict):
+        &#34;&#34;&#34;
+        Appends to html list of all metrics
+
+        Html should have been created before and should already contain network visualization.
+
+        Args:
+            path_to_html: path to html to append
+            metrics_to_add: dictionary of metrics to add {name: value}
+        &#34;&#34;&#34;
+        with open(path_to_html, &#34;a&#34;) as file:
+            for name, metric in metrics_to_add.items():
+                file.write(&#34;{}: {}&lt;br&gt;&#34;.format(name, metric))</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="graphflow.models.network.Network"><code class="flex name class">
+<span>class <span class="ident">Network</span></span>
+<span>(</span><span>*args, **kwargs)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Abstract class for every model (simple, extended, epidemic, epanet)</p>
+<p>Delivers easy to use interface and unified for every model.</p></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">class Network(ABC):
+    &#34;&#34;&#34;
+    Abstract class for every model (simple, extended, epidemic, epanet)
+
+    Delivers easy to use interface and unified for every model.
+    &#34;&#34;&#34;
+
+    _model: str
+    _is_calculated: bool = False
+    _metrics: [str]
+    _calculated_networks = {}
+    _static_metrics = {}
+    _network_properties = {}
+
+    @property
+    def model(self):
+        &#34;&#34;&#34;Returns model as string. It can be one of: &#39;simple&#39;, &#39;extended&#39;, &#39;epidemic&#39; or &#39;epanet&#39;&#34;&#34;&#34;
+        return self._model
+
+    @property
+    def is_calculated(self):
+        &#34;&#34;&#34;Returns bool indication if the network has been calculated&#34;&#34;&#34;
+        return self._is_calculated
+
+    @property
+    def metrics(self):
+        &#34;&#34;&#34;Returns used metrics as list of strings&#34;&#34;&#34;
+        return self._metrics
+
+    @abstractmethod
+    def get_nx_network(self):
+        &#34;&#34;&#34;Returns base network from the model as networkx graph&#34;&#34;&#34;
+        pass
+
+    @abstractmethod
+    def calculate(self):
+        &#34;&#34;&#34;Calculates network and applies all metrics.&#34;&#34;&#34;
+        pass
+
+    def visualize(self):
+        &#34;&#34;&#34;
+            Visualises calculated network
+
+            Raises:
+                ValueError: Network is not calculated
+        &#34;&#34;&#34;
+        if not self.is_calculated:
+            raise ValueError(&#34;Network not calculated.&#34;)
+
+        layout = self._get_hv_network() + self._get_metrics_plot()
+
+        filename = &#34;graph.html&#34;
+        hv.save(layout, filename, backend=&#39;bokeh&#39;)
+        self._add_metric_list(filename, self._static_metrics)
+        webbrowser.open(filename)
+
+    def export(self, filename: str):
+        &#34;&#34;&#34;
+        Exports network as CSV file
+
+        Args:
+            filename: exported file
+
+        Raises:
+            ValueError: Network is not calculated
+        &#34;&#34;&#34;
+        if not self.is_calculated:
+            raise ValueError(&#34;Network not calculated.&#34;)
+
+        with open(filename, &#39;w&#39;, newline=&#39;&#39;) as csvfile:
+            writer = csv.writer(csvfile, quotechar=&#39;|&#39;, quoting=csv.QUOTE_MINIMAL)
+            networks = self._calculated_networks
+
+            writer.writerow([&#39;time&#39;, &#39;metrics&#39;] + list(list(networks.values())[0].nodes()))
+
+            for time, net in networks.items():
+                data = list(net.nodes(data=True))
+                # [(0, {&#39;foo&#39;: &#39;bar&#39;}), (1, {&#39;time&#39;: &#39;5pm&#39;}), (2, {})]
+
+                metrics = {}
+                for nodes in data:
+                    for name, v in nodes[1].items():
+                        if name not in metrics:
+                            metrics[name] = {}
+                        metrics[name][nodes[0]] = v
+                # {&#39;foo&#39;: {0: &#39;bar&#39;, 1: &#39;els&#39;}, &#39;bar&#39;: {0: &#39;bar&#39;, 1: &#39;els&#39;}}
+
+                for name, nodes in metrics.items():
+                    row = [time, name]
+                    for _, value in nodes.items():
+                        row.append(value)
+                    writer.writerow(row)
+
+    # TODO- change next 2 methods so that they use calculate_metric() function.
+    #  Also add kwargs to them (self._network_properties)
+
+    def _apply_static_metrics(self, network):
+        &#34;&#34;&#34;
+        Applies all static metrics to `network` as attributes and fills `_static_metrics` dictionary with not node
+        specific metrics.
+        &#34;&#34;&#34;
+        if not self.metrics:
+            return
+
+        for name in self.metrics:
+            fun, model, metric_type = get_metric(name, details=True)
+            if metric_type == &#39;static&#39;:
+                value = fun(network)
+                if isinstance(value, dict):
+                    nx.set_node_attributes(network, value, name)
+                else:
+                    self._static_metrics[name] = value
+
+    def _apply_dynamic_metrics(self, network):
+        &#34;&#34;&#34;
+        Applies all dynamic metrics to `network` as node attributes and not node specific metrics as graph attributes
+        &#34;&#34;&#34;
+        if not self.metrics:
+            return
+
+        funs = []
+        for name in self.metrics:
+            fun, _, metric_type = get_metric(name, details=True)
+            if metric_type == &#39;dynamic&#39;:
+                funs.append(fun)
+
+        for fun, name in zip(funs, self.metrics):
+            value = fun(network)
+            if isinstance(value, dict):
+                nx.set_node_attributes(network, value, name)
+            else:
+                network.graph[name] = value
+
+    def _get_hv_network(self, color_by=None, color_map=None):
+        &#34;&#34;&#34;
+        Returns holovies graph of th network
+
+        Args:
+            color_by: Node attribute by by which value it will be colored. If None nodes will not be colored.
+                Defaults to None
+            color_map: Dictionary {attribute: color} shows what color will nodes have. If color_by is None it will
+                be ignored. If None default colors will be used, which vary depending on color_by attribute value
+
+        Returns:
+            holoviews.HoloMap: holoviews object representing plot
+        &#34;&#34;&#34;
+        hv.extension(&#39;bokeh&#39;)
+
+        graph_dict = {}
+        graph_layout = nx.drawing.layout.spring_layout(list(self._calculated_networks.values())[0])
+        for time, graph in self._calculated_networks.items():
+
+            if color_map:
+                graph = hv.Graph.from_networkx(self._calculated_networks[time], graph_layout)\
+                    .opts(node_color=color_by, cmap=color_map)
+            else:
+                graph = hv.Graph.from_networkx(self._calculated_networks[time], graph_layout)\
+                    .opts(node_color=color_by)
+            graph_dict[time] = graph
+
+        holomap = hv.HoloMap(graph_dict, kdims=&#39;Time&#39;).opts(width=700, height=700, padding=0.1).relabel(group=&#39;Network&#39;)
+
+        return holomap
+
+    def _get_metrics_plot(self, color_map: dict = {}, label_map: dict = {}):
+        &#34;&#34;&#34;
+            Creates holoviews plot for every not node specific metric over time
+
+        Returns:
+            holoviews.HoloMap: holoviews object representing plot
+
+        &#34;&#34;&#34;
+        metric_names = [name for name in next(iter(self._calculated_networks.values())).graph.keys()]
+        curve_dict = {}
+        for metric_name in metric_names:
+            name = label_map.get(metric_name, metric_name)
+            curve_dict[name] = hv.Curve((list(self._calculated_networks.keys()),
+                                                list(map(lambda x: x.graph[metric_name],
+                                                         self._calculated_networks.values()))),
+                                               kdims=&#39;Time&#39;, vdims=&#39;Value&#39;)
+            if metric_name in color_map:
+                curve_dict[name].opts(color=color_map[metric_name])
+
+        ndoverlay = hv.NdOverlay(curve_dict)
+        distribution = hv.HoloMap({i: (ndoverlay * hv.VLine(i)).relabel(group=&#39;Metrics&#39;)
+                                   for i in self._calculated_networks.keys()}, kdims=&#39;Time&#39;)\
+            .opts(width=400, height=400, padding=0.1)
+
+        return distribution
+
+    def _add_metric_list(self, path_to_html: str, metrics_to_add: dict):
+        &#34;&#34;&#34;
+        Appends to html list of all metrics
+
+        Html should have been created before and should already contain network visualization.
+
+        Args:
+            path_to_html: path to html to append
+            metrics_to_add: dictionary of metrics to add {name: value}
+        &#34;&#34;&#34;
+        with open(path_to_html, &#34;a&#34;) as file:
+            for name, metric in metrics_to_add.items():
+                file.write(&#34;{}: {}&lt;br&gt;&#34;.format(name, metric))</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>abc.ABC</li>
+</ul>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li><a title="graphflow.models.epanet.epanet_network.EpanetNetwork" href="epanet/epanet_network.html#graphflow.models.epanet.epanet_network.EpanetNetwork">EpanetNetwork</a></li>
+<li><a title="graphflow.models.epidemic.epidemic_network.EpidemicNetwork" href="epidemic/epidemic_network.html#graphflow.models.epidemic.epidemic_network.EpidemicNetwork">EpidemicNetwork</a></li>
+<li><a title="graphflow.models.extended.extended_network.ExtendedNetwork" href="extended/extended_network.html#graphflow.models.extended.extended_network.ExtendedNetwork">ExtendedNetwork</a></li>
+<li><a title="graphflow.models.simple.simple_network.SimpleNetwork" href="simple/simple_network.html#graphflow.models.simple.simple_network.SimpleNetwork">SimpleNetwork</a></li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="graphflow.models.network.Network.is_calculated"><code class="name">var <span class="ident">is_calculated</span></code></dt>
+<dd>
+<section class="desc"><p>Returns bool indication if the network has been calculated</p></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">@property
+def is_calculated(self):
+    &#34;&#34;&#34;Returns bool indication if the network has been calculated&#34;&#34;&#34;
+    return self._is_calculated</code></pre>
+</details>
+</dd>
+<dt id="graphflow.models.network.Network.metrics"><code class="name">var <span class="ident">metrics</span></code></dt>
+<dd>
+<section class="desc"><p>Returns used metrics as list of strings</p></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">@property
+def metrics(self):
+    &#34;&#34;&#34;Returns used metrics as list of strings&#34;&#34;&#34;
+    return self._metrics</code></pre>
+</details>
+</dd>
+<dt id="graphflow.models.network.Network.model"><code class="name">var <span class="ident">model</span></code></dt>
+<dd>
+<section class="desc"><p>Returns model as string. It can be one of: 'simple', 'extended', 'epidemic' or 'epanet'</p></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">@property
+def model(self):
+    &#34;&#34;&#34;Returns model as string. It can be one of: &#39;simple&#39;, &#39;extended&#39;, &#39;epidemic&#39; or &#39;epanet&#39;&#34;&#34;&#34;
+    return self._model</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="graphflow.models.network.Network.calculate"><code class="name flex">
+<span>def <span class="ident">calculate</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Calculates network and applies all metrics.</p></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">@abstractmethod
+def calculate(self):
+    &#34;&#34;&#34;Calculates network and applies all metrics.&#34;&#34;&#34;
+    pass</code></pre>
+</details>
+</dd>
+<dt id="graphflow.models.network.Network.export"><code class="name flex">
+<span>def <span class="ident">export</span></span>(<span>self, filename)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Exports network as CSV file</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>filename</code></strong></dt>
+<dd>exported file</dd>
+</dl>
+<h2 id="raises">Raises</h2>
+<dl>
+<dt><strong><code>ValueError</code></strong></dt>
+<dd>Network is not calculated</dd>
+</dl></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def export(self, filename: str):
+    &#34;&#34;&#34;
+    Exports network as CSV file
+
+    Args:
+        filename: exported file
+
+    Raises:
+        ValueError: Network is not calculated
+    &#34;&#34;&#34;
+    if not self.is_calculated:
+        raise ValueError(&#34;Network not calculated.&#34;)
+
+    with open(filename, &#39;w&#39;, newline=&#39;&#39;) as csvfile:
+        writer = csv.writer(csvfile, quotechar=&#39;|&#39;, quoting=csv.QUOTE_MINIMAL)
+        networks = self._calculated_networks
+
+        writer.writerow([&#39;time&#39;, &#39;metrics&#39;] + list(list(networks.values())[0].nodes()))
+
+        for time, net in networks.items():
+            data = list(net.nodes(data=True))
+            # [(0, {&#39;foo&#39;: &#39;bar&#39;}), (1, {&#39;time&#39;: &#39;5pm&#39;}), (2, {})]
+
+            metrics = {}
+            for nodes in data:
+                for name, v in nodes[1].items():
+                    if name not in metrics:
+                        metrics[name] = {}
+                    metrics[name][nodes[0]] = v
+            # {&#39;foo&#39;: {0: &#39;bar&#39;, 1: &#39;els&#39;}, &#39;bar&#39;: {0: &#39;bar&#39;, 1: &#39;els&#39;}}
+
+            for name, nodes in metrics.items():
+                row = [time, name]
+                for _, value in nodes.items():
+                    row.append(value)
+                writer.writerow(row)</code></pre>
+</details>
+</dd>
+<dt id="graphflow.models.network.Network.get_nx_network"><code class="name flex">
+<span>def <span class="ident">get_nx_network</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Returns base network from the model as networkx graph</p></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">@abstractmethod
+def get_nx_network(self):
+    &#34;&#34;&#34;Returns base network from the model as networkx graph&#34;&#34;&#34;
+    pass</code></pre>
+</details>
+</dd>
+<dt id="graphflow.models.network.Network.visualize"><code class="name flex">
+<span>def <span class="ident">visualize</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Visualises calculated network</p>
+<h2 id="raises">Raises</h2>
+<dl>
+<dt><strong><code>ValueError</code></strong></dt>
+<dd>Network is not calculated</dd>
+</dl></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def visualize(self):
+    &#34;&#34;&#34;
+        Visualises calculated network
+
+        Raises:
+            ValueError: Network is not calculated
+    &#34;&#34;&#34;
+    if not self.is_calculated:
+        raise ValueError(&#34;Network not calculated.&#34;)
+
+    layout = self._get_hv_network() + self._get_metrics_plot()
+
+    filename = &#34;graph.html&#34;
+    hv.save(layout, filename, backend=&#39;bokeh&#39;)
+    self._add_metric_list(filename, self._static_metrics)
+    webbrowser.open(filename)</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="graphflow.models" href="index.html">graphflow.models</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="graphflow.models.network.Network" href="#graphflow.models.network.Network">Network</a></code></h4>
+<ul class="two-column">
+<li><code><a title="graphflow.models.network.Network.calculate" href="#graphflow.models.network.Network.calculate">calculate</a></code></li>
+<li><code><a title="graphflow.models.network.Network.export" href="#graphflow.models.network.Network.export">export</a></code></li>
+<li><code><a title="graphflow.models.network.Network.get_nx_network" href="#graphflow.models.network.Network.get_nx_network">get_nx_network</a></code></li>
+<li><code><a title="graphflow.models.network.Network.is_calculated" href="#graphflow.models.network.Network.is_calculated">is_calculated</a></code></li>
+<li><code><a title="graphflow.models.network.Network.metrics" href="#graphflow.models.network.Network.metrics">metrics</a></code></li>
+<li><code><a title="graphflow.models.network.Network.model" href="#graphflow.models.network.Network.model">model</a></code></li>
+<li><code><a title="graphflow.models.network.Network.visualize" href="#graphflow.models.network.Network.visualize">visualize</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.6.3</a>.</p>
+</footer>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad()</script>
+</body>
+</html>

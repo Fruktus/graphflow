@@ -1,0 +1,341 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.6.3" />
+<title>graphflow.models.epidemic.epidemic_network API documentation</title>
+<meta name="description" content="" />
+<link href='https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css' rel='stylesheet'>
+<link href='https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/8.0.0/sanitize.min.css' rel='stylesheet'>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" rel="stylesheet">
+<style>.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{font-weight:bold}#index h4 + ul{margin-bottom:.6em}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase;cursor:pointer}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>graphflow.models.epidemic.epidemic_network</code></h1>
+</header>
+<section id="section-intro">
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python"># pylint: skip-file
+import webbrowser
+from copy import deepcopy
+import logging as lg
+
+import networkx as nx
+import holoviews as hv
+
+from graphflow.models.epidemic.epidemic_runner import Parser
+from graphflow.models.epidemic.epidemic_simulation import Simulation
+from graphflow.models.network import Network
+
+lg.getLogger(&#39;epidemic&#39;)
+
+
+class EpidemicNetwork(Network):
+    &#34;&#34;&#34;
+    EpidemicNetwork implements epidemic model, using EoN library. Both SIR and SIS models are supported.
+
+    Args:
+        path_to_network: Path to file containing network in GML format. Each node requires attributes: &#39;infected&#39;
+            (for SIR ans SIS) and &#39;recovered&#39; (for SIR only). Each of them is either 0 or 1.
+        metrics: Used metrics as list of strings. Each name has to be name of one of the functions in on of the
+            ``graphflow.analysis.metrics`` and ``graphflow.analysis.epidemic_metrics`` files
+        *args: Not used in this model
+        **kwargs: See below
+
+    Keyword Args:
+        simulation_type (str): Required. &#39;sis&#39; or &#39;sir&#39;
+        algorithm (str): Required. &#39;fast&#39; or &#39;discrete&#39;
+        transmission_rate (float): Required for **fast** algorithm. Transmission rate per edge
+        recovery_rate (float): Required for **fast** algorithm. Recovery rate per node
+        transmission_probability (float): Required for **discrete** algorithm. Transmission probability
+        max_time (float): Maximal simulation time. Defaults to `Inf`. It has to be specified for SIS model since or it will
+            run infinitely.
+
+    Examples:
+        &gt;&gt;&gt; network = EpidemicNetwork(&#39;network.txt&#39;, [&#39;degree_centrality&#39;, &#39;diameter&#39;], simulation_type=&#39;sis&#39;, \
+        ... algorithm=&#39;fast&#39;, transmission_rate=2.0, recovery_rate=1.0, max_time=2.0)
+        &gt;&gt;&gt; network.calculate()
+        &gt;&gt;&gt; network.visualize()
+        &gt;&gt;&gt; network.export(&#39;exported.csv&#39;)
+    &#34;&#34;&#34;
+
+    def __init__(self, path_to_network: str, metrics: [str], *args, **kwargs):
+        self._model = &#39;epidemic&#39;
+        self._metrics = metrics
+        self.__simulation_investigation = None
+        self.__transmission_rate = kwargs.get(&#39;transmission_rate&#39;, None)
+        self.__recovery_rate = kwargs.get(&#39;recovery_rate&#39;, None)
+        self.__transmission_probability = kwargs.get(&#39;transmission_probability&#39;, None)
+        self.__max_time = kwargs.get(&#39;max_time&#39;, float(&#39;Inf&#39;))
+
+        epidemic_params = Parser()
+        epidemic_params.parse_input(kwargs.get(&#39;simulation_type&#39;), kwargs.get(&#39;algorithm&#39;), path_to_network,
+                                    transmission_rate=self.__transmission_rate,
+                                    recovery_rate=self.__recovery_rate,
+                                    transmission_probability=self.__transmission_probability,
+                                    max_time=self.__max_time)
+        simulation_config = epidemic_params.get_simulation_config()
+
+        self.__my_sim = Simulation(simulation_config)
+
+    def get_nx_network(self):
+        return self.__my_sim.get_network()
+
+    def calculate(self):
+        lg.info(&#39;starting calculation&#39;)
+        self.__simulation_investigation = self.__my_sim.run_simulation()
+
+        if self.__simulation_investigation.SIR:
+            time_steps, S, I, R = self.__simulation_investigation.summary()
+            time_steps = time_steps[1:]
+            S = S[1:]
+            I = I[1:]
+            R = R[1:]
+        else:
+            time_steps, S, I = self.__simulation_investigation.summary()
+            R = [0 for _ in time_steps]
+
+        nx_network = self.get_nx_network()
+        self._apply_static_metrics(nx_network)
+
+        for key in list(nx_network.graph.keys()):
+            del nx_network.graph[key]
+
+        for time, s, i, r in zip(time_steps, S, I, R):
+            self._calculated_networks[time] = deepcopy(nx_network)
+
+            self._calculated_networks[time].graph[&#39;S&#39;] = s
+            self._calculated_networks[time].graph[&#39;I&#39;] = i
+            if self.__simulation_investigation.SIR:
+                self._calculated_networks[time].graph[&#39;R&#39;] = r
+
+            self._apply_dynamic_metrics(self._calculated_networks[time])
+
+            statuses = self.__simulation_investigation.get_statuses(time=time)
+            nx.set_node_attributes(self._calculated_networks[time], statuses, &#39;status&#39;)
+
+        self._is_calculated = True
+        lg.info(&#39;calculation complete&#39;)
+
+    def visualize(self):
+        lg.info(&#39;starting visualization&#39;)
+        if not self.is_calculated:
+            raise ValueError(&#34;Network not calculated.&#34;)
+
+        color_map = {&#39;S&#39;: &#39;yellow&#39;, &#39;I&#39;: &#39;red&#39;, &#39;R&#39;: &#39;green&#39;}
+        label_map = {&#39;S&#39;: &#39;Susceptible&#39;, &#39;I&#39;: &#39;Infected&#39;, &#39;R&#39;: &#39;Recovered&#39;}
+        layout = self._get_hv_network(color_by=&#34;status&#34;, color_map=color_map) + \
+            self._get_metrics_plot(color_map=color_map, label_map=label_map)
+
+        filename = &#34;graph.html&#34;
+        hv.save(layout, filename, backend=&#39;bokeh&#39;)
+        self._add_metric_list(filename, self._static_metrics)
+        lg.info(&#39;visualization done&#39;)
+        webbrowser.open(filename)</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="graphflow.models.epidemic.epidemic_network.EpidemicNetwork"><code class="flex name class">
+<span>class <span class="ident">EpidemicNetwork</span></span>
+<span>(</span><span>path_to_network, metrics, *args, **kwargs)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>EpidemicNetwork implements epidemic model, using EoN library. Both SIR and SIS models are supported.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>path_to_network</code></strong></dt>
+<dd>Path to file containing network in GML format. Each node requires attributes: 'infected'
+(for SIR ans SIS) and 'recovered' (for SIR only). Each of them is either 0 or 1.</dd>
+<dt><strong><code>metrics</code></strong></dt>
+<dd>Used metrics as list of strings. Each name has to be name of one of the functions in on of the
+<code>&lt;a title="graphflow.analysis.metrics" href="../../analysis/metrics.html"&gt;</code>graphflow.analysis.metrics<code>&lt;/a&gt;</code> and <code>&lt;a title="graphflow.analysis.epidemic_metrics" href="../../analysis/epidemic_metrics.html"&gt;</code>graphflow.analysis.epidemic_metrics<code>&lt;/a&gt;</code> files</dd>
+<dt><strong><code>*args</code></strong></dt>
+<dd>Not used in this model</dd>
+<dt><strong><code>**kwargs</code></strong></dt>
+<dd>See below</dd>
+</dl>
+<p>Keyword Args:
+simulation_type (str): Required. 'sis' or 'sir'
+algorithm (str): Required. 'fast' or 'discrete'
+transmission_rate (float): Required for <strong>fast</strong> algorithm. Transmission rate per edge
+recovery_rate (float): Required for <strong>fast</strong> algorithm. Recovery rate per node
+transmission_probability (float): Required for <strong>discrete</strong> algorithm. Transmission probability
+max_time (float): Maximal simulation time. Defaults to <code>Inf</code>. It has to be specified for SIS model since or it will
+run infinitely.</p>
+<h2 id="examples">Examples</h2>
+<pre><code>&gt;&gt;&gt; network = EpidemicNetwork('network.txt', ['degree_centrality', 'diameter'], simulation_type='sis',         ... algorithm='fast', transmission_rate=2.0, recovery_rate=1.0, max_time=2.0)
+&gt;&gt;&gt; network.calculate()
+&gt;&gt;&gt; network.visualize()
+&gt;&gt;&gt; network.export('exported.csv')
+</code></pre></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">class EpidemicNetwork(Network):
+    &#34;&#34;&#34;
+    EpidemicNetwork implements epidemic model, using EoN library. Both SIR and SIS models are supported.
+
+    Args:
+        path_to_network: Path to file containing network in GML format. Each node requires attributes: &#39;infected&#39;
+            (for SIR ans SIS) and &#39;recovered&#39; (for SIR only). Each of them is either 0 or 1.
+        metrics: Used metrics as list of strings. Each name has to be name of one of the functions in on of the
+            ``graphflow.analysis.metrics`` and ``graphflow.analysis.epidemic_metrics`` files
+        *args: Not used in this model
+        **kwargs: See below
+
+    Keyword Args:
+        simulation_type (str): Required. &#39;sis&#39; or &#39;sir&#39;
+        algorithm (str): Required. &#39;fast&#39; or &#39;discrete&#39;
+        transmission_rate (float): Required for **fast** algorithm. Transmission rate per edge
+        recovery_rate (float): Required for **fast** algorithm. Recovery rate per node
+        transmission_probability (float): Required for **discrete** algorithm. Transmission probability
+        max_time (float): Maximal simulation time. Defaults to `Inf`. It has to be specified for SIS model since or it will
+            run infinitely.
+
+    Examples:
+        &gt;&gt;&gt; network = EpidemicNetwork(&#39;network.txt&#39;, [&#39;degree_centrality&#39;, &#39;diameter&#39;], simulation_type=&#39;sis&#39;, \
+        ... algorithm=&#39;fast&#39;, transmission_rate=2.0, recovery_rate=1.0, max_time=2.0)
+        &gt;&gt;&gt; network.calculate()
+        &gt;&gt;&gt; network.visualize()
+        &gt;&gt;&gt; network.export(&#39;exported.csv&#39;)
+    &#34;&#34;&#34;
+
+    def __init__(self, path_to_network: str, metrics: [str], *args, **kwargs):
+        self._model = &#39;epidemic&#39;
+        self._metrics = metrics
+        self.__simulation_investigation = None
+        self.__transmission_rate = kwargs.get(&#39;transmission_rate&#39;, None)
+        self.__recovery_rate = kwargs.get(&#39;recovery_rate&#39;, None)
+        self.__transmission_probability = kwargs.get(&#39;transmission_probability&#39;, None)
+        self.__max_time = kwargs.get(&#39;max_time&#39;, float(&#39;Inf&#39;))
+
+        epidemic_params = Parser()
+        epidemic_params.parse_input(kwargs.get(&#39;simulation_type&#39;), kwargs.get(&#39;algorithm&#39;), path_to_network,
+                                    transmission_rate=self.__transmission_rate,
+                                    recovery_rate=self.__recovery_rate,
+                                    transmission_probability=self.__transmission_probability,
+                                    max_time=self.__max_time)
+        simulation_config = epidemic_params.get_simulation_config()
+
+        self.__my_sim = Simulation(simulation_config)
+
+    def get_nx_network(self):
+        return self.__my_sim.get_network()
+
+    def calculate(self):
+        lg.info(&#39;starting calculation&#39;)
+        self.__simulation_investigation = self.__my_sim.run_simulation()
+
+        if self.__simulation_investigation.SIR:
+            time_steps, S, I, R = self.__simulation_investigation.summary()
+            time_steps = time_steps[1:]
+            S = S[1:]
+            I = I[1:]
+            R = R[1:]
+        else:
+            time_steps, S, I = self.__simulation_investigation.summary()
+            R = [0 for _ in time_steps]
+
+        nx_network = self.get_nx_network()
+        self._apply_static_metrics(nx_network)
+
+        for key in list(nx_network.graph.keys()):
+            del nx_network.graph[key]
+
+        for time, s, i, r in zip(time_steps, S, I, R):
+            self._calculated_networks[time] = deepcopy(nx_network)
+
+            self._calculated_networks[time].graph[&#39;S&#39;] = s
+            self._calculated_networks[time].graph[&#39;I&#39;] = i
+            if self.__simulation_investigation.SIR:
+                self._calculated_networks[time].graph[&#39;R&#39;] = r
+
+            self._apply_dynamic_metrics(self._calculated_networks[time])
+
+            statuses = self.__simulation_investigation.get_statuses(time=time)
+            nx.set_node_attributes(self._calculated_networks[time], statuses, &#39;status&#39;)
+
+        self._is_calculated = True
+        lg.info(&#39;calculation complete&#39;)
+
+    def visualize(self):
+        lg.info(&#39;starting visualization&#39;)
+        if not self.is_calculated:
+            raise ValueError(&#34;Network not calculated.&#34;)
+
+        color_map = {&#39;S&#39;: &#39;yellow&#39;, &#39;I&#39;: &#39;red&#39;, &#39;R&#39;: &#39;green&#39;}
+        label_map = {&#39;S&#39;: &#39;Susceptible&#39;, &#39;I&#39;: &#39;Infected&#39;, &#39;R&#39;: &#39;Recovered&#39;}
+        layout = self._get_hv_network(color_by=&#34;status&#34;, color_map=color_map) + \
+            self._get_metrics_plot(color_map=color_map, label_map=label_map)
+
+        filename = &#34;graph.html&#34;
+        hv.save(layout, filename, backend=&#39;bokeh&#39;)
+        self._add_metric_list(filename, self._static_metrics)
+        lg.info(&#39;visualization done&#39;)
+        webbrowser.open(filename)</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="graphflow.models.network.Network" href="../network.html#graphflow.models.network.Network">Network</a></li>
+<li>abc.ABC</li>
+</ul>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="graphflow.models.network.Network" href="../network.html#graphflow.models.network.Network">Network</a></b></code>:
+<ul class="hlist">
+<li><code><a title="graphflow.models.network.Network.calculate" href="../network.html#graphflow.models.network.Network.calculate">calculate</a></code></li>
+<li><code><a title="graphflow.models.network.Network.export" href="../network.html#graphflow.models.network.Network.export">export</a></code></li>
+<li><code><a title="graphflow.models.network.Network.get_nx_network" href="../network.html#graphflow.models.network.Network.get_nx_network">get_nx_network</a></code></li>
+<li><code><a title="graphflow.models.network.Network.is_calculated" href="../network.html#graphflow.models.network.Network.is_calculated">is_calculated</a></code></li>
+<li><code><a title="graphflow.models.network.Network.metrics" href="../network.html#graphflow.models.network.Network.metrics">metrics</a></code></li>
+<li><code><a title="graphflow.models.network.Network.model" href="../network.html#graphflow.models.network.Network.model">model</a></code></li>
+<li><code><a title="graphflow.models.network.Network.visualize" href="../network.html#graphflow.models.network.Network.visualize">visualize</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="graphflow.models.epidemic" href="index.html">graphflow.models.epidemic</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="graphflow.models.epidemic.epidemic_network.EpidemicNetwork" href="#graphflow.models.epidemic.epidemic_network.EpidemicNetwork">EpidemicNetwork</a></code></h4>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.6.3</a>.</p>
+</footer>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad()</script>
+</body>
+</html>

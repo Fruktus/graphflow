@@ -1,0 +1,587 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.6.3" />
+<title>graphflow.models.extended.extended_model API documentation</title>
+<meta name="description" content="" />
+<link href='https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css' rel='stylesheet'>
+<link href='https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/8.0.0/sanitize.min.css' rel='stylesheet'>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" rel="stylesheet">
+<style>.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{font-weight:bold}#index h4 + ul{margin-bottom:.6em}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase;cursor:pointer}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>graphflow.models.extended.extended_model</code></h1>
+</header>
+<section id="section-intro">
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python"># pylint: disable=R0914
+from __future__ import annotations
+
+import random
+from dataclasses import dataclass, replace
+from typing import Optional
+
+import math
+import numpy as np
+import sympy
+
+from graphflow.models.abstract_simple.abstract_simple_model import AbstractFlowNetworkNode, AbstractFlowNetworkEdge, \
+    AbstractFlowNetwork
+
+
+@dataclass
+class ExtendedFlowNetworkNode(AbstractFlowNetworkNode):
+    pass
+
+
+@dataclass
+class ExtendedFlowNetworkEdge(AbstractFlowNetworkEdge):
+    u_angle: float
+    v_angle: float
+
+    u_pressure: Optional[float]
+    v_pressure: Optional[float]
+
+
+class ExtendedFlowNetwork(AbstractFlowNetwork):
+
+    def calculate_network_state(self):
+        s_values, m_values = self.__calculate_flow_network_state()
+        self.__update_network(s_values, m_values)
+        p_in_result, p_out_result = self.__calculate_pressure_network_state()
+        return self.__build_new_network(p_in_result, p_out_result)
+
+    # Flow Calculations
+    def __calculate_flow_network_state(self):
+        s_symbols = {}
+        m_symbols = {}
+        equations = []
+
+        self.__create_flow_symbols(m_symbols, s_symbols)
+        self.__add_initial_flow_conditions(equations, m_symbols, s_symbols)
+        self.__add_node_flow_equations(equations, m_symbols, s_symbols)
+        s_values, m_values = self.__solve_flow_equations(equations, m_symbols, s_symbols)
+        return s_values, m_values
+
+    def __create_flow_symbols(self, m_symbols, s_symbols):
+        for node in self._internal_nodes.values():
+            s_symbols[node.id] = sympy.Symbol(&#34;s_%i&#34; % node.id)
+
+        for edge in self._internal_edges.values():
+            m_symbols[(edge.u_id, edge.v_id)] = sympy.Symbol(&#39;m_%i_%i&#39; % (edge.u_id, edge.v_id))
+
+    def __add_initial_flow_conditions(self, equations, m_symbols, s_symbols):
+        for node in self._internal_nodes.values():
+            if node.s_flow is not None:
+                equations.append(s_symbols[node.id] - node.s_flow)
+
+        for edge in self._internal_edges.values():
+            if edge.m_flow is not None:
+                equations.append(m_symbols[(edge.u_id, edge.v_id)] - edge.m_flow)
+
+    def __add_node_flow_equations(self, equations, m_symbols, s_symbols):
+        for node in self._internal_nodes.values():
+            equations.append(self.__build_flow_expr(node, m_symbols, s_symbols))
+
+    def __build_flow_expr(self, node, m_symbols, s_symbols):
+        in_edges_m = list(map(lambda x: m_symbols[x], self._internal_network.in_edges(node.id)))
+        out_edges_m = list(map(lambda x: m_symbols[x], self._internal_network.out_edges(node.id)))
+        return s_symbols[node.id] + sum(in_edges_m) - sum(out_edges_m)
+
+    @staticmethod
+    def __solve_flow_equations(equations, m_symbols, s_symbols):
+        all_symbols = list(s_symbols.values()) + list(m_symbols.values())
+        raw_result = sympy.linsolve(equations, all_symbols)
+        if not isinstance(raw_result, sympy.FiniteSet):
+            raise ValueError()
+
+        result = list(raw_result)[0]
+        s_values = result[:len(s_symbols)]
+        m_values = result[len(s_symbols):len(s_symbols) + len(m_symbols)]
+
+        s_result = dict(list(zip(s_symbols.keys(), s_values)))
+        m_result = dict(list(zip(m_symbols.keys(), m_values)))
+        return s_result, m_result
+
+    def __update_network(self, s_values, m_values):
+        new_network = ExtendedFlowNetwork(density=self.density, viscosity=self.viscosity)
+        self.__fill_with_nodes(new_network, s_values)
+        self.__fill_with_edges(m_values, new_network)
+        self._internal_network, self._internal_nodes, self._internal_edges = new_network.get_internal_components()
+
+    def __fill_with_nodes(self, new_network, s_values):
+        for node in self._internal_nodes.values():
+            new_node = replace(node, s_flow=s_values[node.id])
+            new_network.add_node(new_node)
+
+    def __fill_with_edges(self, m_values, new_network):
+        for edge in self._internal_edges.values():
+            if m_values[(edge.u_id, edge.v_id)] &lt; 0:
+                new_edge = replace(edge, u_id=edge.v_id, v_id=edge.u_id, m_flow=-m_values[(edge.u_id, edge.v_id)],
+                                   u_angle=edge.v_angle, v_angle=edge.u_angle)
+            else:
+                new_edge = replace(edge, m_flow=m_values[(edge.u_id, edge.v_id)])
+            new_network.add_edge(new_edge)
+
+    def get_internal_components(self):
+        return self._internal_network, self._internal_nodes, self._internal_edges
+
+    # Pressure Calculations
+    def __calculate_pressure_network_state(self):
+        p_in_symbols = {}
+        p_out_symbols = {}
+        equations = []
+
+        self.__create_pressure_symbols(p_in_symbols, p_out_symbols)
+        self.__add_initial_pressure_conditions(equations, p_in_symbols, p_out_symbols)
+        self.__add_pressure_equations(equations, p_in_symbols, p_out_symbols)
+        p_in_result, p_out_result = self.__solve_flow_equations(equations, p_in_symbols, p_out_symbols)
+        return p_in_result, p_out_result
+
+    def __create_pressure_symbols(self, p_in_symbols, p_out_symbols):
+        for edge in self._internal_edges.values():
+            p_in_symbols[(edge.u_id, edge.v_id)] = sympy.Symbol(&#39;p_in_%i_%i&#39; % (edge.u_id, edge.v_id))
+            p_out_symbols[(edge.v_id, edge.u_id)] = sympy.Symbol(&#39;p_out_%i_%i&#39; % (edge.v_id, edge.u_id))
+
+    def __add_initial_pressure_conditions(self, equations, p_in_symbols, p_out_symbols):
+        for edge in self._internal_edges.values():
+            if edge.u_pressure is not None:
+                equations.append(p_in_symbols[(edge.u_id, edge.v_id)] - edge.u_pressure)
+
+            if edge.v_pressure is not None:
+                equations.append(p_out_symbols[(edge.v_id, edge.u_id)] - edge.v_pressure)
+
+    def __add_pressure_equations(self, equations, p_in_symbols, p_out_symbols):
+        self.__add_pressure_node_equations(equations, p_in_symbols, p_out_symbols)
+        self.__add_pressure_edge_equations(equations, p_in_symbols, p_out_symbols)
+
+    def __add_pressure_node_equations(self, equations, p_in_symbols, p_out_symbols):
+        for node in self._internal_nodes.values():
+            in_nodes = [i for (i, j) in self._internal_network.in_edges(node.id)]
+            out_nodes = [j for (i, j) in self._internal_network.out_edges(node.id)]
+
+            if not in_nodes or not out_nodes:
+                continue
+
+            ref = random.choice(in_nodes)
+
+            c_ref = {}
+            for j in out_nodes:
+                c_ref_j = self.__calculate_coefficients(j, node.id, ref)
+                c_ref[(ref, j)] = c_ref_j
+
+                m_node_j = self._internal_edges[(node.id, j)].m_flow
+                a_node_j = self._internal_edges[(node.id, j)].cross_area
+                u_j = m_node_j / (self.density * a_node_j)
+
+                p_in_ref_node = p_in_symbols[(ref, node.id)]
+                p_out_j_node = p_out_symbols[(j, node.id)]
+                equation = p_in_ref_node - p_out_j_node - c_ref_j * self.density * u_j ** 2
+                equations.append(equation)
+
+            m_sum = sum([self._internal_edges[(node.id, j)].m_flow for j in out_nodes])
+
+            for i in in_nodes:
+                if i == ref:
+                    continue
+
+                coeff = 0
+                for j in out_nodes:
+                    c_i_j = self.__calculate_coefficients(j, node.id, ref)
+
+                    m_node_j = self._internal_edges[(node.id, j)].m_flow
+                    a_node_j = self._internal_edges[(node.id, j)].cross_area
+                    u_j = m_node_j / (self.density * a_node_j)
+                    coeff += m_node_j / m_sum * (c_i_j - c_ref[(ref, j)]) * self.density * u_j ** 2
+
+                equation = p_out_symbols[(node.id, i)] - p_in_symbols[(ref, node.id)] - coeff
+                equations.append(equation)
+
+    def __calculate_coefficients(self, j, node, ref):
+        psi = self._internal_edges[(ref, node)].cross_area / self._internal_edges[(node, j)].cross_area
+        q_ref_j = self._internal_edges[(node, j)].m_flow / self._internal_edges[(ref, node)].m_flow
+        th_ref_j = (self._internal_edges[(ref, node)].u_angle - self._internal_edges[
+            (node, j)].u_angle) / math.pi % 1
+        c_ref_j = 1 - 1 / (psi * q_ref_j) * math.cos(0.75 * (math.pi - th_ref_j))
+        return c_ref_j
+
+    def __add_pressure_edge_equations(self, equations, p_in_symbols, p_out_symbols):
+        for edge in self._internal_edges.values():
+            re_val = 2 * edge.m_flow / (self.viscosity * math.sqrt(edge.cross_area) * math.pi)
+
+            f1_val = np.sign(-4.5 * (re_val - 3000) / 1000) * 64 / re_val
+            f2_val = np.sign(4.5 * (re_val - 3000) / 1000) * 0.079 / (re_val * 0.25)
+            f_val = f1_val + f2_val
+
+            coeff = edge.length * edge.m_flow ** 2 / (self.density * edge.cross_area ** 2) * math.sqrt(
+                math.pi / edge.cross_area)
+            equation = p_in_symbols[(edge.u_id, edge.v_id)] - p_out_symbols[(edge.v_id, edge.u_id)] - f_val * coeff
+            equations.append(equation)
+
+    @staticmethod
+    def __solve_pressure_equations(equations, p_in_symbols, p_out_symbols):
+        all_symbols = list(p_in_symbols.values()) + list(p_out_symbols.values())
+        raw_result = sympy.linsolve(equations, all_symbols)
+        if not isinstance(raw_result, sympy.FiniteSet):
+            raise ValueError()
+
+        result = list(raw_result)[0]
+        p_in_values = result[:len(p_in_symbols)]
+        p_out_values = result[len(p_in_symbols):len(p_in_symbols) + len(p_out_symbols)]
+
+        p_in_result = dict(list(zip(p_in_symbols.keys(), p_in_values)))
+        p_out_result = dict(list(zip(p_out_symbols.keys(), p_out_values)))
+        return p_in_result, p_out_result
+
+    def __build_new_network(self, p_in_symbols, p_out_symbols):
+        new_network = ExtendedFlowNetwork(density=self.density, viscosity=self.viscosity)
+        for node in self._internal_nodes.values():
+            new_node = replace(node)
+            new_network.add_node(new_node)
+
+        for edge in self._internal_edges.values():
+            new_edge = replace(edge, u_pressure=p_in_symbols[(edge.v_id, edge.u_id)],
+                               v_pressure=p_out_symbols[(edge.u_id, edge.v_id)])
+            new_network.add_edge(new_edge)
+
+        return new_network</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="graphflow.models.extended.extended_model.ExtendedFlowNetwork"><code class="flex name class">
+<span>class <span class="ident">ExtendedFlowNetwork</span></span>
+<span>(</span><span>density, viscosity)</span>
+</code></dt>
+<dd>
+<section class="desc"></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">class ExtendedFlowNetwork(AbstractFlowNetwork):
+
+    def calculate_network_state(self):
+        s_values, m_values = self.__calculate_flow_network_state()
+        self.__update_network(s_values, m_values)
+        p_in_result, p_out_result = self.__calculate_pressure_network_state()
+        return self.__build_new_network(p_in_result, p_out_result)
+
+    # Flow Calculations
+    def __calculate_flow_network_state(self):
+        s_symbols = {}
+        m_symbols = {}
+        equations = []
+
+        self.__create_flow_symbols(m_symbols, s_symbols)
+        self.__add_initial_flow_conditions(equations, m_symbols, s_symbols)
+        self.__add_node_flow_equations(equations, m_symbols, s_symbols)
+        s_values, m_values = self.__solve_flow_equations(equations, m_symbols, s_symbols)
+        return s_values, m_values
+
+    def __create_flow_symbols(self, m_symbols, s_symbols):
+        for node in self._internal_nodes.values():
+            s_symbols[node.id] = sympy.Symbol(&#34;s_%i&#34; % node.id)
+
+        for edge in self._internal_edges.values():
+            m_symbols[(edge.u_id, edge.v_id)] = sympy.Symbol(&#39;m_%i_%i&#39; % (edge.u_id, edge.v_id))
+
+    def __add_initial_flow_conditions(self, equations, m_symbols, s_symbols):
+        for node in self._internal_nodes.values():
+            if node.s_flow is not None:
+                equations.append(s_symbols[node.id] - node.s_flow)
+
+        for edge in self._internal_edges.values():
+            if edge.m_flow is not None:
+                equations.append(m_symbols[(edge.u_id, edge.v_id)] - edge.m_flow)
+
+    def __add_node_flow_equations(self, equations, m_symbols, s_symbols):
+        for node in self._internal_nodes.values():
+            equations.append(self.__build_flow_expr(node, m_symbols, s_symbols))
+
+    def __build_flow_expr(self, node, m_symbols, s_symbols):
+        in_edges_m = list(map(lambda x: m_symbols[x], self._internal_network.in_edges(node.id)))
+        out_edges_m = list(map(lambda x: m_symbols[x], self._internal_network.out_edges(node.id)))
+        return s_symbols[node.id] + sum(in_edges_m) - sum(out_edges_m)
+
+    @staticmethod
+    def __solve_flow_equations(equations, m_symbols, s_symbols):
+        all_symbols = list(s_symbols.values()) + list(m_symbols.values())
+        raw_result = sympy.linsolve(equations, all_symbols)
+        if not isinstance(raw_result, sympy.FiniteSet):
+            raise ValueError()
+
+        result = list(raw_result)[0]
+        s_values = result[:len(s_symbols)]
+        m_values = result[len(s_symbols):len(s_symbols) + len(m_symbols)]
+
+        s_result = dict(list(zip(s_symbols.keys(), s_values)))
+        m_result = dict(list(zip(m_symbols.keys(), m_values)))
+        return s_result, m_result
+
+    def __update_network(self, s_values, m_values):
+        new_network = ExtendedFlowNetwork(density=self.density, viscosity=self.viscosity)
+        self.__fill_with_nodes(new_network, s_values)
+        self.__fill_with_edges(m_values, new_network)
+        self._internal_network, self._internal_nodes, self._internal_edges = new_network.get_internal_components()
+
+    def __fill_with_nodes(self, new_network, s_values):
+        for node in self._internal_nodes.values():
+            new_node = replace(node, s_flow=s_values[node.id])
+            new_network.add_node(new_node)
+
+    def __fill_with_edges(self, m_values, new_network):
+        for edge in self._internal_edges.values():
+            if m_values[(edge.u_id, edge.v_id)] &lt; 0:
+                new_edge = replace(edge, u_id=edge.v_id, v_id=edge.u_id, m_flow=-m_values[(edge.u_id, edge.v_id)],
+                                   u_angle=edge.v_angle, v_angle=edge.u_angle)
+            else:
+                new_edge = replace(edge, m_flow=m_values[(edge.u_id, edge.v_id)])
+            new_network.add_edge(new_edge)
+
+    def get_internal_components(self):
+        return self._internal_network, self._internal_nodes, self._internal_edges
+
+    # Pressure Calculations
+    def __calculate_pressure_network_state(self):
+        p_in_symbols = {}
+        p_out_symbols = {}
+        equations = []
+
+        self.__create_pressure_symbols(p_in_symbols, p_out_symbols)
+        self.__add_initial_pressure_conditions(equations, p_in_symbols, p_out_symbols)
+        self.__add_pressure_equations(equations, p_in_symbols, p_out_symbols)
+        p_in_result, p_out_result = self.__solve_flow_equations(equations, p_in_symbols, p_out_symbols)
+        return p_in_result, p_out_result
+
+    def __create_pressure_symbols(self, p_in_symbols, p_out_symbols):
+        for edge in self._internal_edges.values():
+            p_in_symbols[(edge.u_id, edge.v_id)] = sympy.Symbol(&#39;p_in_%i_%i&#39; % (edge.u_id, edge.v_id))
+            p_out_symbols[(edge.v_id, edge.u_id)] = sympy.Symbol(&#39;p_out_%i_%i&#39; % (edge.v_id, edge.u_id))
+
+    def __add_initial_pressure_conditions(self, equations, p_in_symbols, p_out_symbols):
+        for edge in self._internal_edges.values():
+            if edge.u_pressure is not None:
+                equations.append(p_in_symbols[(edge.u_id, edge.v_id)] - edge.u_pressure)
+
+            if edge.v_pressure is not None:
+                equations.append(p_out_symbols[(edge.v_id, edge.u_id)] - edge.v_pressure)
+
+    def __add_pressure_equations(self, equations, p_in_symbols, p_out_symbols):
+        self.__add_pressure_node_equations(equations, p_in_symbols, p_out_symbols)
+        self.__add_pressure_edge_equations(equations, p_in_symbols, p_out_symbols)
+
+    def __add_pressure_node_equations(self, equations, p_in_symbols, p_out_symbols):
+        for node in self._internal_nodes.values():
+            in_nodes = [i for (i, j) in self._internal_network.in_edges(node.id)]
+            out_nodes = [j for (i, j) in self._internal_network.out_edges(node.id)]
+
+            if not in_nodes or not out_nodes:
+                continue
+
+            ref = random.choice(in_nodes)
+
+            c_ref = {}
+            for j in out_nodes:
+                c_ref_j = self.__calculate_coefficients(j, node.id, ref)
+                c_ref[(ref, j)] = c_ref_j
+
+                m_node_j = self._internal_edges[(node.id, j)].m_flow
+                a_node_j = self._internal_edges[(node.id, j)].cross_area
+                u_j = m_node_j / (self.density * a_node_j)
+
+                p_in_ref_node = p_in_symbols[(ref, node.id)]
+                p_out_j_node = p_out_symbols[(j, node.id)]
+                equation = p_in_ref_node - p_out_j_node - c_ref_j * self.density * u_j ** 2
+                equations.append(equation)
+
+            m_sum = sum([self._internal_edges[(node.id, j)].m_flow for j in out_nodes])
+
+            for i in in_nodes:
+                if i == ref:
+                    continue
+
+                coeff = 0
+                for j in out_nodes:
+                    c_i_j = self.__calculate_coefficients(j, node.id, ref)
+
+                    m_node_j = self._internal_edges[(node.id, j)].m_flow
+                    a_node_j = self._internal_edges[(node.id, j)].cross_area
+                    u_j = m_node_j / (self.density * a_node_j)
+                    coeff += m_node_j / m_sum * (c_i_j - c_ref[(ref, j)]) * self.density * u_j ** 2
+
+                equation = p_out_symbols[(node.id, i)] - p_in_symbols[(ref, node.id)] - coeff
+                equations.append(equation)
+
+    def __calculate_coefficients(self, j, node, ref):
+        psi = self._internal_edges[(ref, node)].cross_area / self._internal_edges[(node, j)].cross_area
+        q_ref_j = self._internal_edges[(node, j)].m_flow / self._internal_edges[(ref, node)].m_flow
+        th_ref_j = (self._internal_edges[(ref, node)].u_angle - self._internal_edges[
+            (node, j)].u_angle) / math.pi % 1
+        c_ref_j = 1 - 1 / (psi * q_ref_j) * math.cos(0.75 * (math.pi - th_ref_j))
+        return c_ref_j
+
+    def __add_pressure_edge_equations(self, equations, p_in_symbols, p_out_symbols):
+        for edge in self._internal_edges.values():
+            re_val = 2 * edge.m_flow / (self.viscosity * math.sqrt(edge.cross_area) * math.pi)
+
+            f1_val = np.sign(-4.5 * (re_val - 3000) / 1000) * 64 / re_val
+            f2_val = np.sign(4.5 * (re_val - 3000) / 1000) * 0.079 / (re_val * 0.25)
+            f_val = f1_val + f2_val
+
+            coeff = edge.length * edge.m_flow ** 2 / (self.density * edge.cross_area ** 2) * math.sqrt(
+                math.pi / edge.cross_area)
+            equation = p_in_symbols[(edge.u_id, edge.v_id)] - p_out_symbols[(edge.v_id, edge.u_id)] - f_val * coeff
+            equations.append(equation)
+
+    @staticmethod
+    def __solve_pressure_equations(equations, p_in_symbols, p_out_symbols):
+        all_symbols = list(p_in_symbols.values()) + list(p_out_symbols.values())
+        raw_result = sympy.linsolve(equations, all_symbols)
+        if not isinstance(raw_result, sympy.FiniteSet):
+            raise ValueError()
+
+        result = list(raw_result)[0]
+        p_in_values = result[:len(p_in_symbols)]
+        p_out_values = result[len(p_in_symbols):len(p_in_symbols) + len(p_out_symbols)]
+
+        p_in_result = dict(list(zip(p_in_symbols.keys(), p_in_values)))
+        p_out_result = dict(list(zip(p_out_symbols.keys(), p_out_values)))
+        return p_in_result, p_out_result
+
+    def __build_new_network(self, p_in_symbols, p_out_symbols):
+        new_network = ExtendedFlowNetwork(density=self.density, viscosity=self.viscosity)
+        for node in self._internal_nodes.values():
+            new_node = replace(node)
+            new_network.add_node(new_node)
+
+        for edge in self._internal_edges.values():
+            new_edge = replace(edge, u_pressure=p_in_symbols[(edge.v_id, edge.u_id)],
+                               v_pressure=p_out_symbols[(edge.u_id, edge.v_id)])
+            new_network.add_edge(new_edge)
+
+        return new_network</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="graphflow.models.abstract_simple.abstract_simple_model.AbstractFlowNetwork" href="../abstract_simple/abstract_simple_model.html#graphflow.models.abstract_simple.abstract_simple_model.AbstractFlowNetwork">AbstractFlowNetwork</a></li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="graphflow.models.extended.extended_model.ExtendedFlowNetwork.calculate_network_state"><code class="name flex">
+<span>def <span class="ident">calculate_network_state</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<section class="desc"></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def calculate_network_state(self):
+    s_values, m_values = self.__calculate_flow_network_state()
+    self.__update_network(s_values, m_values)
+    p_in_result, p_out_result = self.__calculate_pressure_network_state()
+    return self.__build_new_network(p_in_result, p_out_result)</code></pre>
+</details>
+</dd>
+<dt id="graphflow.models.extended.extended_model.ExtendedFlowNetwork.get_internal_components"><code class="name flex">
+<span>def <span class="ident">get_internal_components</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<section class="desc"></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def get_internal_components(self):
+    return self._internal_network, self._internal_nodes, self._internal_edges</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="graphflow.models.extended.extended_model.ExtendedFlowNetworkEdge"><code class="flex name class">
+<span>class <span class="ident">ExtendedFlowNetworkEdge</span></span>
+<span>(</span><span>u_id, v_id, length, cross_area, m_flow, u_angle, v_angle, u_pressure, v_pressure)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>ExtendedFlowNetworkEdge(u_id: int, v_id: int, length: float, cross_area: float, m_flow: Union[float, NoneType], u_angle: 'float', v_angle: 'float', u_pressure: 'Optional[float]', v_pressure: 'Optional[float]')</p></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">class ExtendedFlowNetworkEdge(AbstractFlowNetworkEdge):
+    u_angle: float
+    v_angle: float
+
+    u_pressure: Optional[float]
+    v_pressure: Optional[float]</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="graphflow.models.abstract_simple.abstract_simple_model.AbstractFlowNetworkEdge" href="../abstract_simple/abstract_simple_model.html#graphflow.models.abstract_simple.abstract_simple_model.AbstractFlowNetworkEdge">AbstractFlowNetworkEdge</a></li>
+</ul>
+</dd>
+<dt id="graphflow.models.extended.extended_model.ExtendedFlowNetworkNode"><code class="flex name class">
+<span>class <span class="ident">ExtendedFlowNetworkNode</span></span>
+<span>(</span><span>id, s_flow)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>ExtendedFlowNetworkNode(id: int, s_flow: Union[float, NoneType])</p></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">class ExtendedFlowNetworkNode(AbstractFlowNetworkNode):
+    pass</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="graphflow.models.abstract_simple.abstract_simple_model.AbstractFlowNetworkNode" href="../abstract_simple/abstract_simple_model.html#graphflow.models.abstract_simple.abstract_simple_model.AbstractFlowNetworkNode">AbstractFlowNetworkNode</a></li>
+</ul>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="graphflow.models.extended" href="index.html">graphflow.models.extended</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="graphflow.models.extended.extended_model.ExtendedFlowNetwork" href="#graphflow.models.extended.extended_model.ExtendedFlowNetwork">ExtendedFlowNetwork</a></code></h4>
+<ul class="">
+<li><code><a title="graphflow.models.extended.extended_model.ExtendedFlowNetwork.calculate_network_state" href="#graphflow.models.extended.extended_model.ExtendedFlowNetwork.calculate_network_state">calculate_network_state</a></code></li>
+<li><code><a title="graphflow.models.extended.extended_model.ExtendedFlowNetwork.get_internal_components" href="#graphflow.models.extended.extended_model.ExtendedFlowNetwork.get_internal_components">get_internal_components</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="graphflow.models.extended.extended_model.ExtendedFlowNetworkEdge" href="#graphflow.models.extended.extended_model.ExtendedFlowNetworkEdge">ExtendedFlowNetworkEdge</a></code></h4>
+</li>
+<li>
+<h4><code><a title="graphflow.models.extended.extended_model.ExtendedFlowNetworkNode" href="#graphflow.models.extended.extended_model.ExtendedFlowNetworkNode">ExtendedFlowNetworkNode</a></code></h4>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.6.3</a>.</p>
+</footer>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad()</script>
+</body>
+</html>

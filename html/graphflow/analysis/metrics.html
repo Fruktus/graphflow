@@ -1,0 +1,1546 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.6.3" />
+<title>graphflow.analysis.metrics API documentation</title>
+<meta name="description" content="General metrics …" />
+<link href='https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css' rel='stylesheet'>
+<link href='https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/8.0.0/sanitize.min.css' rel='stylesheet'>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" rel="stylesheet">
+<style>.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{font-weight:bold}#index h4 + ul{margin-bottom:.6em}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase;cursor:pointer}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>graphflow.analysis.metrics</code></h1>
+</header>
+<section id="section-intro">
+<p>General metrics</p>
+<p>This file contains general metrics which are available for all models.</p>
+<p>The following describes all metrics not only general.</p>
+<p>Metric is recognised by functions name. Names have to start with either <code>static_</code> or <code>dynamic_</code> after which is
+metric name in snake_case. The first word states if the metric is static - can be calculated only once, or
+dynamic - depends on graphs state and has to be calculated for each time step. The graphs themselves are not dynamic
+meaning that they can't remove/add nodes and edges during simulation but their state - nodes attributes mostly can
+change. Thus dynamic metrics.</p>
+<p>Each metric is function with similar pattern:</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>network</code></strong> :&ensp;<code>graph</code></dt>
+<dd>NetworkX graph on which metric will be calculated</dd>
+<dt><strong><code>**kwargs</code></strong></dt>
+<dd>Some metrics (not in this file) require additional arguments. Most common is:
+state (dict): Required if <code>network</code> doesn't have certain attribute for each node (atribute depend on metric).
+Dictionary of node state. Key is node ID, value is node state represented as another dictionary
+{name: value} where name is attribute name, value is its value</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>One</code> of <code>the</code> <code>following</code> (<code>depending</code> <code>on</code> <code>metric</code>):</dt>
+<dd>int or float: Metric represents entire network (graph) property. Eg diameter
+dict: Dictionary (node: value). Represents nodes properties.
+tuple: (dict, dict). Similar to previous but returns two values</dd>
+</dl>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">&#34;&#34;&#34;
+General metrics
+
+This file contains general metrics which are available for all models.
+
+The following describes all metrics not only general.
+
+Metric is recognised by functions name. Names have to start with either ``static_`` or ``dynamic_`` after which is
+metric name in snake_case. The first word states if the metric is static - can be calculated only once, or
+dynamic - depends on graphs state and has to be calculated for each time step. The graphs themselves are not dynamic
+meaning that they can&#39;t remove/add nodes and edges during simulation but their state - nodes attributes mostly can
+change. Thus dynamic metrics.
+
+Each metric is function with similar pattern:
+
+Args:
+    network (graph): NetworkX graph on which metric will be calculated
+    **kwargs: Some metrics (not in this file) require additional arguments. Most common is:
+        state (dict): Required if `network` doesn&#39;t have certain attribute for each node (atribute depend on metric).
+        Dictionary of node state. Key is node ID, value is node state represented as another dictionary
+        {name: value} where name is attribute name, value is its value
+
+Returns:
+    One of the following (depending on metric):
+        int or float: Metric represents entire network (graph) property. Eg diameter
+        dict: Dictionary (node: value). Represents nodes properties.
+        tuple: (dict, dict). Similar to previous but returns two values
+&#34;&#34;&#34;
+
+import networkx as nx
+
+
+# general metrics
+def static_degree_centrality(network: nx.Graph):
+    r&#34;&#34;&#34;Compute the degree centrality for nodes.
+
+        The degree centrality for a node v is the fraction of nodes it
+        is connected to.
+
+    Args:
+        network: A NetworkX graph
+
+    Returns
+        dict: Dictionary of nodes with degree centrality as the value.&#34;&#34;&#34;
+    return nx.degree_centrality(network)
+
+
+def static_hits(network: nx.Graph):
+    r&#34;&#34;&#34;&#34;Returns HITS hubs and authorities values for nodes.
+
+    The HITS algorithm computes two numbers for a node.
+    Authorities estimates the node value based on the incoming links.
+    Hubs estimates the node value based on outgoing links.
+
+    Args:
+        network : A NetworkX graph
+
+    Returns:
+    tuple: (hubs,authorities) two-tuple of dictionaries
+            Two dictionaries keyed by node containing the hub and authority
+            values.
+
+    Raises:
+        PowerIterationFailedConvergence: If the algorithm fails to converge to the specified tolerance
+            within the specified number of iterations of the power iteration
+            method.&#34;&#34;&#34;
+    try:
+        return nx.hits_scipy(network)
+    except nx.PowerIterationFailedConvergence:
+        return None
+
+
+def static_diameter(network: nx.Graph):
+    r&#34;&#34;&#34;Returns the diameter of the graph G.
+
+    The diameter is the maximum eccentricity.
+
+    Args:
+        network : a NetworkX graph
+
+    Returns:
+        d : Diameter of graph&#34;&#34;&#34;
+    try:
+        return nx.algorithms.distance_measures.diameter(network)
+    except nx.NetworkXError:
+        return 0
+
+
+def static_density(network: nx.Graph):
+    r&#34;&#34;&#34;Calculates density, based on Wikipedia
+
+    Args:
+        network: A NetworkX graph
+
+    Returns:
+        float: density&#34;&#34;&#34;
+    edges = len(network.edges)
+    vertices = len(network.nodes)
+    return edges / (vertices * (vertices - 1))
+
+
+def static_modularity(network):
+    r&#34;&#34;&#34;Find communities in graph using Clauset-Newman-Moore greedy modularity
+    maximization. This method currently supports the Graph class and does not
+    consider edge weights.
+
+    Greedy modularity maximization begins with each node in its own community
+    and joins the pair of communities that most increases modularity until no
+    such pair exists.
+
+    Args:
+        network : NetworkX graph
+
+    Yields:
+        Yields sets of nodes, one for each community.
+
+    Examples:
+        &gt;&gt;&gt; from networkx.algorithms.community import greedy_modularity_communities
+        &gt;&gt;&gt; G = nx.karate_club_graph()
+        &gt;&gt;&gt; c = list(greedy_modularity_communities(G))
+        &gt;&gt;&gt; sorted(c[0])
+        [8, 14, 15, 18, 20, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33]&#34;&#34;&#34;
+    return nx.algorithms.community.modularity_max.greedy_modularity_communities(network)
+
+
+def static_page_rank(network: nx.Graph):
+    r&#34;&#34;&#34;Returns the PageRank of the nodes in the graph.
+
+    PageRank computes a ranking of the nodes in the graph G based on
+    the structure of the incoming links. It was originally designed as
+    an algorithm to rank web pages.
+
+    Args:
+        network : A NetworkX graph. Undirected graphs will be converted to a directed
+      graph with two directed edges for each undirected edge.
+
+    Returns:
+        dict: Dictionary of nodes with PageRank as value
+
+    Examples:
+        &gt;&gt;&gt; G = nx.DiGraph(nx.path_graph(4))
+        &gt;&gt;&gt; pr = nx.pagerank(G, alpha=0.9)
+
+    Raises:
+        PowerIterationFailedConvergence: If the algorithm fails to converge to the specified tolerance
+            within the specified number of iterations of the power iteration
+            method.&#34;&#34;&#34;
+    return nx.algorithms.link_analysis.pagerank_alg.pagerank(network)
+
+
+def static_eigenvector_centrality(network: nx.Graph):
+    r&#34;&#34;&#34;Compute the eigenvector centrality for the graph `G`.
+
+    Eigenvector centrality computes the centrality for a node based on the
+    centrality of its neighbors. The eigenvector centrality for node $i$ is
+    the $i$-th element of the vector $x$ defined by the equation
+
+    .. math::
+
+        Ax = \lambda x
+
+    where $A$ is the adjacency matrix of the graph `G` with eigenvalue
+    $\lambda$. By virtue of the Perron–Frobenius theorem, there is a unique
+    solution $x$, all of whose entries are positive, if $\lambda$ is the
+    largest eigenvalue of the adjacency matrix $A$ ([2]_).
+
+    Args:
+        network : A NetworkX graph
+
+    Returns:
+        dict: Dictionary of nodes with eigenvector centrality as the value.
+
+    Examples:
+        &gt;&gt;&gt; G = nx.path_graph(4)
+        &gt;&gt;&gt; centrality = nx.eigenvector_centrality(G)
+        &gt;&gt;&gt; sorted((v, &#39;{:0.2f}&#39;.format(c)) for v, c in centrality.items())
+        [(0, &#39;0.37&#39;), (1, &#39;0.60&#39;), (2, &#39;0.60&#39;), (3, &#39;0.37&#39;)]
+
+    Raises:
+        NetworkXPointlessConcept: If the graph `G` is the null graph.
+
+        NetworkXError: If each value in `nstart` is zero.
+
+        PowerIterationFailedConvergence: If the algorithm fails to converge to the specified tolerance
+            within the specified number of iterations of the power iteration
+            method.
+&#34;&#34;&#34;
+    return nx.algorithms.centrality.eigenvector_centrality(network, max_iter=1000)
+
+
+def static_closeness_centrality(network: nx.Graph):
+    r&#34;&#34;&#34;Compute closeness centrality for nodes.
+
+    Closeness centrality [1]_ of a node `u` is the reciprocal of the
+    average shortest path distance to `u` over all `n-1` reachable nodes.
+
+    .. math::
+
+        C(u) = \frac{n - 1}{\sum_{v=1}^{n-1} d(v, u)},
+
+    where `d(v, u)` is the shortest-path distance between `v` and `u`,
+    and `n` is the number of nodes that can reach `u`. Notice that the
+    closeness distance function computes the incoming distance to `u`
+    for directed graphs. To use outward distance, act on `G.reverse()`.
+
+    Notice that higher values of closeness indicate higher centrality.
+
+    Wasserman and Faust propose an improved formula for graphs with
+    more than one connected component. The result is &#34;a ratio of the
+    fraction of actors in the group who are reachable, to the average
+    distance&#34; from the reachable actors [2]_. You might think this
+    scale factor is inverted but it is not. As is, nodes from small
+    components receive a smaller closeness value. Letting `N` denote
+    the number of nodes in the graph,
+
+    .. math::
+
+        C_{WF}(u) = \frac{n-1}{N-1} \frac{n - 1}{\sum_{v=1}^{n-1} d(v, u)},
+
+    Args:
+        network: A NetworkX graph
+
+    Returns:
+        dict: Dictionary of nodes with closeness centrality as the value.&#34;&#34;&#34;
+    return nx.algorithms.centrality.closeness_centrality(network)
+
+
+def static_betweenness_centrality(network: nx.Graph):
+    r&#34;&#34;&#34;Compute the shortest-path betweenness centrality for nodes.
+
+    Betweenness centrality of a node $v$ is the sum of the
+    fraction of all-pairs shortest paths that pass through $v$
+
+    .. math::
+
+       c_B(v) =\sum_{s,t \in V} \frac{\sigma(s, t|v)}{\sigma(s, t)}
+
+    where $V$ is the set of nodes, $\sigma(s, t)$ is the number of
+    shortest $(s, t)$-paths,  and $\sigma(s, t|v)$ is the number of
+    those paths  passing through some  node $v$ other than $s, t$.
+    If $s = t$, $\sigma(s, t) = 1$, and if $v \in {s, t}$,
+    $\sigma(s, t|v) = 0$ [2]_.
+
+    Args:
+        network: A NetworkX graph.
+
+    Returns:
+    dict: Dictionary of nodes with betweenness centrality as the value.&#34;&#34;&#34;
+    return nx.algorithms.centrality.betweenness_centrality(network)
+
+
+def static_average_path(network: nx.Graph):
+    r&#34;&#34;&#34;Returns the average shortest path length.
+
+    The average shortest path length is
+
+    .. math::
+
+       a =\sum_{s,t \in V} \frac{d(s, t)}{n(n-1)}
+
+    where `V` is the set of nodes in `G`,
+    `d(s, t)` is the shortest path from `s` to `t`,
+    and `n` is the number of nodes in `G`.
+
+    Args:
+        network: NetworkX graph
+
+    Raises:
+        NetworkXPointlessConcept: If `G` is the null graph (that is, the graph on zero nodes).
+
+        NetworkXError: If `G` is not connected (or not weakly connected, in the case
+            of a directed graph).
+
+        ValueError: If `method` is not among the supported options.
+
+    Examples:
+        &gt;&gt;&gt; G = nx.path_graph(5)
+        &gt;&gt;&gt; nx.average_shortest_path_length(G)
+        2.0
+
+        For disconnected graphs, you can compute the average shortest path
+        length for each component
+
+        &gt;&gt;&gt; G = nx.Graph([(1, 2), (3, 4)])
+        &gt;&gt;&gt; for C in nx.connected_component_subgraphs(G):
+        ...     print(nx.average_shortest_path_length(C))
+        1.0
+        1.0&#34;&#34;&#34;
+    return nx.algorithms.shortest_paths.generic.average_shortest_path_length(network)
+
+
+# specific metrics
+def static_maximum_flow(network: nx.Graph, source, target):
+    r&#34;&#34;&#34;Find a maximum single-commodity flow.
+
+    Args:
+        network: Edges of the graph are expected to have an attribute called
+            &#39;capacity&#39;. If this attribute is not present, the edge is
+            considered to have infinite capacity.
+        source: Source node for the flow.
+        target: Sink node for the flow.
+
+    Returns:
+        integer, float: Value of the maximum flow, i.e., net outflow from the source.
+        dict: A dictionary containing the value of the flow that went through
+            each edge.&#34;&#34;&#34;
+    try:
+        return nx.algorithms.flow.maximum_flow_value(network, source, target)
+    except nx.NetworkXError:
+        return 0.0
+    except nx.NetworkXUnbounded:
+        return 0.0
+
+
+def static_current_flow_closeness(network: nx.Graph):
+    r&#34;&#34;&#34;Compute current-flow closeness centrality for nodes.
+
+    Current-flow closeness centrality is variant of closeness
+    centrality based on effective resistance between nodes in
+    a network. This metric is also known as information centrality.
+
+    Args:
+        network: A NetworkX graph
+
+    Returns:
+        dict: Dictionary of nodes with current flow closeness centrality as the value.
+&#34;&#34;&#34;
+    return nx.algorithms.centrality.current_flow_closeness_centrality(network.to_undirected())
+
+
+def static_current_flow_betweenness(network: nx.Graph):
+    r&#34;&#34;&#34;Compute current-flow betweenness centrality for nodes.
+
+    Current-flow betweenness centrality uses an electrical current
+    model for information spreading in contrast to betweenness
+    centrality which uses shortest paths.
+
+    Current-flow betweenness centrality is also known as
+    random-walk betweenness centrality [2]_.
+
+    Args:
+        network: A NetworkX graph
+
+    Returns:
+        dict: Dictionary of nodes with betweenness centrality as the value.&#34;&#34;&#34;
+    return nx.algorithms.centrality.current_flow_betweenness_centrality(network.to_undirected())
+
+
+def static_load_centrality(network: nx.Graph):
+    r&#34;&#34;&#34;Compute load centrality for nodes.
+
+    The load centrality of a node is the fraction of all shortest paths that pass through that node.
+
+    Args:
+        network: A NetworkX graph
+
+    Returns:
+        dict: Dictionary of nodes with centrality as the value.&#34;&#34;&#34;
+    return nx.algorithms.centrality.load_centrality(network)
+
+
+def static_subgraph(network: nx.Graph):
+    r&#34;&#34;&#34;Returns subgraph centrality for each node in G.
+
+    Subgraph centrality  of a node `n` is the sum of weighted closed
+    walks of all lengths starting and ending at node `n`. The weights
+    decrease with path length. Each closed walk is associated with a
+    connected subgraph ([1]_).
+
+    Args:
+        network: A NetworkX graph
+
+    Returns:
+        dict: Dictionary of nodes with subgraph centrality as the value.
+
+    Raises:
+        NetworkXError: If the graph is not undirected and simple.&#34;&#34;&#34;
+    return nx.algorithms.centrality.subgraph_centrality(network.to_undirected())
+
+
+def static_harmonic_centrality(network: nx.Graph):
+    r&#34;&#34;&#34;Compute harmonic centrality for nodes.
+
+    Harmonic centrality [1]_ of a node `u` is the sum of the reciprocal
+    of the shortest path distances from all other nodes to `u`
+
+    .. math::
+
+        C(u) = \sum_{v \neq u} \frac{1}{d(v, u)}
+
+    where `d(v, u)` is the shortest-path distance between `v` and `u`.
+
+    Notice that higher values indicate higher centrality.
+
+    Args:
+        network: A NetworkX graph
+
+    Returns:
+        dict: Dictionary of nodes with harmonic centrality as the value.&#34;&#34;&#34;
+    return nx.algorithms.centrality.harmonic_centrality(network)
+
+
+def static_global_reaching(network: nx.Graph):
+    r&#34;&#34;&#34;Returns the global reaching centrality of a directed graph.
+
+    The *global reaching centrality* of a weighted directed graph is the
+    average over all nodes of the difference between the local reaching
+    centrality of the node and the greatest local reaching centrality of
+    any node in the graph [1]_. For more information on the local
+    reaching centrality, see :func:`local_reaching_centrality`.
+    Informally, the local reaching centrality is the proportion of the
+    graph that is reachable from the neighbors of the node.
+
+    Args:
+        network: A NetworkX DiGraph.
+
+    Returns:
+        float: The global reaching centrality of the graph.
+
+    Examples:
+        &gt;&gt;&gt; import networkx as nx
+        &gt;&gt;&gt; G = nx.DiGraph()
+        &gt;&gt;&gt; G.add_edge(1, 2)
+        &gt;&gt;&gt; G.add_edge(1, 3)
+        &gt;&gt;&gt; nx.global_reaching_centrality(G)
+        1.0
+        &gt;&gt;&gt; G.add_edge(3, 2)
+        &gt;&gt;&gt; nx.global_reaching_centrality(G)
+        0.75&#34;&#34;&#34;
+    return nx.algorithms.centrality.global_reaching_centrality(network)
+
+
+def static_percolation(network: nx.Graph):
+    r&#34;&#34;&#34;Compute the percolation centrality for nodes.
+
+    Percolation centrality of a node $v$, at a given time, is defined
+    as the proportion of ‘percolated paths’ that go through that node.
+
+    This measure quantifies relative impact of nodes based on their
+    topological connectivity, as well as their percolation states.
+
+    Percolation states of nodes are used to depict network percolation
+    scenarios (such as during infection transmission in a social network
+    of individuals, spreading of computer viruses on computer networks, or
+    transmission of disease over a network of towns) over time. In this
+    measure usually the percolation state is expressed as a decimal
+    between 0.0 and 1.0.
+
+    When all nodes are in the same percolated state this measure is
+    equivalent to betweenness centrality.
+
+    Args:
+        network: A NetworkX graph.
+
+    Returns:
+        dict: Dictionary of nodes with percolation centrality as the value.&#34;&#34;&#34;
+    try:
+        return nx.algorithms.centrality.percolation_centrality(network)
+    except KeyError:
+        return {}
+
+
+def static_second_order_centrality(network: nx.Graph):
+    r&#34;&#34;&#34;Compute the second order centrality for nodes of G.
+
+    The second order centrality of a given node is the standard deviation of
+    the return times to that node of a perpetual random walk on G:
+
+    Args:
+        network: A NetworkX connected and undirected graph.
+
+    Returns:
+        dict: Dictionary keyed by node with second order centrality as the value.
+
+    Examples:
+        &gt;&gt;&gt; G = nx.star_graph(10)
+        &gt;&gt;&gt; soc = nx.second_order_centrality(G)
+        &gt;&gt;&gt; print(sorted(soc.items(), key=lambda x:x[1])[0][0]) # pick first id
+        0
+
+    Raises:
+        NetworkXException: If the graph G is empty, non connected or has negative weights.&#34;&#34;&#34;
+    return nx.algorithms.centrality.second_order_centrality(network.to_undirected())</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="graphflow.analysis.metrics.static_average_path"><code class="name flex">
+<span>def <span class="ident">static_average_path</span></span>(<span>network)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Returns the average shortest path length.</p>
+<p>The average shortest path length is</p>
+<p>[ a =\sum_{s,t \in V} \frac{d(s, t)}{n(n-1)} ]
+where <code>V</code> is the set of nodes in <code>G</code>,
+<code>d(s, t)</code> is the shortest path from <code>s</code> to <code>t</code>,
+and <code>n</code> is the number of nodes in <code>G</code>.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>network</code></strong></dt>
+<dd>NetworkX graph</dd>
+</dl>
+<h2 id="raises">Raises</h2>
+<dl>
+<dt><strong><code>NetworkXPointlessConcept</code></strong></dt>
+<dd>If <code>G</code> is the null graph (that is, the graph on zero nodes).</dd>
+<dt><strong><code>NetworkXError</code></strong></dt>
+<dd>If <code>G</code> is not connected (or not weakly connected, in the case
+of a directed graph).</dd>
+<dt><strong><code>ValueError</code></strong></dt>
+<dd>If <code>method</code> is not among the supported options.</dd>
+</dl>
+<h2 id="examples">Examples</h2>
+<pre><code>&gt;&gt;&gt; G = nx.path_graph(5)
+&gt;&gt;&gt; nx.average_shortest_path_length(G)
+2.0
+</code></pre>
+<p>For disconnected graphs, you can compute the average shortest path
+length for each component</p>
+<pre><code>&gt;&gt;&gt; G = nx.Graph([(1, 2), (3, 4)])
+&gt;&gt;&gt; for C in nx.connected_component_subgraphs(G):
+...     print(nx.average_shortest_path_length(C))
+1.0
+</code></pre>
+<p>1.0</p></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def static_average_path(network: nx.Graph):
+    r&#34;&#34;&#34;Returns the average shortest path length.
+
+    The average shortest path length is
+
+    .. math::
+
+       a =\sum_{s,t \in V} \frac{d(s, t)}{n(n-1)}
+
+    where `V` is the set of nodes in `G`,
+    `d(s, t)` is the shortest path from `s` to `t`,
+    and `n` is the number of nodes in `G`.
+
+    Args:
+        network: NetworkX graph
+
+    Raises:
+        NetworkXPointlessConcept: If `G` is the null graph (that is, the graph on zero nodes).
+
+        NetworkXError: If `G` is not connected (or not weakly connected, in the case
+            of a directed graph).
+
+        ValueError: If `method` is not among the supported options.
+
+    Examples:
+        &gt;&gt;&gt; G = nx.path_graph(5)
+        &gt;&gt;&gt; nx.average_shortest_path_length(G)
+        2.0
+
+        For disconnected graphs, you can compute the average shortest path
+        length for each component
+
+        &gt;&gt;&gt; G = nx.Graph([(1, 2), (3, 4)])
+        &gt;&gt;&gt; for C in nx.connected_component_subgraphs(G):
+        ...     print(nx.average_shortest_path_length(C))
+        1.0
+        1.0&#34;&#34;&#34;
+    return nx.algorithms.shortest_paths.generic.average_shortest_path_length(network)</code></pre>
+</details>
+</dd>
+<dt id="graphflow.analysis.metrics.static_betweenness_centrality"><code class="name flex">
+<span>def <span class="ident">static_betweenness_centrality</span></span>(<span>network)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Compute the shortest-path betweenness centrality for nodes.</p>
+<p>Betweenness centrality of a node $v$ is the sum of the
+fraction of all-pairs shortest paths that pass through $v$</p>
+<p>[ c_B(v) =\sum_{s,t \in V} \frac{\sigma(s, t|v)}{\sigma(s, t)} ]
+where $V$ is the set of nodes, $\sigma(s, t)$ is the number of
+shortest $(s, t)$-paths,
+and $\sigma(s, t|v)$ is the number of
+those paths
+passing through some
+node $v$ other than $s, t$.
+If $s = t$, $\sigma(s, t) = 1$, and if $v \in {s, t}$,
+$\sigma(s, t|v) = 0$ [2]_.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>network</code></strong></dt>
+<dd>A NetworkX graph.</dd>
+</dl>
+<p>Returns:
+dict: Dictionary of nodes with betweenness centrality as the value.</p></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def static_betweenness_centrality(network: nx.Graph):
+    r&#34;&#34;&#34;Compute the shortest-path betweenness centrality for nodes.
+
+    Betweenness centrality of a node $v$ is the sum of the
+    fraction of all-pairs shortest paths that pass through $v$
+
+    .. math::
+
+       c_B(v) =\sum_{s,t \in V} \frac{\sigma(s, t|v)}{\sigma(s, t)}
+
+    where $V$ is the set of nodes, $\sigma(s, t)$ is the number of
+    shortest $(s, t)$-paths,  and $\sigma(s, t|v)$ is the number of
+    those paths  passing through some  node $v$ other than $s, t$.
+    If $s = t$, $\sigma(s, t) = 1$, and if $v \in {s, t}$,
+    $\sigma(s, t|v) = 0$ [2]_.
+
+    Args:
+        network: A NetworkX graph.
+
+    Returns:
+    dict: Dictionary of nodes with betweenness centrality as the value.&#34;&#34;&#34;
+    return nx.algorithms.centrality.betweenness_centrality(network)</code></pre>
+</details>
+</dd>
+<dt id="graphflow.analysis.metrics.static_closeness_centrality"><code class="name flex">
+<span>def <span class="ident">static_closeness_centrality</span></span>(<span>network)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Compute closeness centrality for nodes.</p>
+<p>Closeness centrality [1]_ of a node <code>u</code> is the reciprocal of the
+average shortest path distance to <code>u</code> over all <code>n-1</code> reachable nodes.</p>
+<p>[ C(u) = \frac{n - 1}{\sum_{v=1}^{n-1} d(v, u)}, ]
+where <code>d(v, u)</code> is the shortest-path distance between <code>v</code> and <code>u</code>,
+and <code>n</code> is the number of nodes that can reach <code>u</code>. Notice that the
+closeness distance function computes the incoming distance to <code>u</code>
+for directed graphs. To use outward distance, act on <code>G.reverse()</code>.</p>
+<p>Notice that higher values of closeness indicate higher centrality.</p>
+<p>Wasserman and Faust propose an improved formula for graphs with
+more than one connected component. The result is "a ratio of the
+fraction of actors in the group who are reachable, to the average
+distance" from the reachable actors [2]_. You might think this
+scale factor is inverted but it is not. As is, nodes from small
+components receive a smaller closeness value. Letting <code>N</code> denote
+the number of nodes in the graph,</p>
+<p>[ C_{WF}(u) = \frac{n-1}{N-1} \frac{n - 1}{\sum_{v=1}^{n-1} d(v, u)}, ]</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>network</code></strong></dt>
+<dd>A NetworkX graph</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><strong><code>dict</code></strong></dt>
+<dd>Dictionary of nodes with closeness centrality as the value.</dd>
+</dl></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def static_closeness_centrality(network: nx.Graph):
+    r&#34;&#34;&#34;Compute closeness centrality for nodes.
+
+    Closeness centrality [1]_ of a node `u` is the reciprocal of the
+    average shortest path distance to `u` over all `n-1` reachable nodes.
+
+    .. math::
+
+        C(u) = \frac{n - 1}{\sum_{v=1}^{n-1} d(v, u)},
+
+    where `d(v, u)` is the shortest-path distance between `v` and `u`,
+    and `n` is the number of nodes that can reach `u`. Notice that the
+    closeness distance function computes the incoming distance to `u`
+    for directed graphs. To use outward distance, act on `G.reverse()`.
+
+    Notice that higher values of closeness indicate higher centrality.
+
+    Wasserman and Faust propose an improved formula for graphs with
+    more than one connected component. The result is &#34;a ratio of the
+    fraction of actors in the group who are reachable, to the average
+    distance&#34; from the reachable actors [2]_. You might think this
+    scale factor is inverted but it is not. As is, nodes from small
+    components receive a smaller closeness value. Letting `N` denote
+    the number of nodes in the graph,
+
+    .. math::
+
+        C_{WF}(u) = \frac{n-1}{N-1} \frac{n - 1}{\sum_{v=1}^{n-1} d(v, u)},
+
+    Args:
+        network: A NetworkX graph
+
+    Returns:
+        dict: Dictionary of nodes with closeness centrality as the value.&#34;&#34;&#34;
+    return nx.algorithms.centrality.closeness_centrality(network)</code></pre>
+</details>
+</dd>
+<dt id="graphflow.analysis.metrics.static_current_flow_betweenness"><code class="name flex">
+<span>def <span class="ident">static_current_flow_betweenness</span></span>(<span>network)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Compute current-flow betweenness centrality for nodes.</p>
+<p>Current-flow betweenness centrality uses an electrical current
+model for information spreading in contrast to betweenness
+centrality which uses shortest paths.</p>
+<p>Current-flow betweenness centrality is also known as
+random-walk betweenness centrality [2]_.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>network</code></strong></dt>
+<dd>A NetworkX graph</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><strong><code>dict</code></strong></dt>
+<dd>Dictionary of nodes with betweenness centrality as the value.</dd>
+</dl></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def static_current_flow_betweenness(network: nx.Graph):
+    r&#34;&#34;&#34;Compute current-flow betweenness centrality for nodes.
+
+    Current-flow betweenness centrality uses an electrical current
+    model for information spreading in contrast to betweenness
+    centrality which uses shortest paths.
+
+    Current-flow betweenness centrality is also known as
+    random-walk betweenness centrality [2]_.
+
+    Args:
+        network: A NetworkX graph
+
+    Returns:
+        dict: Dictionary of nodes with betweenness centrality as the value.&#34;&#34;&#34;
+    return nx.algorithms.centrality.current_flow_betweenness_centrality(network.to_undirected())</code></pre>
+</details>
+</dd>
+<dt id="graphflow.analysis.metrics.static_current_flow_closeness"><code class="name flex">
+<span>def <span class="ident">static_current_flow_closeness</span></span>(<span>network)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Compute current-flow closeness centrality for nodes.</p>
+<p>Current-flow closeness centrality is variant of closeness
+centrality based on effective resistance between nodes in
+a network. This metric is also known as information centrality.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>network</code></strong></dt>
+<dd>A NetworkX graph</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><strong><code>dict</code></strong></dt>
+<dd>Dictionary of nodes with current flow closeness centrality as the value.</dd>
+</dl></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def static_current_flow_closeness(network: nx.Graph):
+    r&#34;&#34;&#34;Compute current-flow closeness centrality for nodes.
+
+    Current-flow closeness centrality is variant of closeness
+    centrality based on effective resistance between nodes in
+    a network. This metric is also known as information centrality.
+
+    Args:
+        network: A NetworkX graph
+
+    Returns:
+        dict: Dictionary of nodes with current flow closeness centrality as the value.
+&#34;&#34;&#34;
+    return nx.algorithms.centrality.current_flow_closeness_centrality(network.to_undirected())</code></pre>
+</details>
+</dd>
+<dt id="graphflow.analysis.metrics.static_degree_centrality"><code class="name flex">
+<span>def <span class="ident">static_degree_centrality</span></span>(<span>network)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Compute the degree centrality for nodes.</p>
+<pre><code>The degree centrality for a node v is the fraction of nodes it
+is connected to.
+</code></pre>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>network</code></strong></dt>
+<dd>A NetworkX graph</dd>
+<dt><strong><code>Returns</code></strong></dt>
+<dd>dict: Dictionary of nodes with degree centrality as the value.</dd>
+</dl></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def static_degree_centrality(network: nx.Graph):
+    r&#34;&#34;&#34;Compute the degree centrality for nodes.
+
+        The degree centrality for a node v is the fraction of nodes it
+        is connected to.
+
+    Args:
+        network: A NetworkX graph
+
+    Returns
+        dict: Dictionary of nodes with degree centrality as the value.&#34;&#34;&#34;
+    return nx.degree_centrality(network)</code></pre>
+</details>
+</dd>
+<dt id="graphflow.analysis.metrics.static_density"><code class="name flex">
+<span>def <span class="ident">static_density</span></span>(<span>network)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Calculates density, based on Wikipedia</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>network</code></strong></dt>
+<dd>A NetworkX graph</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><strong><code>float</code></strong></dt>
+<dd>density</dd>
+</dl></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def static_density(network: nx.Graph):
+    r&#34;&#34;&#34;Calculates density, based on Wikipedia
+
+    Args:
+        network: A NetworkX graph
+
+    Returns:
+        float: density&#34;&#34;&#34;
+    edges = len(network.edges)
+    vertices = len(network.nodes)
+    return edges / (vertices * (vertices - 1))</code></pre>
+</details>
+</dd>
+<dt id="graphflow.analysis.metrics.static_diameter"><code class="name flex">
+<span>def <span class="ident">static_diameter</span></span>(<span>network)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Returns the diameter of the graph G.</p>
+<p>The diameter is the maximum eccentricity.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>network</code></strong> :&ensp;<code>a</code> <code>NetworkX</code> <code>graph</code></dt>
+<dd>&nbsp;</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><strong><code>d</code></strong> :&ensp;<code>Diameter</code> of <code>graph</code></dt>
+<dd>&nbsp;</dd>
+</dl></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def static_diameter(network: nx.Graph):
+    r&#34;&#34;&#34;Returns the diameter of the graph G.
+
+    The diameter is the maximum eccentricity.
+
+    Args:
+        network : a NetworkX graph
+
+    Returns:
+        d : Diameter of graph&#34;&#34;&#34;
+    try:
+        return nx.algorithms.distance_measures.diameter(network)
+    except nx.NetworkXError:
+        return 0</code></pre>
+</details>
+</dd>
+<dt id="graphflow.analysis.metrics.static_eigenvector_centrality"><code class="name flex">
+<span>def <span class="ident">static_eigenvector_centrality</span></span>(<span>network)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Compute the eigenvector centrality for the graph <code>G</code>.</p>
+<p>Eigenvector centrality computes the centrality for a node based on the
+centrality of its neighbors. The eigenvector centrality for node $i$ is
+the $i$-th element of the vector $x$ defined by the equation</p>
+<p>[ Ax = \lambda x ]
+where $A$ is the adjacency matrix of the graph <code>G</code> with eigenvalue
+$\lambda$. By virtue of the Perron–Frobenius theorem, there is a unique
+solution $x$, all of whose entries are positive, if $\lambda$ is the
+largest eigenvalue of the adjacency matrix $A$ ([2]_).</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>network</code></strong> :&ensp;<code>A</code> <code>NetworkX</code> <code>graph</code></dt>
+<dd>&nbsp;</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><strong><code>dict</code></strong></dt>
+<dd>Dictionary of nodes with eigenvector centrality as the value.</dd>
+</dl>
+<h2 id="examples">Examples</h2>
+<pre><code>&gt;&gt;&gt; G = nx.path_graph(4)
+&gt;&gt;&gt; centrality = nx.eigenvector_centrality(G)
+&gt;&gt;&gt; sorted((v, '{:0.2f}'.format(c)) for v, c in centrality.items())
+[(0, '0.37'), (1, '0.60'), (2, '0.60'), (3, '0.37')]
+</code></pre>
+<h2 id="raises">Raises</h2>
+<dl>
+<dt><strong><code>NetworkXPointlessConcept</code></strong></dt>
+<dd>If the graph <code>G</code> is the null graph.</dd>
+<dt><strong><code>NetworkXError</code></strong></dt>
+<dd>If each value in <code>nstart</code> is zero.</dd>
+<dt><strong><code>PowerIterationFailedConvergence</code></strong></dt>
+<dd>If the algorithm fails to converge to the specified tolerance
+within the specified number of iterations of the power iteration
+method.</dd>
+</dl></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def static_eigenvector_centrality(network: nx.Graph):
+    r&#34;&#34;&#34;Compute the eigenvector centrality for the graph `G`.
+
+    Eigenvector centrality computes the centrality for a node based on the
+    centrality of its neighbors. The eigenvector centrality for node $i$ is
+    the $i$-th element of the vector $x$ defined by the equation
+
+    .. math::
+
+        Ax = \lambda x
+
+    where $A$ is the adjacency matrix of the graph `G` with eigenvalue
+    $\lambda$. By virtue of the Perron–Frobenius theorem, there is a unique
+    solution $x$, all of whose entries are positive, if $\lambda$ is the
+    largest eigenvalue of the adjacency matrix $A$ ([2]_).
+
+    Args:
+        network : A NetworkX graph
+
+    Returns:
+        dict: Dictionary of nodes with eigenvector centrality as the value.
+
+    Examples:
+        &gt;&gt;&gt; G = nx.path_graph(4)
+        &gt;&gt;&gt; centrality = nx.eigenvector_centrality(G)
+        &gt;&gt;&gt; sorted((v, &#39;{:0.2f}&#39;.format(c)) for v, c in centrality.items())
+        [(0, &#39;0.37&#39;), (1, &#39;0.60&#39;), (2, &#39;0.60&#39;), (3, &#39;0.37&#39;)]
+
+    Raises:
+        NetworkXPointlessConcept: If the graph `G` is the null graph.
+
+        NetworkXError: If each value in `nstart` is zero.
+
+        PowerIterationFailedConvergence: If the algorithm fails to converge to the specified tolerance
+            within the specified number of iterations of the power iteration
+            method.
+&#34;&#34;&#34;
+    return nx.algorithms.centrality.eigenvector_centrality(network, max_iter=1000)</code></pre>
+</details>
+</dd>
+<dt id="graphflow.analysis.metrics.static_global_reaching"><code class="name flex">
+<span>def <span class="ident">static_global_reaching</span></span>(<span>network)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Returns the global reaching centrality of a directed graph.</p>
+<p>The <em>global reaching centrality</em> of a weighted directed graph is the
+average over all nodes of the difference between the local reaching
+centrality of the node and the greatest local reaching centrality of
+any node in the graph [1]_. For more information on the local
+reaching centrality, see :func:<code>local_reaching_centrality</code>.
+Informally, the local reaching centrality is the proportion of the
+graph that is reachable from the neighbors of the node.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>network</code></strong></dt>
+<dd>A NetworkX DiGraph.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><strong><code>float</code></strong></dt>
+<dd>The global reaching centrality of the graph.</dd>
+</dl>
+<h2 id="examples">Examples</h2>
+<pre><code>&gt;&gt;&gt; import networkx as nx
+&gt;&gt;&gt; G = nx.DiGraph()
+&gt;&gt;&gt; G.add_edge(1, 2)
+&gt;&gt;&gt; G.add_edge(1, 3)
+&gt;&gt;&gt; nx.global_reaching_centrality(G)
+1.0
+&gt;&gt;&gt; G.add_edge(3, 2)
+&gt;&gt;&gt; nx.global_reaching_centrality(G)
+0.75
+</code></pre></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def static_global_reaching(network: nx.Graph):
+    r&#34;&#34;&#34;Returns the global reaching centrality of a directed graph.
+
+    The *global reaching centrality* of a weighted directed graph is the
+    average over all nodes of the difference between the local reaching
+    centrality of the node and the greatest local reaching centrality of
+    any node in the graph [1]_. For more information on the local
+    reaching centrality, see :func:`local_reaching_centrality`.
+    Informally, the local reaching centrality is the proportion of the
+    graph that is reachable from the neighbors of the node.
+
+    Args:
+        network: A NetworkX DiGraph.
+
+    Returns:
+        float: The global reaching centrality of the graph.
+
+    Examples:
+        &gt;&gt;&gt; import networkx as nx
+        &gt;&gt;&gt; G = nx.DiGraph()
+        &gt;&gt;&gt; G.add_edge(1, 2)
+        &gt;&gt;&gt; G.add_edge(1, 3)
+        &gt;&gt;&gt; nx.global_reaching_centrality(G)
+        1.0
+        &gt;&gt;&gt; G.add_edge(3, 2)
+        &gt;&gt;&gt; nx.global_reaching_centrality(G)
+        0.75&#34;&#34;&#34;
+    return nx.algorithms.centrality.global_reaching_centrality(network)</code></pre>
+</details>
+</dd>
+<dt id="graphflow.analysis.metrics.static_harmonic_centrality"><code class="name flex">
+<span>def <span class="ident">static_harmonic_centrality</span></span>(<span>network)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Compute harmonic centrality for nodes.</p>
+<p>Harmonic centrality [1]_ of a node <code>u</code> is the sum of the reciprocal
+of the shortest path distances from all other nodes to <code>u</code></p>
+<p>[ C(u) = \sum_{v \neq u} \frac{1}{d(v, u)} ]
+where <code>d(v, u)</code> is the shortest-path distance between <code>v</code> and <code>u</code>.</p>
+<p>Notice that higher values indicate higher centrality.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>network</code></strong></dt>
+<dd>A NetworkX graph</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><strong><code>dict</code></strong></dt>
+<dd>Dictionary of nodes with harmonic centrality as the value.</dd>
+</dl></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def static_harmonic_centrality(network: nx.Graph):
+    r&#34;&#34;&#34;Compute harmonic centrality for nodes.
+
+    Harmonic centrality [1]_ of a node `u` is the sum of the reciprocal
+    of the shortest path distances from all other nodes to `u`
+
+    .. math::
+
+        C(u) = \sum_{v \neq u} \frac{1}{d(v, u)}
+
+    where `d(v, u)` is the shortest-path distance between `v` and `u`.
+
+    Notice that higher values indicate higher centrality.
+
+    Args:
+        network: A NetworkX graph
+
+    Returns:
+        dict: Dictionary of nodes with harmonic centrality as the value.&#34;&#34;&#34;
+    return nx.algorithms.centrality.harmonic_centrality(network)</code></pre>
+</details>
+</dd>
+<dt id="graphflow.analysis.metrics.static_hits"><code class="name flex">
+<span>def <span class="ident">static_hits</span></span>(<span>network)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>"Returns HITS hubs and authorities values for nodes.</p>
+<p>The HITS algorithm computes two numbers for a node.
+Authorities estimates the node value based on the incoming links.
+Hubs estimates the node value based on outgoing links.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>network</code></strong> :&ensp;<code>A</code> <code>NetworkX</code> <code>graph</code></dt>
+<dd>&nbsp;</dd>
+<dt>Returns:</dt>
+<dt><strong><code>tuple</code></strong> :&ensp;(<code>hubs</code>,<code>authorities</code>) <code>two</code>-<code>tuple</code> of <code>dictionaries</code></dt>
+<dd>Two dictionaries keyed by node containing the hub and authority
+values.</dd>
+</dl>
+<h2 id="raises">Raises</h2>
+<dl>
+<dt><strong><code>PowerIterationFailedConvergence</code></strong></dt>
+<dd>If the algorithm fails to converge to the specified tolerance
+within the specified number of iterations of the power iteration
+method.</dd>
+</dl></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def static_hits(network: nx.Graph):
+    r&#34;&#34;&#34;&#34;Returns HITS hubs and authorities values for nodes.
+
+    The HITS algorithm computes two numbers for a node.
+    Authorities estimates the node value based on the incoming links.
+    Hubs estimates the node value based on outgoing links.
+
+    Args:
+        network : A NetworkX graph
+
+    Returns:
+    tuple: (hubs,authorities) two-tuple of dictionaries
+            Two dictionaries keyed by node containing the hub and authority
+            values.
+
+    Raises:
+        PowerIterationFailedConvergence: If the algorithm fails to converge to the specified tolerance
+            within the specified number of iterations of the power iteration
+            method.&#34;&#34;&#34;
+    try:
+        return nx.hits_scipy(network)
+    except nx.PowerIterationFailedConvergence:
+        return None</code></pre>
+</details>
+</dd>
+<dt id="graphflow.analysis.metrics.static_load_centrality"><code class="name flex">
+<span>def <span class="ident">static_load_centrality</span></span>(<span>network)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Compute load centrality for nodes.</p>
+<p>The load centrality of a node is the fraction of all shortest paths that pass through that node.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>network</code></strong></dt>
+<dd>A NetworkX graph</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><strong><code>dict</code></strong></dt>
+<dd>Dictionary of nodes with centrality as the value.</dd>
+</dl></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def static_load_centrality(network: nx.Graph):
+    r&#34;&#34;&#34;Compute load centrality for nodes.
+
+    The load centrality of a node is the fraction of all shortest paths that pass through that node.
+
+    Args:
+        network: A NetworkX graph
+
+    Returns:
+        dict: Dictionary of nodes with centrality as the value.&#34;&#34;&#34;
+    return nx.algorithms.centrality.load_centrality(network)</code></pre>
+</details>
+</dd>
+<dt id="graphflow.analysis.metrics.static_maximum_flow"><code class="name flex">
+<span>def <span class="ident">static_maximum_flow</span></span>(<span>network, source, target)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Find a maximum single-commodity flow.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>network</code></strong></dt>
+<dd>Edges of the graph are expected to have an attribute called
+'capacity'. If this attribute is not present, the edge is
+considered to have infinite capacity.</dd>
+<dt><strong><code>source</code></strong></dt>
+<dd>Source node for the flow.</dd>
+<dt><strong><code>target</code></strong></dt>
+<dd>Sink node for the flow.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt>integer, float: Value of the maximum flow, i.e., net outflow from the source.</dt>
+<dt><strong><code>dict</code></strong></dt>
+<dd>A dictionary containing the value of the flow that went through
+each edge.</dd>
+</dl></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def static_maximum_flow(network: nx.Graph, source, target):
+    r&#34;&#34;&#34;Find a maximum single-commodity flow.
+
+    Args:
+        network: Edges of the graph are expected to have an attribute called
+            &#39;capacity&#39;. If this attribute is not present, the edge is
+            considered to have infinite capacity.
+        source: Source node for the flow.
+        target: Sink node for the flow.
+
+    Returns:
+        integer, float: Value of the maximum flow, i.e., net outflow from the source.
+        dict: A dictionary containing the value of the flow that went through
+            each edge.&#34;&#34;&#34;
+    try:
+        return nx.algorithms.flow.maximum_flow_value(network, source, target)
+    except nx.NetworkXError:
+        return 0.0
+    except nx.NetworkXUnbounded:
+        return 0.0</code></pre>
+</details>
+</dd>
+<dt id="graphflow.analysis.metrics.static_modularity"><code class="name flex">
+<span>def <span class="ident">static_modularity</span></span>(<span>network)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Find communities in graph using Clauset-Newman-Moore greedy modularity
+maximization. This method currently supports the Graph class and does not
+consider edge weights.</p>
+<p>Greedy modularity maximization begins with each node in its own community
+and joins the pair of communities that most increases modularity until no
+such pair exists.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>network</code></strong> :&ensp;<code>NetworkX</code> <code>graph</code></dt>
+<dd>&nbsp;</dd>
+</dl>
+<h2 id="yields">Yields</h2>
+<p>Yields sets of nodes, one for each community.</p>
+<h2 id="examples">Examples</h2>
+<pre><code>&gt;&gt;&gt; from networkx.algorithms.community import greedy_modularity_communities
+&gt;&gt;&gt; G = nx.karate_club_graph()
+&gt;&gt;&gt; c = list(greedy_modularity_communities(G))
+&gt;&gt;&gt; sorted(c[0])
+[8, 14, 15, 18, 20, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33]
+</code></pre></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def static_modularity(network):
+    r&#34;&#34;&#34;Find communities in graph using Clauset-Newman-Moore greedy modularity
+    maximization. This method currently supports the Graph class and does not
+    consider edge weights.
+
+    Greedy modularity maximization begins with each node in its own community
+    and joins the pair of communities that most increases modularity until no
+    such pair exists.
+
+    Args:
+        network : NetworkX graph
+
+    Yields:
+        Yields sets of nodes, one for each community.
+
+    Examples:
+        &gt;&gt;&gt; from networkx.algorithms.community import greedy_modularity_communities
+        &gt;&gt;&gt; G = nx.karate_club_graph()
+        &gt;&gt;&gt; c = list(greedy_modularity_communities(G))
+        &gt;&gt;&gt; sorted(c[0])
+        [8, 14, 15, 18, 20, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33]&#34;&#34;&#34;
+    return nx.algorithms.community.modularity_max.greedy_modularity_communities(network)</code></pre>
+</details>
+</dd>
+<dt id="graphflow.analysis.metrics.static_page_rank"><code class="name flex">
+<span>def <span class="ident">static_page_rank</span></span>(<span>network)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Returns the PageRank of the nodes in the graph.</p>
+<p>PageRank computes a ranking of the nodes in the graph G based on
+the structure of the incoming links. It was originally designed as
+an algorithm to rank web pages.</p>
+<h2 id="args">Args</h2>
+<p>network : A NetworkX graph. Undirected graphs will be converted to a directed
+graph with two directed edges for each undirected edge.</p>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><strong><code>dict</code></strong></dt>
+<dd>Dictionary of nodes with PageRank as value</dd>
+</dl>
+<h2 id="examples">Examples</h2>
+<pre><code>&gt;&gt;&gt; G = nx.DiGraph(nx.path_graph(4))
+&gt;&gt;&gt; pr = nx.pagerank(G, alpha=0.9)
+</code></pre>
+<h2 id="raises">Raises</h2>
+<dl>
+<dt><strong><code>PowerIterationFailedConvergence</code></strong></dt>
+<dd>If the algorithm fails to converge to the specified tolerance
+within the specified number of iterations of the power iteration
+method.</dd>
+</dl></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def static_page_rank(network: nx.Graph):
+    r&#34;&#34;&#34;Returns the PageRank of the nodes in the graph.
+
+    PageRank computes a ranking of the nodes in the graph G based on
+    the structure of the incoming links. It was originally designed as
+    an algorithm to rank web pages.
+
+    Args:
+        network : A NetworkX graph. Undirected graphs will be converted to a directed
+      graph with two directed edges for each undirected edge.
+
+    Returns:
+        dict: Dictionary of nodes with PageRank as value
+
+    Examples:
+        &gt;&gt;&gt; G = nx.DiGraph(nx.path_graph(4))
+        &gt;&gt;&gt; pr = nx.pagerank(G, alpha=0.9)
+
+    Raises:
+        PowerIterationFailedConvergence: If the algorithm fails to converge to the specified tolerance
+            within the specified number of iterations of the power iteration
+            method.&#34;&#34;&#34;
+    return nx.algorithms.link_analysis.pagerank_alg.pagerank(network)</code></pre>
+</details>
+</dd>
+<dt id="graphflow.analysis.metrics.static_percolation"><code class="name flex">
+<span>def <span class="ident">static_percolation</span></span>(<span>network)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Compute the percolation centrality for nodes.</p>
+<p>Percolation centrality of a node $v$, at a given time, is defined
+as the proportion of ‘percolated paths’ that go through that node.</p>
+<p>This measure quantifies relative impact of nodes based on their
+topological connectivity, as well as their percolation states.</p>
+<p>Percolation states of nodes are used to depict network percolation
+scenarios (such as during infection transmission in a social network
+of individuals, spreading of computer viruses on computer networks, or
+transmission of disease over a network of towns) over time. In this
+measure usually the percolation state is expressed as a decimal
+between 0.0 and 1.0.</p>
+<p>When all nodes are in the same percolated state this measure is
+equivalent to betweenness centrality.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>network</code></strong></dt>
+<dd>A NetworkX graph.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><strong><code>dict</code></strong></dt>
+<dd>Dictionary of nodes with percolation centrality as the value.</dd>
+</dl></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def static_percolation(network: nx.Graph):
+    r&#34;&#34;&#34;Compute the percolation centrality for nodes.
+
+    Percolation centrality of a node $v$, at a given time, is defined
+    as the proportion of ‘percolated paths’ that go through that node.
+
+    This measure quantifies relative impact of nodes based on their
+    topological connectivity, as well as their percolation states.
+
+    Percolation states of nodes are used to depict network percolation
+    scenarios (such as during infection transmission in a social network
+    of individuals, spreading of computer viruses on computer networks, or
+    transmission of disease over a network of towns) over time. In this
+    measure usually the percolation state is expressed as a decimal
+    between 0.0 and 1.0.
+
+    When all nodes are in the same percolated state this measure is
+    equivalent to betweenness centrality.
+
+    Args:
+        network: A NetworkX graph.
+
+    Returns:
+        dict: Dictionary of nodes with percolation centrality as the value.&#34;&#34;&#34;
+    try:
+        return nx.algorithms.centrality.percolation_centrality(network)
+    except KeyError:
+        return {}</code></pre>
+</details>
+</dd>
+<dt id="graphflow.analysis.metrics.static_second_order_centrality"><code class="name flex">
+<span>def <span class="ident">static_second_order_centrality</span></span>(<span>network)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Compute the second order centrality for nodes of G.</p>
+<p>The second order centrality of a given node is the standard deviation of
+the return times to that node of a perpetual random walk on G:</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>network</code></strong></dt>
+<dd>A NetworkX connected and undirected graph.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><strong><code>dict</code></strong></dt>
+<dd>Dictionary keyed by node with second order centrality as the value.</dd>
+</dl>
+<h2 id="examples">Examples</h2>
+<pre><code>&gt;&gt;&gt; G = nx.star_graph(10)
+&gt;&gt;&gt; soc = nx.second_order_centrality(G)
+&gt;&gt;&gt; print(sorted(soc.items(), key=lambda x:x[1])[0][0]) # pick first id
+**`0`**
+</code></pre>
+<dl>
+<dd>&nbsp;</dd>
+</dl>
+<h2 id="raises">Raises</h2>
+<dl>
+<dt><strong><code>NetworkXException</code></strong></dt>
+<dd>If the graph G is empty, non connected or has negative weights.</dd>
+</dl></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def static_second_order_centrality(network: nx.Graph):
+    r&#34;&#34;&#34;Compute the second order centrality for nodes of G.
+
+    The second order centrality of a given node is the standard deviation of
+    the return times to that node of a perpetual random walk on G:
+
+    Args:
+        network: A NetworkX connected and undirected graph.
+
+    Returns:
+        dict: Dictionary keyed by node with second order centrality as the value.
+
+    Examples:
+        &gt;&gt;&gt; G = nx.star_graph(10)
+        &gt;&gt;&gt; soc = nx.second_order_centrality(G)
+        &gt;&gt;&gt; print(sorted(soc.items(), key=lambda x:x[1])[0][0]) # pick first id
+        0
+
+    Raises:
+        NetworkXException: If the graph G is empty, non connected or has negative weights.&#34;&#34;&#34;
+    return nx.algorithms.centrality.second_order_centrality(network.to_undirected())</code></pre>
+</details>
+</dd>
+<dt id="graphflow.analysis.metrics.static_subgraph"><code class="name flex">
+<span>def <span class="ident">static_subgraph</span></span>(<span>network)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Returns subgraph centrality for each node in G.</p>
+<p>Subgraph centrality
+of a node <code>n</code> is the sum of weighted closed
+walks of all lengths starting and ending at node <code>n</code>. The weights
+decrease with path length. Each closed walk is associated with a
+connected subgraph ([1]_).</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>network</code></strong></dt>
+<dd>A NetworkX graph</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><strong><code>dict</code></strong></dt>
+<dd>Dictionary of nodes with subgraph centrality as the value.</dd>
+</dl>
+<h2 id="raises">Raises</h2>
+<dl>
+<dt><strong><code>NetworkXError</code></strong></dt>
+<dd>If the graph is not undirected and simple.</dd>
+</dl></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def static_subgraph(network: nx.Graph):
+    r&#34;&#34;&#34;Returns subgraph centrality for each node in G.
+
+    Subgraph centrality  of a node `n` is the sum of weighted closed
+    walks of all lengths starting and ending at node `n`. The weights
+    decrease with path length. Each closed walk is associated with a
+    connected subgraph ([1]_).
+
+    Args:
+        network: A NetworkX graph
+
+    Returns:
+        dict: Dictionary of nodes with subgraph centrality as the value.
+
+    Raises:
+        NetworkXError: If the graph is not undirected and simple.&#34;&#34;&#34;
+    return nx.algorithms.centrality.subgraph_centrality(network.to_undirected())</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+<section>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="graphflow.analysis" href="index.html">graphflow.analysis</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="graphflow.analysis.metrics.static_average_path" href="#graphflow.analysis.metrics.static_average_path">static_average_path</a></code></li>
+<li><code><a title="graphflow.analysis.metrics.static_betweenness_centrality" href="#graphflow.analysis.metrics.static_betweenness_centrality">static_betweenness_centrality</a></code></li>
+<li><code><a title="graphflow.analysis.metrics.static_closeness_centrality" href="#graphflow.analysis.metrics.static_closeness_centrality">static_closeness_centrality</a></code></li>
+<li><code><a title="graphflow.analysis.metrics.static_current_flow_betweenness" href="#graphflow.analysis.metrics.static_current_flow_betweenness">static_current_flow_betweenness</a></code></li>
+<li><code><a title="graphflow.analysis.metrics.static_current_flow_closeness" href="#graphflow.analysis.metrics.static_current_flow_closeness">static_current_flow_closeness</a></code></li>
+<li><code><a title="graphflow.analysis.metrics.static_degree_centrality" href="#graphflow.analysis.metrics.static_degree_centrality">static_degree_centrality</a></code></li>
+<li><code><a title="graphflow.analysis.metrics.static_density" href="#graphflow.analysis.metrics.static_density">static_density</a></code></li>
+<li><code><a title="graphflow.analysis.metrics.static_diameter" href="#graphflow.analysis.metrics.static_diameter">static_diameter</a></code></li>
+<li><code><a title="graphflow.analysis.metrics.static_eigenvector_centrality" href="#graphflow.analysis.metrics.static_eigenvector_centrality">static_eigenvector_centrality</a></code></li>
+<li><code><a title="graphflow.analysis.metrics.static_global_reaching" href="#graphflow.analysis.metrics.static_global_reaching">static_global_reaching</a></code></li>
+<li><code><a title="graphflow.analysis.metrics.static_harmonic_centrality" href="#graphflow.analysis.metrics.static_harmonic_centrality">static_harmonic_centrality</a></code></li>
+<li><code><a title="graphflow.analysis.metrics.static_hits" href="#graphflow.analysis.metrics.static_hits">static_hits</a></code></li>
+<li><code><a title="graphflow.analysis.metrics.static_load_centrality" href="#graphflow.analysis.metrics.static_load_centrality">static_load_centrality</a></code></li>
+<li><code><a title="graphflow.analysis.metrics.static_maximum_flow" href="#graphflow.analysis.metrics.static_maximum_flow">static_maximum_flow</a></code></li>
+<li><code><a title="graphflow.analysis.metrics.static_modularity" href="#graphflow.analysis.metrics.static_modularity">static_modularity</a></code></li>
+<li><code><a title="graphflow.analysis.metrics.static_page_rank" href="#graphflow.analysis.metrics.static_page_rank">static_page_rank</a></code></li>
+<li><code><a title="graphflow.analysis.metrics.static_percolation" href="#graphflow.analysis.metrics.static_percolation">static_percolation</a></code></li>
+<li><code><a title="graphflow.analysis.metrics.static_second_order_centrality" href="#graphflow.analysis.metrics.static_second_order_centrality">static_second_order_centrality</a></code></li>
+<li><code><a title="graphflow.analysis.metrics.static_subgraph" href="#graphflow.analysis.metrics.static_subgraph">static_subgraph</a></code></li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.6.3</a>.</p>
+</footer>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad()</script>
+</body>
+</html>

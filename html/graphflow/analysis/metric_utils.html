@@ -1,0 +1,496 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.6.3" />
+<title>graphflow.analysis.metric_utils API documentation</title>
+<meta name="description" content="Metric utilities contains functions connected with delivering, calculating and applying metrics to networks …" />
+<link href='https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css' rel='stylesheet'>
+<link href='https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/8.0.0/sanitize.min.css' rel='stylesheet'>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" rel="stylesheet">
+<style>.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{font-weight:bold}#index h4 + ul{margin-bottom:.6em}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase;cursor:pointer}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>graphflow.analysis.metric_utils</code></h1>
+</header>
+<section id="section-intro">
+<p>Metric utilities contains functions connected with delivering, calculating and applying metrics to networks.</p>
+<p>Basically other files in this package connected with metrics shouldn't be used. They just deliver metrics and this
+module is responsible for using them.</p>
+<h2 id="attributes">Attributes</h2>
+<dl>
+<dt><strong><code>METRICS_DICT</code></strong> :&ensp;<code>dict</code></dt>
+<dd>Dictionary containing all metrics. {name: (function, model, metric_type)}, where:
+name (str): Metric name
+function (function): Metric as function. See <a title="graphflow.analysis.metrics" href="metrics.html"><code>graphflow.analysis.metrics</code></a>
+model (str): Simulation model. Can be one of: 'simple', 'extended', 'epidemic', 'epanet'
+metric_type (str): Metric type. Can be either 'static' or 'dynamic'
+Usage of this attribute is not recommended. Generally it's better to get date through
+<code>get_metric(name[,details])</code> function</dd>
+</dl>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">&#34;&#34;&#34;
+Metric utilities contains functions connected with delivering, calculating and applying metrics to networks.
+
+Basically other files in this package connected with metrics shouldn&#39;t be used. They just deliver metrics and this
+module is responsible for using them.
+
+Attributes:
+    METRICS_DICT (dict): Dictionary containing all metrics. {name: (function, model, metric_type)}, where:
+        name (str): Metric name
+        function (function): Metric as function. See `graphflow.analysis.metrics`
+        model (str): Simulation model. Can be one of: &#39;simple&#39;, &#39;extended&#39;, &#39;epidemic&#39;, &#39;epanet&#39;
+        metric_type (str): Metric type. Can be either &#39;static&#39; or &#39;dynamic&#39;
+        Usage of this attribute is not recommended. Generally it&#39;s better to get date through
+        `get_metric(name[,details])` function
+&#34;&#34;&#34;
+
+import inspect
+
+import networkx as nx
+
+import graphflow.analysis.metrics as mtr
+import graphflow.analysis.epidemic_metrics as emtr
+
+MODULE_DICT = {&#39;general&#39;: mtr, &#39;epidemic&#39;: emtr}
+
+
+def calculate_metric(name: str, network: nx.Graph, **kwargs):
+    &#34;&#34;&#34;
+    Calculates metric given by its string name
+
+    Args:
+        name: metric name
+        network: networkx graph
+        **kwargs: additional arguments required for some metrics
+
+    Returns:
+        dict or int/float - calculated metric. Dictctionary when metric is calculated for each node, number if metric
+            is property of entire graph
+    &#34;&#34;&#34;
+
+    metric, model, _ = get_metric(name)
+
+    # it needs to be changed when new files with metrics are added
+    if model == &#39;epidemic&#39;:
+        return metric(network, **kwargs)
+    return metric(network)
+
+
+def calculate_metric_list(network: nx.Graph, metrics):
+    &#34;&#34;&#34;
+    Same as calculate metric but accepts iterable of names (as strings)
+
+    Args:
+        network: networkx graph
+        metrics: iterable of metrics
+
+    Returns:
+        list: list of calculated metrics
+
+    See Also:
+        `calculate_metric(name, network, **kwargs)`
+    &#34;&#34;&#34;
+
+    arr = []
+    for i in metrics:
+        res = calculate_metric(i, network)
+        if res:
+            arr.append(res)
+    return arr
+
+
+def metric_list(model: str = &#39;general&#39;, metric_type: str = &#39;all&#39;):
+    &#34;&#34;&#34;
+    Returns list of available metrics
+
+    Each metric is different function in one of the modules:
+     - `graphflow.analysis.metrics` - contains detailed description of metrics
+     - `graphflow.analysis.epidemic_metrics`
+
+    Args:
+        model: Network model. Can be one of &#39;simple&#39;, &#39;extended&#39;, &#39;epidemic&#39;, &#39;epanet&#39;, &#39;general&#39; or &#39;all&#39;. Choosing
+            &#39;general&#39; will return metrics available for all models.&#39;
+        metric_type: Get only static, dynamic or all metrics. Can be one of: &#39;static&#39;, &#39;dynamic&#39;, &#39;all&#39;
+
+    Returns:
+        [str]: List of strings representing names of metrics
+
+    Raises:
+        ValueError: Wrong argument - either ``metric_type`` or ``model``
+
+    See Also:
+        graphflow.analysis.metrics
+    &#34;&#34;&#34;
+
+    if model == &#39;general&#39;:
+        models_to_check = (&#39;general&#39;, )
+    elif model == &#39;simple&#39;:
+        models_to_check = (&#39;simple&#39;, )
+    elif model == &#39;extended&#39;:
+        models_to_check = (&#39;extended&#39;, )
+    elif model == &#39;epidemic&#39;:
+        models_to_check = (&#39;epidemic&#39;, )
+    elif model == &#39;epanet&#39;:
+        models_to_check = (&#39;epanet&#39;, )
+    elif model == &#39;all&#39;:
+        models_to_check = (&#39;general&#39;, &#39;simple&#39;, &#39;extended&#39;, &#39;epidemic&#39;, &#39;epanet&#39;)
+    else:
+        raise ValueError(&#34;Unrecognised model: {}&#34;.format(model))
+
+    if metric_type == &#39;static&#39;:
+        metric_types_to_check = (&#39;static&#39;, )
+    elif metric_type == &#39;dynamic&#39;:
+        metric_types_to_check = (&#39;dynamic&#39;, )
+    elif metric_type == &#39;all&#39;:
+        metric_types_to_check = (&#39;static&#39;, &#39;dynamic&#39;)
+    else:
+        raise ValueError(&#34;Wrong metric type: {}. Can be only: &#39;static&#39;, &#39;dynamic&#39; or &#39;all&#39;&#34;.format(metric_type))
+
+    metrics = []
+
+    for name, (_, other_model, other_type) in METRICS_DICT.items():
+        if other_type in metric_types_to_check and other_model in models_to_check:
+            metrics.append(name)
+
+    return metrics
+
+
+def get_metric(name: str, details: bool = False):
+    &#34;&#34;&#34;
+    Returns metric (as function) by its name
+
+    Generally better to use than extracting data directly from `metrics_dict`
+
+    Args:
+        name: Metric name
+        details: Whether to provide more details in addition to function. Defaults to False
+
+    Returns:
+        function: Metric as function
+
+        If details = True:
+        function, model, metric_type - where:
+            function (function): Metric as function
+            model (str): Simulation model. Can be one of: &#39;simple&#39;, &#39;extended&#39;, &#39;epidemic&#39;, &#39;epanet&#39;
+            metric_type (str): Metric type. Can be either &#39;static&#39; or &#39;dynamic&#39;
+
+    Raises:
+        KeyError: When there is no such metric
+
+    See Also:
+        graphflow.analysis.metrics
+    &#34;&#34;&#34;
+    if details:
+        return METRICS_DICT[name]
+    return METRICS_DICT[name][0]
+
+
+def __get_all_metrics_dict():
+    &#34;&#34;&#34;
+    Prepares dictionary containing all metrics (as functions) along with their type and model.
+
+    Returns:
+        dict: Metric dictionary ``{name: (function, model, metric_type)}``
+    &#34;&#34;&#34;
+    prefixes = (&#39;static&#39;, &#39;dynamic&#39;)
+
+    return_dict = {}
+
+    for model, module in MODULE_DICT.items():
+        names = dir(module)
+
+        for name in names:
+            value = getattr(module, name)
+            if inspect.isfunction(value):
+                splitted = name.split(&#39;_&#39;, 1)
+                if splitted[0] in prefixes:
+                    return_dict[splitted[1]] = (value, model, splitted[0])
+
+    return return_dict
+
+
+METRICS_DICT = __get_all_metrics_dict()</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="graphflow.analysis.metric_utils.calculate_metric"><code class="name flex">
+<span>def <span class="ident">calculate_metric</span></span>(<span>name, network, **kwargs)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Calculates metric given by its string name</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>name</code></strong></dt>
+<dd>metric name</dd>
+<dt><strong><code>network</code></strong></dt>
+<dd>networkx graph</dd>
+<dt><strong><code>**kwargs</code></strong></dt>
+<dd>additional arguments required for some metrics</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>dict</code> or <code>int</code>/<code>float</code> - <code>calculated</code> <code>metric.</code> <code>Dictctionary</code> <code>when</code> <code>metric</code> <code>is</code> <code>calculated</code> <code>for</code> <code>each</code> <code>node</code>, <code>number</code> <code>if</code> <code>metric</code></dt>
+<dd>is property of entire graph</dd>
+</dl></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def calculate_metric(name: str, network: nx.Graph, **kwargs):
+    &#34;&#34;&#34;
+    Calculates metric given by its string name
+
+    Args:
+        name: metric name
+        network: networkx graph
+        **kwargs: additional arguments required for some metrics
+
+    Returns:
+        dict or int/float - calculated metric. Dictctionary when metric is calculated for each node, number if metric
+            is property of entire graph
+    &#34;&#34;&#34;
+
+    metric, model, _ = get_metric(name)
+
+    # it needs to be changed when new files with metrics are added
+    if model == &#39;epidemic&#39;:
+        return metric(network, **kwargs)
+    return metric(network)</code></pre>
+</details>
+</dd>
+<dt id="graphflow.analysis.metric_utils.calculate_metric_list"><code class="name flex">
+<span>def <span class="ident">calculate_metric_list</span></span>(<span>network, metrics)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Same as calculate metric but accepts iterable of names (as strings)</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>network</code></strong></dt>
+<dd>networkx graph</dd>
+<dt><strong><code>metrics</code></strong></dt>
+<dd>iterable of metrics</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><strong><code>list</code></strong></dt>
+<dd>list of calculated metrics</dd>
+<dt><code>See</code> <code>Also</code>:</dt>
+<dd><code>calculate_metric(name, network, **kwargs)</code></dd>
+</dl></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def calculate_metric_list(network: nx.Graph, metrics):
+    &#34;&#34;&#34;
+    Same as calculate metric but accepts iterable of names (as strings)
+
+    Args:
+        network: networkx graph
+        metrics: iterable of metrics
+
+    Returns:
+        list: list of calculated metrics
+
+    See Also:
+        `calculate_metric(name, network, **kwargs)`
+    &#34;&#34;&#34;
+
+    arr = []
+    for i in metrics:
+        res = calculate_metric(i, network)
+        if res:
+            arr.append(res)
+    return arr</code></pre>
+</details>
+</dd>
+<dt id="graphflow.analysis.metric_utils.get_metric"><code class="name flex">
+<span>def <span class="ident">get_metric</span></span>(<span>name, details=False)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Returns metric (as function) by its name</p>
+<p>Generally better to use than extracting data directly from <code>metrics_dict</code></p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>name</code></strong></dt>
+<dd>Metric name</dd>
+<dt><strong><code>details</code></strong></dt>
+<dd>Whether to provide more details in addition to function. Defaults to False</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><strong><code>function</code></strong></dt>
+<dd>Metric as function</dd>
+<dt><code>If</code> <code>details</code> = <code>True</code>:</dt>
+<dd>&nbsp;</dd>
+<dt><code>function</code>, <code>model</code>, <code>metric_type</code> - <code>where</code>:</dt>
+<dd>function (function): Metric as function
+model (str): Simulation model. Can be one of: 'simple', 'extended', 'epidemic', 'epanet'
+metric_type (str): Metric type. Can be either 'static' or 'dynamic'</dd>
+</dl>
+<h2 id="raises">Raises</h2>
+<dl>
+<dt><strong><code>KeyError</code></strong></dt>
+<dd>When there is no such metric</dd>
+<dt><code>See</code> <code>Also</code>:</dt>
+<dd>graphflow.analysis.metrics</dd>
+</dl></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def get_metric(name: str, details: bool = False):
+    &#34;&#34;&#34;
+    Returns metric (as function) by its name
+
+    Generally better to use than extracting data directly from `metrics_dict`
+
+    Args:
+        name: Metric name
+        details: Whether to provide more details in addition to function. Defaults to False
+
+    Returns:
+        function: Metric as function
+
+        If details = True:
+        function, model, metric_type - where:
+            function (function): Metric as function
+            model (str): Simulation model. Can be one of: &#39;simple&#39;, &#39;extended&#39;, &#39;epidemic&#39;, &#39;epanet&#39;
+            metric_type (str): Metric type. Can be either &#39;static&#39; or &#39;dynamic&#39;
+
+    Raises:
+        KeyError: When there is no such metric
+
+    See Also:
+        graphflow.analysis.metrics
+    &#34;&#34;&#34;
+    if details:
+        return METRICS_DICT[name]
+    return METRICS_DICT[name][0]</code></pre>
+</details>
+</dd>
+<dt id="graphflow.analysis.metric_utils.metric_list"><code class="name flex">
+<span>def <span class="ident">metric_list</span></span>(<span>model='general', metric_type='all')</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Returns list of available metrics</p>
+<p>Each metric is different function in one of the modules:
+- <a title="graphflow.analysis.metrics" href="metrics.html"><code>graphflow.analysis.metrics</code></a> - contains detailed description of metrics
+- <a title="graphflow.analysis.epidemic_metrics" href="epidemic_metrics.html"><code>graphflow.analysis.epidemic_metrics</code></a></p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>model</code></strong></dt>
+<dd>Network model. Can be one of 'simple', 'extended', 'epidemic', 'epanet', 'general' or 'all'. Choosing
+'general' will return metrics available for all models.'</dd>
+<dt><strong><code>metric_type</code></strong></dt>
+<dd>Get only static, dynamic or all metrics. Can be one of: 'static', 'dynamic', 'all'</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<p>[str]: List of strings representing names of metrics</p>
+<h2 id="raises">Raises</h2>
+<dl>
+<dt><strong><code>ValueError</code></strong></dt>
+<dd>Wrong argument - either <code>metric_type</code> or <code>model</code></dd>
+<dt><code>See</code> <code>Also</code>:</dt>
+<dd>graphflow.analysis.metrics</dd>
+</dl></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def metric_list(model: str = &#39;general&#39;, metric_type: str = &#39;all&#39;):
+    &#34;&#34;&#34;
+    Returns list of available metrics
+
+    Each metric is different function in one of the modules:
+     - `graphflow.analysis.metrics` - contains detailed description of metrics
+     - `graphflow.analysis.epidemic_metrics`
+
+    Args:
+        model: Network model. Can be one of &#39;simple&#39;, &#39;extended&#39;, &#39;epidemic&#39;, &#39;epanet&#39;, &#39;general&#39; or &#39;all&#39;. Choosing
+            &#39;general&#39; will return metrics available for all models.&#39;
+        metric_type: Get only static, dynamic or all metrics. Can be one of: &#39;static&#39;, &#39;dynamic&#39;, &#39;all&#39;
+
+    Returns:
+        [str]: List of strings representing names of metrics
+
+    Raises:
+        ValueError: Wrong argument - either ``metric_type`` or ``model``
+
+    See Also:
+        graphflow.analysis.metrics
+    &#34;&#34;&#34;
+
+    if model == &#39;general&#39;:
+        models_to_check = (&#39;general&#39;, )
+    elif model == &#39;simple&#39;:
+        models_to_check = (&#39;simple&#39;, )
+    elif model == &#39;extended&#39;:
+        models_to_check = (&#39;extended&#39;, )
+    elif model == &#39;epidemic&#39;:
+        models_to_check = (&#39;epidemic&#39;, )
+    elif model == &#39;epanet&#39;:
+        models_to_check = (&#39;epanet&#39;, )
+    elif model == &#39;all&#39;:
+        models_to_check = (&#39;general&#39;, &#39;simple&#39;, &#39;extended&#39;, &#39;epidemic&#39;, &#39;epanet&#39;)
+    else:
+        raise ValueError(&#34;Unrecognised model: {}&#34;.format(model))
+
+    if metric_type == &#39;static&#39;:
+        metric_types_to_check = (&#39;static&#39;, )
+    elif metric_type == &#39;dynamic&#39;:
+        metric_types_to_check = (&#39;dynamic&#39;, )
+    elif metric_type == &#39;all&#39;:
+        metric_types_to_check = (&#39;static&#39;, &#39;dynamic&#39;)
+    else:
+        raise ValueError(&#34;Wrong metric type: {}. Can be only: &#39;static&#39;, &#39;dynamic&#39; or &#39;all&#39;&#34;.format(metric_type))
+
+    metrics = []
+
+    for name, (_, other_model, other_type) in METRICS_DICT.items():
+        if other_type in metric_types_to_check and other_model in models_to_check:
+            metrics.append(name)
+
+    return metrics</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+<section>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="graphflow.analysis" href="index.html">graphflow.analysis</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="graphflow.analysis.metric_utils.calculate_metric" href="#graphflow.analysis.metric_utils.calculate_metric">calculate_metric</a></code></li>
+<li><code><a title="graphflow.analysis.metric_utils.calculate_metric_list" href="#graphflow.analysis.metric_utils.calculate_metric_list">calculate_metric_list</a></code></li>
+<li><code><a title="graphflow.analysis.metric_utils.get_metric" href="#graphflow.analysis.metric_utils.get_metric">get_metric</a></code></li>
+<li><code><a title="graphflow.analysis.metric_utils.metric_list" href="#graphflow.analysis.metric_utils.metric_list">metric_list</a></code></li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.6.3</a>.</p>
+</footer>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad()</script>
+</body>
+</html>

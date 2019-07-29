@@ -1,0 +1,872 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.6.3" />
+<title>graphflow.visualisation.gui API documentation</title>
+<meta name="description" content="Provides graphical interface for module" />
+<link href='https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css' rel='stylesheet'>
+<link href='https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/8.0.0/sanitize.min.css' rel='stylesheet'>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" rel="stylesheet">
+<style>.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{font-weight:bold}#index h4 + ul{margin-bottom:.6em}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase;cursor:pointer}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>graphflow.visualisation.gui</code></h1>
+</header>
+<section id="section-intro">
+<p>Provides graphical interface for module</p>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python"># pylint: skip-file
+&#34;&#34;&#34;Provides graphical interface for module&#34;&#34;&#34;
+from tkinter import Tk, ttk, filedialog, Button, messagebox, Entry, Label
+import tkinter as tk
+
+from graphflow.analysis.metric_utils import metric_list
+from graphflow.models.epanet.epanet_model import SimulationType
+from graphflow.models.epanet.epanet_network import EpanetNetwork
+from graphflow.models.epidemic.epidemic_network import EpidemicNetwork
+from graphflow.models.extended.extended_network import ExtendedNetwork
+
+from graphflow.models.simple.simple_network import SimpleNetwork
+
+# TODO change epidemic GUI: four possibilities - fast_sir, fast_sis, discrete_sir, discrete_sis. Args:
+#  for fast - no changes, for discrete - instead of transmission_rate and recovery_rate - transmission_probability
+
+class ChecklistBox(tk.Frame):
+    def __init__(self, parent, choices, **kwargs):
+        tk.Frame.__init__(self, parent, **kwargs)
+
+        self.vars = []
+        bg = self.cget(&#34;background&#34;)
+        for choice in choices:
+            var = tk.StringVar(value=choice)
+            self.vars.append(var)
+            cb = tk.Checkbutton(self, var=var, text=choice,
+                                onvalue=choice, offvalue=&#34;&#34;,
+                                anchor=&#34;w&#34;, width=20, background=bg,
+                                relief=&#34;flat&#34;, highlightthickness=0)
+            cb.deselect()
+            cb.pack(side=&#34;top&#34;, fill=&#34;x&#34;, anchor=&#34;w&#34;)
+
+    def get_checked_items(self):
+        values = []
+        for var in self.vars:
+            value = var.get()
+            if value:
+                values.append(value)
+        return values
+
+
+class Gui:
+    def __init__(self):
+        self.root = Tk()
+        self.root.geometry(&#34;400x550&#34;)
+        self.root.title(&#34;GraphFlow&#34;)
+        self.root.style = ttk.Style()
+        self.root.style.theme_use(&#34;default&#34;)
+        self.nb = ttk.Notebook(self.root)
+
+        self._add_simple_nb()
+        self._add_extended_nb()
+        self._add_epanet_nb()
+        self._add_epidemic_nb()
+
+        self.nb.pack(expand=1, fill=&#34;both&#34;)
+
+    def _add_simple_nb(self):
+        frame = ttk.Frame(self.nb)
+        self.nb.add(frame, text=&#39;Simple&#39;)
+
+        button_frame = ttk.Frame(frame, relief=tk.SUNKEN)
+        load_button = Button(button_frame, text=&#39;load network&#39;,
+                             command=lambda: self._load_file(self.root, filetypes=((&#34;json files&#34;, &#34;*.json&#34;),
+                                                                                   (&#34;all files&#34;, &#34;*.*&#34;))))
+        load_button.pack(side=tk.LEFT, padx=5, pady=5)
+        calculate_button = Button(button_frame, text=&#39;calculate&#39;,
+                                  command=lambda: self._calculate_simple(metrics=cb.get_checked_items()))
+        calculate_button.pack(side=tk.LEFT, padx=5, pady=5)
+        export_button = Button(button_frame, text=&#39;export&#39;, command=lambda: self._export_data())
+        export_button.pack(side=tk.LEFT, padx=5, pady=5)
+        visualize_button = Button(button_frame, text=&#39;visualize&#39;, command=lambda: self._visualize_data())
+        visualize_button.pack(side=tk.LEFT, padx=5, pady=5)
+        button_frame.pack(side=tk.BOTTOM, fill=tk.X, expand=True)
+
+        cb = self._generate_metrics_checklist(frame)
+        cb.pack(side=tk.LEFT, padx=5, pady=5)
+
+    def _add_extended_nb(self):
+        frame = ttk.Frame(self.nb)
+        self.nb.add(frame, text=&#39;Extended&#39;)
+
+        buttonframe = ttk.Frame(frame, relief=tk.SUNKEN)
+        load_button = Button(buttonframe, text=&#39;load network&#39;,
+                             command=lambda: self._load_file(self.root, filetypes=((&#34;json files&#34;, &#34;*.json&#34;),
+                                                                                   (&#34;all files&#34;, &#34;*.*&#34;))))
+        load_button.pack(side=tk.LEFT, padx=5, pady=5)
+        calculate_button = Button(buttonframe, text=&#39;calculate&#39;,
+                                  command=lambda: self._calculate_extended(metrics=cb.get_checked_items()))
+        calculate_button.pack(side=tk.LEFT, padx=5, pady=5)
+        export_button = Button(buttonframe, text=&#39;export&#39;, command=lambda: self._export_data())
+        export_button.pack(side=tk.LEFT, padx=5, pady=5)
+        buttonframe.pack(side=tk.BOTTOM, fill=tk.X, expand=True)
+        visualize_button = Button(buttonframe, text=&#39;visualize&#39;, command=lambda: self._visualize_data())
+        visualize_button.pack(side=tk.LEFT, padx=5, pady=5)
+
+        cb = self._generate_metrics_checklist(frame)
+        cb.pack(side=tk.LEFT, padx=5, pady=5)
+
+    def _add_epanet_nb(self):
+        frame = ttk.Frame(self.nb)
+        self.nb.add(frame, text=&#39;Epanet&#39;)
+
+        # buttons #
+        buttonframe = ttk.Frame(frame, relief=tk.SUNKEN)
+        load_button = Button(buttonframe, text=&#39;load network&#39;,
+                             command=lambda: self._load_file(self.root, filetypes=((&#34;epanet files&#34;, &#34;*.inp&#34;),
+                                                                                   (&#34;all files&#34;, &#34;*.*&#34;))))
+        load_button.pack(side=tk.LEFT, padx=5, pady=5)
+
+        export_button = Button(buttonframe, text=&#39;export&#39;, command=lambda: self._export_data())
+        export_button.pack(side=tk.LEFT, padx=5, pady=5)
+        visualize_button = Button(buttonframe, text=&#39;visualize&#39;, command=lambda: self._visualize_data())
+        visualize_button.pack(side=tk.LEFT, padx=5, pady=5)
+
+        buttonframe.pack(side=tk.BOTTOM, fill=tk.X, expand=True)
+
+        # checklist #
+        cb = self._generate_metrics_checklist(frame)
+        cb.pack(side=tk.LEFT, padx=5, pady=5)
+
+        # earthquake #
+        eq_frame = ttk.Frame(frame, relief=tk.SUNKEN)
+        Label(eq_frame, text=&#39;Earthquake&#39;).pack(padx=5, pady=5)
+
+        epicx_box_frame = ttk.Frame(eq_frame, relief=tk.FLAT)
+        epicx_box = Entry(epicx_box_frame, width=8)
+        epicx_box.pack(side=tk.RIGHT, padx=5, pady=5)
+        Label(epicx_box_frame, text=&#39;epicenter x&#39;).pack(side=tk.RIGHT, padx=5, pady=5)
+        epicx_box_frame.pack(fill=tk.X, expand=True, padx=5, pady=5)
+
+        epicy_box_frame = ttk.Frame(eq_frame, relief=tk.FLAT)
+        epicy_box = Entry(epicy_box_frame, width=8)
+        epicy_box.pack(side=tk.RIGHT, padx=5, pady=5)
+        Label(epicy_box_frame, text=&#39;epicenter y&#39;).pack(side=tk.RIGHT, padx=5, pady=5)
+        epicy_box_frame.pack(fill=tk.X, expand=True, padx=5, pady=5)
+
+        magni_box_frame = ttk.Frame(eq_frame, relief=tk.FLAT)
+        magni_box = Entry(magni_box_frame, width=8)
+        magni_box.pack(side=tk.RIGHT, padx=5, pady=5)
+        Label(magni_box_frame, text=&#39;magnitude&#39;).pack(side=tk.RIGHT, padx=5, pady=5)
+        magni_box_frame.pack(fill=tk.X, expand=True, padx=5, pady=5)
+
+        depth_box_frame = ttk.Frame(eq_frame, relief=tk.FLAT)
+        depth_box = Entry(depth_box_frame, width=8)
+        depth_box.pack(side=tk.RIGHT, padx=5, pady=5)
+        Label(depth_box_frame, text=&#39;depth&#39;).pack(side=tk.RIGHT, padx=5, pady=5)
+        depth_box_frame.pack(fill=tk.X, expand=True, padx=5, pady=5)
+
+        viseq_button = Button(eq_frame, text=&#39;visualize&#39;,
+                              command=lambda: self._visualize_data())
+        viseq_button.pack(side=tk.RIGHT, padx=5, pady=5)
+        calculate_button = Button(eq_frame, text=&#39;calculate&#39;,
+                                  command=lambda: self._calculate_epanet(&#39;earthquake&#39;,
+                                                                         epix=float(epicx_box.get()),
+                                                                         epiy=(epicy_box.get()),
+                                                                         magnitude=float(magni_box.get()),
+                                                                         depth=float(depth_box.get()),
+                                                                         metrics=cb.get_checked_items()))
+        calculate_button.pack(side=tk.RIGHT, padx=5, pady=5)
+
+        eq_frame.pack()
+
+        # pressure #
+        pr_frame = ttk.Frame(frame, relief=tk.SUNKEN)
+        Label(pr_frame, text=&#39;Pressure&#39;).pack(padx=5, pady=5)
+
+        time_box_frame = ttk.Frame(pr_frame, relief=tk.FLAT)
+        time_box = Entry(time_box_frame, width=8)
+        time_box.pack(side=tk.RIGHT, padx=5, pady=5)
+        Label(time_box_frame, text=&#39;time&#39;).pack(side=tk.RIGHT, padx=5, pady=5)
+        time_box_frame.pack(fill=tk.X, expand=True, padx=5, pady=5)
+
+        vispr_button = Button(pr_frame, text=&#39;visualize&#39;,
+                              command=lambda: self._visualize_data())
+        vispr_button.pack(side=tk.RIGHT, padx=5, pady=5)
+        calculate_button = Button(pr_frame, text=&#39;calculate&#39;,
+                                  command=lambda: self._calculate_epanet(&#39;pressure&#39;,
+                                                                         time=float(time_box.get()),
+                                                                         metrics=cb.get_checked_items()))
+        calculate_button.pack(side=tk.RIGHT, padx=5, pady=5)
+
+        pr_frame.pack()
+
+        # quality #
+        ql_frame = ttk.Frame(frame, relief=tk.SUNKEN)
+        Label(ql_frame, text=&#39;Quality&#39;).pack(padx=5, pady=5)
+
+        tn_box_frame = ttk.Frame(ql_frame, relief=tk.FLAT)
+        tn_box = Entry(tn_box_frame, width=8)
+        tn_box.pack(side=tk.RIGHT, padx=5, pady=5)
+        Label(tn_box_frame, text=&#39;trace node&#39;).pack(side=tk.RIGHT, padx=5, pady=5)
+        tn_box_frame.pack(fill=tk.X, expand=True, padx=5, pady=5)
+
+        visql_button = Button(ql_frame, text=&#39;visualize&#39;,
+                              command=lambda: self._visualize_data())
+        visql_button.pack(side=tk.RIGHT, padx=5, pady=5)
+        calculate_button = Button(ql_frame, text=&#39;calculate&#39;,
+                                  command=lambda: self._calculate_epanet(&#39;quality&#39;, trace_node=tn_box.get(),
+                                                                         metrics=cb.get_checked_items()))
+        calculate_button.pack(side=tk.RIGHT, padx=5, pady=5)
+
+        ql_frame.pack()
+
+    def _add_epidemic_nb(self):
+        frame = ttk.Frame(self.nb)
+        self.nb.add(frame, text=&#39;Epidemic&#39;)
+
+        types = {0: &#39;sir&#39;, 1: &#39;sis&#39;}
+
+        buttonframe = ttk.Frame(frame, relief=tk.SUNKEN)
+        load_button = Button(buttonframe, text=&#39;load network&#39;,
+                             command=lambda: self._load_file(self.root, filetypes=((&#34;gml files&#34;, &#34;*.gml&#34;),
+                                                                                   (&#34;all files&#34;, &#34;*.*&#34;))))
+        load_button.pack(side=tk.LEFT, padx=5, pady=5)
+        calculate_button = Button(buttonframe, text=&#39;calculate&#39;,
+                                  command=lambda: self._calculate_epidemic(ntype=types[type_box.curselection()[0]],
+                                                                           metrics=cb.get_checked_items(),
+                                                                           transrate=float(transrate_box.get()),
+                                                                           recrate=float(recrate_box.get()),
+                                                                           tmax=float(tmax_box.get())))
+        calculate_button.pack(side=tk.LEFT, padx=5, pady=5)
+        export_button = Button(buttonframe, text=&#39;export&#39;, command=lambda: self._export_data())
+        export_button.pack(side=tk.LEFT, padx=5, pady=5)
+        animation_button = Button(buttonframe, text=&#39;animate&#39;, command=lambda: self._export_epidemic_animation())
+        animation_button.pack(side=tk.LEFT, padx=5, pady=5)
+        visualize_button = Button(buttonframe, text=&#39;visualize&#39;, command=lambda: self._visualize_data())
+        visualize_button.pack(side=tk.LEFT, padx=5, pady=5)
+        buttonframe.pack(side=tk.BOTTOM, fill=tk.X, expand=True)
+
+        cb = self._generate_metrics_checklist(frame, epidemic=True)
+        cb.pack(side=tk.LEFT, padx=5, pady=5)
+
+        input_frame = ttk.Frame(frame, relief=tk.FLAT)
+
+        type_frame = ttk.Frame(input_frame, relief=tk.SUNKEN)
+        type_box = tk.Listbox(type_frame, width=6, height=2)
+        type_box.pack(fill=tk.X, expand=True, side=tk.RIGHT, padx=5, pady=5)
+        Label(type_frame, text=&#39;network type&#39;).pack(side=tk.RIGHT, padx=5, pady=5)
+        type_frame.pack(fill=tk.X, expand=True)
+
+        type_box.insert(tk.END, &#39;sir&#39;)
+        type_box.insert(tk.END, &#39;sis&#39;)
+        type_box.select_set(0)
+
+        transrate_frame = ttk.Frame(input_frame, relief=tk.SUNKEN)
+        transrate_box = Entry(transrate_frame, width=8)
+        transrate_box.pack(side=tk.RIGHT, padx=5, pady=5)
+        transrate_box.insert(0, &#39;2.0&#39;)
+        Label(transrate_frame, text=&#39;transmission rate&#39;).pack(side=tk.RIGHT, padx=5, pady=5)
+        transrate_frame.pack(fill=tk.X, expand=True)
+
+        recrate_frame = ttk.Frame(input_frame, relief=tk.SUNKEN)
+        recrate_box = Entry(recrate_frame, width=8)
+        recrate_box.pack(side=tk.RIGHT, padx=5, pady=5)
+        recrate_box.insert(0, &#39;1.0&#39;)
+        Label(recrate_frame, text=&#39;recovery rate&#39;).pack(side=tk.RIGHT, padx=5, pady=5)
+        recrate_frame.pack(fill=tk.X, expand=True)
+
+        tmax_frame = ttk.Frame(input_frame, relief=tk.SUNKEN)
+        tmax_box = Entry(tmax_frame, width=8)
+        tmax_box.pack(side=tk.RIGHT, padx=5, pady=5)
+        tmax_box.insert(0, &#39;2&#39;)
+        Label(tmax_frame, text=&#39;max simulation time&#39;).pack(side=tk.RIGHT, padx=5, pady=5)
+        tmax_frame.pack(fill=tk.X, expand=True)
+
+        input_frame.pack(side=tk.RIGHT, padx=5, pady=5)
+
+    @staticmethod
+    def _load_file(root, **kwargs):
+        root.filename = filedialog.askopenfilename(title=&#34;Select network file&#34;, **kwargs)
+
+    @staticmethod
+    def _generate_metrics_checklist(frame, epidemic=False):
+        metrics = metric_list()
+
+        if epidemic:
+            metrics += metric_list(model=&#39;general&#39;)
+
+        return ChecklistBox(frame, metrics, bd=1, relief=&#34;sunken&#34;, background=&#34;white&#34;)
+
+    def _export_data(self):
+        if not hasattr(self.root, &#39;calculated_network&#39;):
+            messagebox.showerror(&#39;Error&#39;, &#39;No data to export&#39;)
+            return
+        path = filedialog.asksaveasfilename(title=&#34;Select file&#34;,
+                                            defaultextension=&#39;.csv&#39;, filetypes=((&#34;CSV&#34;, &#34;*.csv&#34;),
+                                                                                (&#34;all files&#34;, &#34;*.*&#34;)))
+        if path:
+            self.root.calculated_network.export(path)
+
+    def _visualize_data(self):
+        if not hasattr(self.root, &#39;calculated_network&#39;):
+            messagebox.showerror(&#39;Error&#39;, &#39;No data to export&#39;)
+            return
+
+        self.root.calculated_network.visualize()
+
+    def _export_epidemic_animation(self):
+        if not hasattr(self.root, &#39;epidemic_result&#39;):
+            messagebox.showerror(&#39;Error&#39;, &#39;No data to export&#39;)
+            return
+
+        path = filedialog.asksaveasfilename(title=&#34;Select file&#34;, defaultextension=&#39;.mp4&#39;,
+                                            filetypes=((&#34;mp4&#34;, &#34;*.mp4&#34;), (&#34;all files&#34;, &#34;*.*&#34;)))
+        if path:
+            animation = self.root.epidemic_result.animate()
+            animation.save(path, fps=5, extra_args=[&#39;-vcodec&#39;, &#39;libx264&#39;])
+
+    def _calculate_simple(self, metrics: [str] = None):
+        if not hasattr(self.root, &#39;filename&#39;):
+            messagebox.showerror(&#39;Error&#39;, &#39;No network file selected&#39;)
+            return
+
+        self.root.calculated_network = SimpleNetwork(self.root.filename, metrics)
+
+        self.root.calculated_network.calculate()
+
+    def _calculate_extended(self, metrics: [str] = None):
+        if not hasattr(self.root, &#39;filename&#39;):
+            messagebox.showerror(&#39;Error&#39;, &#39;No network file selected&#39;)
+            return
+
+        self.root.calculated_network = ExtendedNetwork(self.root.filename, metrics)
+
+        self.root.calculated_network.calculate()
+
+    def _calculate_epanet(self, sim_type, epix=None, epiy=None, magnitude=None, depth=None,
+                          time=None, trace_node=None, metrics: [str] = None):
+        if not hasattr(self.root, &#39;filename&#39;):
+            messagebox.showerror(&#39;Error&#39;, &#39;No network file selected&#39;)
+            return
+
+        self.root.calculated_network = None
+
+        if sim_type == &#39;earthquake&#39;:
+            if sim_type == &#39;earthquake&#39;:
+                if not (epix and epiy and magnitude and depth):
+                    raise ValueError(&#39;No all arguments have been passed&#39;)
+                self.root.calculated_network = EpanetNetwork(self.root.filename, metrics, SimulationType.EARTHQUAKE,
+                                                             epicenter=(epix, epiy),
+                                                             magnitude=magnitude,
+                                                             depth=depth)
+
+        elif sim_type == &#39;pressure&#39;:
+            if not time:
+                raise ValueError(&#39;No time range has been passed&#39;)
+            self.root.calculated_network = EpanetNetwork(self.root.filename, metrics, SimulationType.PRESSURE,
+                                                         time=time)
+
+        elif sim_type == &#39;quality&#39;:
+            if not trace_node:
+                raise ValueError(&#39;No  trace node has been passed&#39;)
+            self.root.calculated_network = EpanetNetwork(self.root.filename, metrics, SimulationType.QUALITY,
+                                                         trace_node=trace_node)
+
+        else:
+            raise ValueError(&#39;Bad simulation type&#39;)
+
+        self.root.calculated_network.calculate()
+
+    def _calculate_epidemic(self, metrics: [str] = None, ntype: str = &#39;sis&#39;, transrate: float = 2.0,
+                            recrate: float = 1.0, tmax: float = 100):
+        if not hasattr(self.root, &#39;filename&#39;):
+            messagebox.showerror(&#39;Error&#39;, &#39;No network file selected&#39;)
+            return
+
+        self.root.calculated_network = EpidemicNetwork(self.root.filename, metrics,
+                                                       ntype, transrate, recrate, tmax)
+
+        self.root.calculated_network.calculate()
+
+    def start(self):
+        self.root.mainloop()</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="graphflow.visualisation.gui.ChecklistBox"><code class="flex name class">
+<span>class <span class="ident">ChecklistBox</span></span>
+<span>(</span><span>parent, choices, **kwargs)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Frame widget which may contain other widgets and can have a 3D border.</p>
+<p>Construct a frame widget with the parent MASTER.</p>
+<p>Valid resource names: background, bd, bg, borderwidth, class,
+colormap, container, cursor, height, highlightbackground,
+highlightcolor, highlightthickness, relief, takefocus, visual, width.</p></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">class ChecklistBox(tk.Frame):
+    def __init__(self, parent, choices, **kwargs):
+        tk.Frame.__init__(self, parent, **kwargs)
+
+        self.vars = []
+        bg = self.cget(&#34;background&#34;)
+        for choice in choices:
+            var = tk.StringVar(value=choice)
+            self.vars.append(var)
+            cb = tk.Checkbutton(self, var=var, text=choice,
+                                onvalue=choice, offvalue=&#34;&#34;,
+                                anchor=&#34;w&#34;, width=20, background=bg,
+                                relief=&#34;flat&#34;, highlightthickness=0)
+            cb.deselect()
+            cb.pack(side=&#34;top&#34;, fill=&#34;x&#34;, anchor=&#34;w&#34;)
+
+    def get_checked_items(self):
+        values = []
+        for var in self.vars:
+            value = var.get()
+            if value:
+                values.append(value)
+        return values</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>tkinter.Frame</li>
+<li>tkinter.Widget</li>
+<li>tkinter.BaseWidget</li>
+<li>tkinter.Misc</li>
+<li>tkinter.Pack</li>
+<li>tkinter.Place</li>
+<li>tkinter.Grid</li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="graphflow.visualisation.gui.ChecklistBox.get_checked_items"><code class="name flex">
+<span>def <span class="ident">get_checked_items</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<section class="desc"></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def get_checked_items(self):
+    values = []
+    for var in self.vars:
+        value = var.get()
+        if value:
+            values.append(value)
+    return values</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="graphflow.visualisation.gui.Gui"><code class="flex name class">
+<span>class <span class="ident">Gui</span></span>
+</code></dt>
+<dd>
+<section class="desc"></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">class Gui:
+    def __init__(self):
+        self.root = Tk()
+        self.root.geometry(&#34;400x550&#34;)
+        self.root.title(&#34;GraphFlow&#34;)
+        self.root.style = ttk.Style()
+        self.root.style.theme_use(&#34;default&#34;)
+        self.nb = ttk.Notebook(self.root)
+
+        self._add_simple_nb()
+        self._add_extended_nb()
+        self._add_epanet_nb()
+        self._add_epidemic_nb()
+
+        self.nb.pack(expand=1, fill=&#34;both&#34;)
+
+    def _add_simple_nb(self):
+        frame = ttk.Frame(self.nb)
+        self.nb.add(frame, text=&#39;Simple&#39;)
+
+        button_frame = ttk.Frame(frame, relief=tk.SUNKEN)
+        load_button = Button(button_frame, text=&#39;load network&#39;,
+                             command=lambda: self._load_file(self.root, filetypes=((&#34;json files&#34;, &#34;*.json&#34;),
+                                                                                   (&#34;all files&#34;, &#34;*.*&#34;))))
+        load_button.pack(side=tk.LEFT, padx=5, pady=5)
+        calculate_button = Button(button_frame, text=&#39;calculate&#39;,
+                                  command=lambda: self._calculate_simple(metrics=cb.get_checked_items()))
+        calculate_button.pack(side=tk.LEFT, padx=5, pady=5)
+        export_button = Button(button_frame, text=&#39;export&#39;, command=lambda: self._export_data())
+        export_button.pack(side=tk.LEFT, padx=5, pady=5)
+        visualize_button = Button(button_frame, text=&#39;visualize&#39;, command=lambda: self._visualize_data())
+        visualize_button.pack(side=tk.LEFT, padx=5, pady=5)
+        button_frame.pack(side=tk.BOTTOM, fill=tk.X, expand=True)
+
+        cb = self._generate_metrics_checklist(frame)
+        cb.pack(side=tk.LEFT, padx=5, pady=5)
+
+    def _add_extended_nb(self):
+        frame = ttk.Frame(self.nb)
+        self.nb.add(frame, text=&#39;Extended&#39;)
+
+        buttonframe = ttk.Frame(frame, relief=tk.SUNKEN)
+        load_button = Button(buttonframe, text=&#39;load network&#39;,
+                             command=lambda: self._load_file(self.root, filetypes=((&#34;json files&#34;, &#34;*.json&#34;),
+                                                                                   (&#34;all files&#34;, &#34;*.*&#34;))))
+        load_button.pack(side=tk.LEFT, padx=5, pady=5)
+        calculate_button = Button(buttonframe, text=&#39;calculate&#39;,
+                                  command=lambda: self._calculate_extended(metrics=cb.get_checked_items()))
+        calculate_button.pack(side=tk.LEFT, padx=5, pady=5)
+        export_button = Button(buttonframe, text=&#39;export&#39;, command=lambda: self._export_data())
+        export_button.pack(side=tk.LEFT, padx=5, pady=5)
+        buttonframe.pack(side=tk.BOTTOM, fill=tk.X, expand=True)
+        visualize_button = Button(buttonframe, text=&#39;visualize&#39;, command=lambda: self._visualize_data())
+        visualize_button.pack(side=tk.LEFT, padx=5, pady=5)
+
+        cb = self._generate_metrics_checklist(frame)
+        cb.pack(side=tk.LEFT, padx=5, pady=5)
+
+    def _add_epanet_nb(self):
+        frame = ttk.Frame(self.nb)
+        self.nb.add(frame, text=&#39;Epanet&#39;)
+
+        # buttons #
+        buttonframe = ttk.Frame(frame, relief=tk.SUNKEN)
+        load_button = Button(buttonframe, text=&#39;load network&#39;,
+                             command=lambda: self._load_file(self.root, filetypes=((&#34;epanet files&#34;, &#34;*.inp&#34;),
+                                                                                   (&#34;all files&#34;, &#34;*.*&#34;))))
+        load_button.pack(side=tk.LEFT, padx=5, pady=5)
+
+        export_button = Button(buttonframe, text=&#39;export&#39;, command=lambda: self._export_data())
+        export_button.pack(side=tk.LEFT, padx=5, pady=5)
+        visualize_button = Button(buttonframe, text=&#39;visualize&#39;, command=lambda: self._visualize_data())
+        visualize_button.pack(side=tk.LEFT, padx=5, pady=5)
+
+        buttonframe.pack(side=tk.BOTTOM, fill=tk.X, expand=True)
+
+        # checklist #
+        cb = self._generate_metrics_checklist(frame)
+        cb.pack(side=tk.LEFT, padx=5, pady=5)
+
+        # earthquake #
+        eq_frame = ttk.Frame(frame, relief=tk.SUNKEN)
+        Label(eq_frame, text=&#39;Earthquake&#39;).pack(padx=5, pady=5)
+
+        epicx_box_frame = ttk.Frame(eq_frame, relief=tk.FLAT)
+        epicx_box = Entry(epicx_box_frame, width=8)
+        epicx_box.pack(side=tk.RIGHT, padx=5, pady=5)
+        Label(epicx_box_frame, text=&#39;epicenter x&#39;).pack(side=tk.RIGHT, padx=5, pady=5)
+        epicx_box_frame.pack(fill=tk.X, expand=True, padx=5, pady=5)
+
+        epicy_box_frame = ttk.Frame(eq_frame, relief=tk.FLAT)
+        epicy_box = Entry(epicy_box_frame, width=8)
+        epicy_box.pack(side=tk.RIGHT, padx=5, pady=5)
+        Label(epicy_box_frame, text=&#39;epicenter y&#39;).pack(side=tk.RIGHT, padx=5, pady=5)
+        epicy_box_frame.pack(fill=tk.X, expand=True, padx=5, pady=5)
+
+        magni_box_frame = ttk.Frame(eq_frame, relief=tk.FLAT)
+        magni_box = Entry(magni_box_frame, width=8)
+        magni_box.pack(side=tk.RIGHT, padx=5, pady=5)
+        Label(magni_box_frame, text=&#39;magnitude&#39;).pack(side=tk.RIGHT, padx=5, pady=5)
+        magni_box_frame.pack(fill=tk.X, expand=True, padx=5, pady=5)
+
+        depth_box_frame = ttk.Frame(eq_frame, relief=tk.FLAT)
+        depth_box = Entry(depth_box_frame, width=8)
+        depth_box.pack(side=tk.RIGHT, padx=5, pady=5)
+        Label(depth_box_frame, text=&#39;depth&#39;).pack(side=tk.RIGHT, padx=5, pady=5)
+        depth_box_frame.pack(fill=tk.X, expand=True, padx=5, pady=5)
+
+        viseq_button = Button(eq_frame, text=&#39;visualize&#39;,
+                              command=lambda: self._visualize_data())
+        viseq_button.pack(side=tk.RIGHT, padx=5, pady=5)
+        calculate_button = Button(eq_frame, text=&#39;calculate&#39;,
+                                  command=lambda: self._calculate_epanet(&#39;earthquake&#39;,
+                                                                         epix=float(epicx_box.get()),
+                                                                         epiy=(epicy_box.get()),
+                                                                         magnitude=float(magni_box.get()),
+                                                                         depth=float(depth_box.get()),
+                                                                         metrics=cb.get_checked_items()))
+        calculate_button.pack(side=tk.RIGHT, padx=5, pady=5)
+
+        eq_frame.pack()
+
+        # pressure #
+        pr_frame = ttk.Frame(frame, relief=tk.SUNKEN)
+        Label(pr_frame, text=&#39;Pressure&#39;).pack(padx=5, pady=5)
+
+        time_box_frame = ttk.Frame(pr_frame, relief=tk.FLAT)
+        time_box = Entry(time_box_frame, width=8)
+        time_box.pack(side=tk.RIGHT, padx=5, pady=5)
+        Label(time_box_frame, text=&#39;time&#39;).pack(side=tk.RIGHT, padx=5, pady=5)
+        time_box_frame.pack(fill=tk.X, expand=True, padx=5, pady=5)
+
+        vispr_button = Button(pr_frame, text=&#39;visualize&#39;,
+                              command=lambda: self._visualize_data())
+        vispr_button.pack(side=tk.RIGHT, padx=5, pady=5)
+        calculate_button = Button(pr_frame, text=&#39;calculate&#39;,
+                                  command=lambda: self._calculate_epanet(&#39;pressure&#39;,
+                                                                         time=float(time_box.get()),
+                                                                         metrics=cb.get_checked_items()))
+        calculate_button.pack(side=tk.RIGHT, padx=5, pady=5)
+
+        pr_frame.pack()
+
+        # quality #
+        ql_frame = ttk.Frame(frame, relief=tk.SUNKEN)
+        Label(ql_frame, text=&#39;Quality&#39;).pack(padx=5, pady=5)
+
+        tn_box_frame = ttk.Frame(ql_frame, relief=tk.FLAT)
+        tn_box = Entry(tn_box_frame, width=8)
+        tn_box.pack(side=tk.RIGHT, padx=5, pady=5)
+        Label(tn_box_frame, text=&#39;trace node&#39;).pack(side=tk.RIGHT, padx=5, pady=5)
+        tn_box_frame.pack(fill=tk.X, expand=True, padx=5, pady=5)
+
+        visql_button = Button(ql_frame, text=&#39;visualize&#39;,
+                              command=lambda: self._visualize_data())
+        visql_button.pack(side=tk.RIGHT, padx=5, pady=5)
+        calculate_button = Button(ql_frame, text=&#39;calculate&#39;,
+                                  command=lambda: self._calculate_epanet(&#39;quality&#39;, trace_node=tn_box.get(),
+                                                                         metrics=cb.get_checked_items()))
+        calculate_button.pack(side=tk.RIGHT, padx=5, pady=5)
+
+        ql_frame.pack()
+
+    def _add_epidemic_nb(self):
+        frame = ttk.Frame(self.nb)
+        self.nb.add(frame, text=&#39;Epidemic&#39;)
+
+        types = {0: &#39;sir&#39;, 1: &#39;sis&#39;}
+
+        buttonframe = ttk.Frame(frame, relief=tk.SUNKEN)
+        load_button = Button(buttonframe, text=&#39;load network&#39;,
+                             command=lambda: self._load_file(self.root, filetypes=((&#34;gml files&#34;, &#34;*.gml&#34;),
+                                                                                   (&#34;all files&#34;, &#34;*.*&#34;))))
+        load_button.pack(side=tk.LEFT, padx=5, pady=5)
+        calculate_button = Button(buttonframe, text=&#39;calculate&#39;,
+                                  command=lambda: self._calculate_epidemic(ntype=types[type_box.curselection()[0]],
+                                                                           metrics=cb.get_checked_items(),
+                                                                           transrate=float(transrate_box.get()),
+                                                                           recrate=float(recrate_box.get()),
+                                                                           tmax=float(tmax_box.get())))
+        calculate_button.pack(side=tk.LEFT, padx=5, pady=5)
+        export_button = Button(buttonframe, text=&#39;export&#39;, command=lambda: self._export_data())
+        export_button.pack(side=tk.LEFT, padx=5, pady=5)
+        animation_button = Button(buttonframe, text=&#39;animate&#39;, command=lambda: self._export_epidemic_animation())
+        animation_button.pack(side=tk.LEFT, padx=5, pady=5)
+        visualize_button = Button(buttonframe, text=&#39;visualize&#39;, command=lambda: self._visualize_data())
+        visualize_button.pack(side=tk.LEFT, padx=5, pady=5)
+        buttonframe.pack(side=tk.BOTTOM, fill=tk.X, expand=True)
+
+        cb = self._generate_metrics_checklist(frame, epidemic=True)
+        cb.pack(side=tk.LEFT, padx=5, pady=5)
+
+        input_frame = ttk.Frame(frame, relief=tk.FLAT)
+
+        type_frame = ttk.Frame(input_frame, relief=tk.SUNKEN)
+        type_box = tk.Listbox(type_frame, width=6, height=2)
+        type_box.pack(fill=tk.X, expand=True, side=tk.RIGHT, padx=5, pady=5)
+        Label(type_frame, text=&#39;network type&#39;).pack(side=tk.RIGHT, padx=5, pady=5)
+        type_frame.pack(fill=tk.X, expand=True)
+
+        type_box.insert(tk.END, &#39;sir&#39;)
+        type_box.insert(tk.END, &#39;sis&#39;)
+        type_box.select_set(0)
+
+        transrate_frame = ttk.Frame(input_frame, relief=tk.SUNKEN)
+        transrate_box = Entry(transrate_frame, width=8)
+        transrate_box.pack(side=tk.RIGHT, padx=5, pady=5)
+        transrate_box.insert(0, &#39;2.0&#39;)
+        Label(transrate_frame, text=&#39;transmission rate&#39;).pack(side=tk.RIGHT, padx=5, pady=5)
+        transrate_frame.pack(fill=tk.X, expand=True)
+
+        recrate_frame = ttk.Frame(input_frame, relief=tk.SUNKEN)
+        recrate_box = Entry(recrate_frame, width=8)
+        recrate_box.pack(side=tk.RIGHT, padx=5, pady=5)
+        recrate_box.insert(0, &#39;1.0&#39;)
+        Label(recrate_frame, text=&#39;recovery rate&#39;).pack(side=tk.RIGHT, padx=5, pady=5)
+        recrate_frame.pack(fill=tk.X, expand=True)
+
+        tmax_frame = ttk.Frame(input_frame, relief=tk.SUNKEN)
+        tmax_box = Entry(tmax_frame, width=8)
+        tmax_box.pack(side=tk.RIGHT, padx=5, pady=5)
+        tmax_box.insert(0, &#39;2&#39;)
+        Label(tmax_frame, text=&#39;max simulation time&#39;).pack(side=tk.RIGHT, padx=5, pady=5)
+        tmax_frame.pack(fill=tk.X, expand=True)
+
+        input_frame.pack(side=tk.RIGHT, padx=5, pady=5)
+
+    @staticmethod
+    def _load_file(root, **kwargs):
+        root.filename = filedialog.askopenfilename(title=&#34;Select network file&#34;, **kwargs)
+
+    @staticmethod
+    def _generate_metrics_checklist(frame, epidemic=False):
+        metrics = metric_list()
+
+        if epidemic:
+            metrics += metric_list(model=&#39;general&#39;)
+
+        return ChecklistBox(frame, metrics, bd=1, relief=&#34;sunken&#34;, background=&#34;white&#34;)
+
+    def _export_data(self):
+        if not hasattr(self.root, &#39;calculated_network&#39;):
+            messagebox.showerror(&#39;Error&#39;, &#39;No data to export&#39;)
+            return
+        path = filedialog.asksaveasfilename(title=&#34;Select file&#34;,
+                                            defaultextension=&#39;.csv&#39;, filetypes=((&#34;CSV&#34;, &#34;*.csv&#34;),
+                                                                                (&#34;all files&#34;, &#34;*.*&#34;)))
+        if path:
+            self.root.calculated_network.export(path)
+
+    def _visualize_data(self):
+        if not hasattr(self.root, &#39;calculated_network&#39;):
+            messagebox.showerror(&#39;Error&#39;, &#39;No data to export&#39;)
+            return
+
+        self.root.calculated_network.visualize()
+
+    def _export_epidemic_animation(self):
+        if not hasattr(self.root, &#39;epidemic_result&#39;):
+            messagebox.showerror(&#39;Error&#39;, &#39;No data to export&#39;)
+            return
+
+        path = filedialog.asksaveasfilename(title=&#34;Select file&#34;, defaultextension=&#39;.mp4&#39;,
+                                            filetypes=((&#34;mp4&#34;, &#34;*.mp4&#34;), (&#34;all files&#34;, &#34;*.*&#34;)))
+        if path:
+            animation = self.root.epidemic_result.animate()
+            animation.save(path, fps=5, extra_args=[&#39;-vcodec&#39;, &#39;libx264&#39;])
+
+    def _calculate_simple(self, metrics: [str] = None):
+        if not hasattr(self.root, &#39;filename&#39;):
+            messagebox.showerror(&#39;Error&#39;, &#39;No network file selected&#39;)
+            return
+
+        self.root.calculated_network = SimpleNetwork(self.root.filename, metrics)
+
+        self.root.calculated_network.calculate()
+
+    def _calculate_extended(self, metrics: [str] = None):
+        if not hasattr(self.root, &#39;filename&#39;):
+            messagebox.showerror(&#39;Error&#39;, &#39;No network file selected&#39;)
+            return
+
+        self.root.calculated_network = ExtendedNetwork(self.root.filename, metrics)
+
+        self.root.calculated_network.calculate()
+
+    def _calculate_epanet(self, sim_type, epix=None, epiy=None, magnitude=None, depth=None,
+                          time=None, trace_node=None, metrics: [str] = None):
+        if not hasattr(self.root, &#39;filename&#39;):
+            messagebox.showerror(&#39;Error&#39;, &#39;No network file selected&#39;)
+            return
+
+        self.root.calculated_network = None
+
+        if sim_type == &#39;earthquake&#39;:
+            if sim_type == &#39;earthquake&#39;:
+                if not (epix and epiy and magnitude and depth):
+                    raise ValueError(&#39;No all arguments have been passed&#39;)
+                self.root.calculated_network = EpanetNetwork(self.root.filename, metrics, SimulationType.EARTHQUAKE,
+                                                             epicenter=(epix, epiy),
+                                                             magnitude=magnitude,
+                                                             depth=depth)
+
+        elif sim_type == &#39;pressure&#39;:
+            if not time:
+                raise ValueError(&#39;No time range has been passed&#39;)
+            self.root.calculated_network = EpanetNetwork(self.root.filename, metrics, SimulationType.PRESSURE,
+                                                         time=time)
+
+        elif sim_type == &#39;quality&#39;:
+            if not trace_node:
+                raise ValueError(&#39;No  trace node has been passed&#39;)
+            self.root.calculated_network = EpanetNetwork(self.root.filename, metrics, SimulationType.QUALITY,
+                                                         trace_node=trace_node)
+
+        else:
+            raise ValueError(&#39;Bad simulation type&#39;)
+
+        self.root.calculated_network.calculate()
+
+    def _calculate_epidemic(self, metrics: [str] = None, ntype: str = &#39;sis&#39;, transrate: float = 2.0,
+                            recrate: float = 1.0, tmax: float = 100):
+        if not hasattr(self.root, &#39;filename&#39;):
+            messagebox.showerror(&#39;Error&#39;, &#39;No network file selected&#39;)
+            return
+
+        self.root.calculated_network = EpidemicNetwork(self.root.filename, metrics,
+                                                       ntype, transrate, recrate, tmax)
+
+        self.root.calculated_network.calculate()
+
+    def start(self):
+        self.root.mainloop()</code></pre>
+</details>
+<h3>Methods</h3>
+<dl>
+<dt id="graphflow.visualisation.gui.Gui.start"><code class="name flex">
+<span>def <span class="ident">start</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<section class="desc"></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def start(self):
+    self.root.mainloop()</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="graphflow.visualisation" href="index.html">graphflow.visualisation</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="graphflow.visualisation.gui.ChecklistBox" href="#graphflow.visualisation.gui.ChecklistBox">ChecklistBox</a></code></h4>
+<ul class="">
+<li><code><a title="graphflow.visualisation.gui.ChecklistBox.get_checked_items" href="#graphflow.visualisation.gui.ChecklistBox.get_checked_items">get_checked_items</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="graphflow.visualisation.gui.Gui" href="#graphflow.visualisation.gui.Gui">Gui</a></code></h4>
+<ul class="">
+<li><code><a title="graphflow.visualisation.gui.Gui.start" href="#graphflow.visualisation.gui.Gui.start">start</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.6.3</a>.</p>
+</footer>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad()</script>
+</body>
+</html>
