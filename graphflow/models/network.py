@@ -254,7 +254,7 @@ class Network(ABC):
                 else:
                     colors[i, j] = hash(statuses[node])
 
-        fig, (ax_plot, ax_network) = plt.subplots(1, 2, figsize=[25, 10])
+        fig, (ax_plot, ax_network) = plt.subplots(1, 2, figsize=[10, 5])
 
         metric_names = [name for name in next(iter(self._calculated_networks.values())).graph.keys()]
         for metric_name in metric_names:
@@ -269,7 +269,7 @@ class Network(ABC):
         line = ax_plot.axvline(x=0)
 
         pos = nx.spring_layout(first_network)
-        nodes = nx.draw_networkx_nodes(first_network, pos, ax=ax_network, node_size=20, node_color=colors[0],
+        nodes = nx.draw_networkx_nodes(first_network, pos, ax=ax_network, node_size=10, node_color=colors[0],
                                        cmap=mpl_cmap)
         edges = nx.draw_networkx_edges(first_network, pos, ax=ax_network, width=0.15)
         ax_network.axis("off")
@@ -282,7 +282,7 @@ class Network(ABC):
             return nodes, line
 
         data_to_frames = list(enumerate(self._calculated_networks.keys()))
-        ani = FuncAnimation(fig, update, interval=1, frames=data_to_frames, blit=True)
+        ani = FuncAnimation(fig, update, interval=5, frames=data_to_frames, blit=True)
         ani.save(filename, writer='imagemagick', savefig_kwargs={'facecolor': 'white'}, fps=10)
 
     def _add_metric_list(self, path_to_html: str, metrics_to_add: dict):
