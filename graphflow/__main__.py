@@ -64,7 +64,7 @@ def main():
     epidemic_subparser.add_argument('--metric', '-m', action='append',
                                     help='metric to use, can be specified multiple times')
     epidemic_subparser.add_argument('--visualize', type=str, default='none',
-                                    help="visualization of results. Can be: 'none', 'holoviews' or 'mp4'")
+                                    help="visualization of results. Can be: 'none', 'html' or 'mp4'")
     if len(sys.argv) > 1:
         args = parser.parse_args()
     else:

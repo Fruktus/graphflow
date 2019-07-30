@@ -170,7 +170,7 @@ class EpidemicNetwork(Network):
         color_map = {'S': 'yellow', 'R': 'green', 'I': 'red'}
         label_map = {'S': 'Susceptible', 'I': 'Infected', 'R': 'Recovered'}
 
-        if vis_type == 'holoviews':
+        if vis_type == 'html':
             layout = self._holoviews_get_networks(color_by="status", color_map=color_map) + \
                      self._holoviews_get_metrics(color_map=color_map, label_map=label_map)
 
@@ -178,10 +178,10 @@ class EpidemicNetwork(Network):
             hv.save(layout, filename, backend='bokeh')
             self._add_metric_list(filename, self._static_metrics)
             webbrowser.open(filename)
-
         elif vis_type == 'mp4':
-            self._save_as_mp4('graph.mp4', 'status', color_map=color_map, label_map=label_map)
-
+            self._save_as_animation('graph.mp4', 'status', color_map=color_map, label_map=label_map)
+        elif vis_type == 'gif':
+            self._save_as_animation('graph.gif', 'status', color_map=color_map, label_map=label_map)
         else:
             raise ValueError("Unrecognised vis_type")
 
