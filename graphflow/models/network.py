@@ -66,11 +66,18 @@ class Network(ABC):
         """
             Visualises calculated network
 
-            Not all models
-
             Args:
                 vis_type: What visualisation method should be used. Can be: 'html', 'mp4' or 'gif'. Defaults to
                     'html'
+
+            Notes:
+            In order to export to 'mp4' and 'gif' **imagemagic** is required!
+
+            Different visualization types are supported for different models:
+                - simple: 'html'
+                - extended: 'html'
+                - epidemic: 'html', 'mp4', 'gif'
+                - epanet: has own visualization
 
             Raises:
                 ValueError: Network is not calculated or wrong `vis_type`

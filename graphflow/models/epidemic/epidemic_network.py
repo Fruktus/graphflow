@@ -107,7 +107,7 @@ class EpidemicNetwork(Network):
             time_steps, S, I = self.__simulation_investigation.summary()
             R = [0 for _ in time_steps]
 
-        if time_steps[0] == -1.0:
+        if time_steps[0] < 0:
             time_steps = time_steps[1:]
             S = S[1:]
             I = I[1:]
