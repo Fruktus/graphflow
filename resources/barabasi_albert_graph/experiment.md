@@ -20,6 +20,8 @@ Domyślne ustawienia:
 `recovery_rate = 2.0`  
 ![sir_fast_0-5_2-0](sir_fast_0-5_2-0.gif)
 
+**Najlepszy wynik**
+
 `transmission_rate = 0.3`  
 `recovery_rate = 0-8`
 ![sir_fast_0-3_0-8](sir_fast_0-3_0-8.gif)
@@ -28,4 +30,4 @@ Domyślne ustawienia:
 `recovery_rate = 0-8`
 ![sir_fast_0-2_0-8](sir_fast_0-2_0-8.gif)
 
-To najlepszy wynik, jaki uzyskałem
+Również bardzo dobry wynik. Z powodu niższych wartość parametrów infekcja utrzymała się dłużej
