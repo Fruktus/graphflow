@@ -66,10 +66,18 @@ class Network(ABC):
         """
             Visualises calculated network
 
-            Not all models
-
             Args:
-                vis_type: What visualisation method should be used. Can be: 'holoviews' or 'mp4'. Defaults to holoviews
+                vis_type: What visualisation method should be used. Can be: 'html', 'mp4' or 'gif'. Defaults to
+                    'html'
+
+            Notes:
+            In order to export to 'mp4' and 'gif' **imagemagic** is required!
+
+            Different visualization types are supported for different models:
+                - simple: 'html'
+                - extended: 'html'
+                - epidemic: 'html', 'mp4', 'gif'
+                - epanet: has own visualization
 
             Raises:
                 ValueError: Network is not calculated or wrong `vis_type`
@@ -77,16 +85,17 @@ class Network(ABC):
         if not self.is_calculated:
             raise ValueError("Network not calculated.")
 
-        if vis_type == 'holoviews':
+        if vis_type == 'html':
             layout = self._holoviews_get_networks() + self._holoviews_get_metrics()
 
             filename = "graph.html"
             hv.save(layout, filename, backend='bokeh')
             self._add_metric_list(filename, self._static_metrics)
             webbrowser.open(filename)
-
         elif vis_type == 'mp4':
-            raise ValueError("Visualization type (vis_type) is unsupported for this model")
+            raise ValueError("Visualization type (vis_type) '{}' is unsupported for this model".format(vis_type))
+        elif vis_type == 'gif':
+            raise ValueError("Visualization type (vis_type) '{}' is unsupported for this model".format(vis_type))
         else:
             raise ValueError("Unrecognised vis_type")
 
@@ -218,7 +227,7 @@ class Network(ABC):
 
         return distribution
 
-    def _save_as_mp4(self, filename: str, color_by: str, color_map: dict = {}, label_map: dict = {}):
+    def _save_as_animation(self, filename: str, color_by: str, color_map: dict = {}, label_map: dict = {}):
         """
         Saves calculated networks as mp4 file
 
