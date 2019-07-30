@@ -4,7 +4,7 @@ Obsługiwane typy sieci:
 - sieci wodociągowe
 - sieci epidemiczne
 
-Głównym obszarem naszego zainteresowania były sieci epidemiczne. Poniżej znajudje sie opis różnych eksperymetów
+Głównym obszarem naszego zainteresowania były sieci epidemiczne. Poniżej znajudje sie opis różnych eksperymentów
  przeprowadzonych na tych sieciach.
 
 ## Przykład
@@ -36,3 +36,5 @@ Algorytmy _fast_ sa dużo bardziej precyzyjne, więc będą częściej używane 
  modelu SIS działa znacznie gorzej niż jego odpowiednik _fast_, nie będzie więc używany do testów.
  
 ## Eksperymenty:
+[Barabasi Albert](resources/barabasi_albert_graph/experiment.md)
+![barabasi_albert](resources/barabasi_albert_graph/barabasi_albert_graph_500_3.png)
