@@ -254,7 +254,7 @@ class Network(ABC):
                 else:
                     colors[i, j] = hash(statuses[node])
 
-        fig, (ax_plot, ax_network) = plt.subplots(1, 2, figsize=[25, 10])
+        fig, (ax_plot, ax_network) = plt.subplots(1, 2, figsize=[10, 5])
 
         metric_names = [name for name in next(iter(self._calculated_networks.values())).graph.keys()]
         for metric_name in metric_names:
