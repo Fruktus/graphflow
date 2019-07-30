@@ -18,16 +18,20 @@ Domyślne ustawienia:
 
 `transmission_rate = 0.5`  
 `recovery_rate = 2.0`  
-![sir_fast_0-5_2-0](sir_fast_0-5_2-0.gif)
-
+![sir_fast_0-5_2-0](sir_fast_0-5_2-0.gif)  
 **Najlepszy wynik**
 
 `transmission_rate = 0.3`  
-`recovery_rate = 0-8`
+`recovery_rate = 0-8`  
 ![sir_fast_0-3_0-8](sir_fast_0-3_0-8.gif)
 
 `transmission_rate = 0.2`  
-`recovery_rate = 0-8`
-![sir_fast_0-2_0-8](sir_fast_0-2_0-8.gif)
+`recovery_rate = 0-8`  
+![sir_fast_0-2_0-8](sir_fast_0-2_0-8.gif)  
+Również bardzo dobry wynik. Z powodu niższych wartości parametrów infekcja utrzymała się dłużej
 
-Również bardzo dobry wynik. Z powodu niższych wartość parametrów infekcja utrzymała się dłużej
+## SIS, algorytm _fast_
+Dla porównania wynik SIS (dla parametrów z ostatniego testu)
+`transmission_rate = 0.2`  
+`recovery_rate = 0-8`  
+![sis_fast_0-2_0-8](sis_fast_0-2_0-8.gif)  
