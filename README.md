@@ -36,5 +36,5 @@ Algorytmy _fast_ sa dużo bardziej precyzyjne, więc będą częściej używane 
  modelu SIS działa znacznie gorzej niż jego odpowiednik _fast_, nie będzie więc używany do testów.
  
 ## Eksperymenty:
-[Barabasi Albert](resources/barabasi_albert_graph/experiment.md)
+- [Barabasi Albert](resources/barabasi_albert_graph/experiment.md)  
 ![barabasi_albert](resources/barabasi_albert_graph/barabasi_albert_graph_500_3.png)
