@@ -68,3 +68,13 @@ Algorytmy _fast_ sa dużo bardziej precyzyjne, więc będą częściej używane 
 ## Eksperymenty:
 - [Barabasi Albert](resources/barabasi_albert_graph/experiment.md)  
 ![barabasi_albert](resources/barabasi_albert_graph/barabasi_albert_graph_500_3.png)
+- [Circullar Ladder](resources/circular_ladder_graph/experiment.md)  
+![circular_ladder](resources/circular_ladder_graph/circular_ladder_graph300.png)
+- [Power Cluster](resources/power_cluster/experiment.md)  
+![power_cluster](resources/power_cluster/powerlaw_cluster_graph_300_1_0-30.png)
+- [Random Shell Graph](resources/shell/experiment.md)  
+![random_shell](resources/shell/random_shell_graph_.png)
+- [Lobster Graph](resources/lobster/experiment.md)  
+![lobster](resources/lobster/random_lobster_300_0-80_0-80.png)  
+- [Hoffman Singleton Graph](resources/hoffman/experiment.md)  
+![hoffman](resources/hoffman/hoffman_singleton_graph_.png)  
