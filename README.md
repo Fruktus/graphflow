@@ -42,3 +42,5 @@ Algorytmy _fast_ sa dużo bardziej precyzyjne, więc będą częściej używane 
 ![circular_ladder](resources/circular_ladder_graph/circular_ladder_graph300.png)
 - [Power Cluster](resources/power_cluster/experiment.md)
 ![power_cluster](resources/power_cluster/powerlaw_cluster_graph_300_1_0-30.png)
+- [Random Shell Graph](resources/shell/experiment.md)
+![random_shell](resources/shell/random_shell_graph_.png)
