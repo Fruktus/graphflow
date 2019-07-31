@@ -36,7 +36,7 @@ python3 -m graphflow @"./sample_config.txt"
 ```
 
 ## Przykład
-Przykładowe działanie programu dla grafu Tutte'a:
+Przykładowe działanie programu dla grafu Tutte'a:  
 ![tutte](resources/tutte_graph/tutte_graph_.png)
 
 ### Model SIR:
