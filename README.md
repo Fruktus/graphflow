@@ -8,7 +8,7 @@ Głównym obszarem naszego zainteresowania były sieci epidemiczne. Poniżej zna
  przeprowadzonych na tych sieciach.
  
 ## Instalacja
-Projekt używa języka Python 3.7 i biblioteki ImageMagick używanej do eksportu danych w formacie mp4.
+Projekt używa języka Python 3.7. Dodatkowo do eksportu danych w formacie mp4 potrzebna będzie biblioteka ImageMagick.
 Po pobraniu projektu, w katalogu głównym wystarczy wywołać polecenie
 
 ```bash
