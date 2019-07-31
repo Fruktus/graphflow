@@ -10,16 +10,29 @@ Głównym obszarem naszego zainteresowania były sieci epidemiczne. Poniżej zna
 ## Instalacja
 Projekt używa języka Python 3.7
 
-'''bash
+```bash
 pip3 install ./graph-flow
-'''
+```
 
 
 ## Uruchomienie
 
-'''bash
+```bash
 python3 -m graphflow
-'''
+```
+
+Uruchomienie aplikacji bez dodatkowych parametrów wyświetli interfejs graficzny.
+Można skorzystać z konsolowej pomocy poprzez komendę
+```bash
+python3 -m graphflow -h
+```
+
+Parametry można podać bezpośrednio z konsoli lub zapisać je w pliku, po jednym w każdej linii,
+a następnie uruchomić program z jednym parametrem będącym ścieżką do tego pliku poprzedzoną znakiem @.
+Przykład:
+```bash
+python3 -m graphflow @"./sample_config.txt"
+```
 
 ## Przykład
 Przykładowe działanie programu dla grafu Tutte'a:
