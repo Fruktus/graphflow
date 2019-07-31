@@ -46,3 +46,5 @@ Algorytmy _fast_ sa dużo bardziej precyzyjne, więc będą częściej używane 
 ![random_shell](resources/shell/random_shell_graph_.png)
 - [Lobster Graph](resources/lobster/experiment.md)  
 ![lobster](resources/lobster/random_lobster_300_0-80_0-80.png)  
+- [Hoffman Singleton Graph](resources/hoffman/experiment.md)  
+![hoffman](resources/hoffman/hoffman_singleton_graph_.png)  
