@@ -38,3 +38,5 @@ Algorytmy _fast_ sa dużo bardziej precyzyjne, więc będą częściej używane 
 ## Eksperymenty:
 - [Barabasi Albert](resources/barabasi_albert_graph/experiment.md)  
 ![barabasi_albert](resources/barabasi_albert_graph/barabasi_albert_graph_500_3.png)
+- [Circullar Ladder](resources/circular_ladder_graph/experiment.md)  
+![circular_aldder](resources/circular_ladder_graph/circular_ladder_graph300.png)
