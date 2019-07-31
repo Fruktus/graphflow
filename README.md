@@ -35,6 +35,8 @@ Przykład:
 python3 -m graphflow @"./sample_config.txt"
 ```
 
+Pełny opis dostępny jest w dokumentacji projektu.
+
 ## Przykład
 Przykładowe działanie programu dla grafu Tutte'a:  
 ![tutte](resources/tutte_graph/tutte_graph_.png)
