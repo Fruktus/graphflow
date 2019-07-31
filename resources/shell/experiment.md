@@ -3,7 +3,7 @@
 
 ## SIR algorytm _fast_
 
-Zmniejszałem parametr `transmission_rate = 1.0` dopóki infekcja przestała zarażać wszystkie węzły
+Zmniejszałem parametr `transmission_rate` aż do momentu gdy zostały jakieś niezarażone węzły po wygaśnięciu infekcji
 
 `transmission_rate = 1.0`  
 `recovery_rate = 1.0`  
@@ -16,6 +16,9 @@ Zmniejszałem parametr `transmission_rate = 1.0` dopóki infekcja przestała zar
 `transmission_rate = 1.0`  
 `recovery_rate = 0.5`  
 ![sir_fast_0-5_1-0](sir_fast_0-5_1-0.gif)
+
+Można zaobserwować bardzo szybkie zarażanie dużych zbiorowisk węzłów, po tym jak jeden z nich zostanie zainfekowany. 
+Choroba dużo trudniej przenosi się na sąsiednie grupy.
 
 ## SIS, algorytm _fast_
 
@@ -31,5 +34,3 @@ I dla algorytmu dyskretnego
 
 `transmission_probability = 0.35`  
 ![sir_discrete_0-35](sir_discrete_0-35.gif)
-
-Widać, że jest on znacznie gorszy niż _fast_
