@@ -4,11 +4,25 @@ Obsługiwane typy sieci:
 - sieci wodociągowe
 - sieci epidemiczne
 
-Głównym obszarem naszego zainteresowania były sieci epidemiczne. Poniżej znajudje sie opis różnych eksperymentów
+Głównym obszarem naszego zainteresowania były sieci epidemiczne. Poniżej znajduje sie opis różnych eksperymentów
  przeprowadzonych na tych sieciach.
+ 
+## Instalacja
+Projekt używa języka Python 3.7
+
+'''bash
+pip3 install ./graph-flow
+'''
+
+
+## Uruchomienie
+
+'''bash
+python3 -m graphflow
+'''
 
 ## Przykład
-Przykładaowe działanie programu dla grafu Tutte'a:
+Przykładowe działanie programu dla grafu Tutte'a:
 ![tutte](resources/tutte_graph/tutte_graph_.png)
 
 ### Model SIR:
