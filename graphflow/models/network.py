@@ -8,6 +8,7 @@ from abc import ABC, abstractmethod
 import networkx as nx
 import holoviews as hv
 import numpy as np
+import matplotlib as mpl
 import matplotlib.colors as col
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
@@ -62,13 +63,13 @@ class Network(ABC):
         """Calculates network and applies all metrics."""
         pass
 
-    def visualize(self, vis_type: str = 'holoviews'):
+    def visualize(self, vis_type: str = 'html'):
         """
             Visualises calculated network
 
             Args:
                 vis_type: What visualisation method should be used. Can be: 'html', 'mp4' or 'gif'. Defaults to
-                    'html'
+                    'html', 'png'
 
             Notes:
             In order to export to 'mp4' and 'gif' **imagemagic** is required!
@@ -76,7 +77,7 @@ class Network(ABC):
             Different visualization types are supported for different models:
                 - simple: 'html'
                 - extended: 'html'
-                - epidemic: 'html', 'mp4', 'gif'
+                - epidemic: 'html', 'mp4', 'gif', 'png'
                 - epanet: has own visualization
 
             Raises:
@@ -96,8 +97,10 @@ class Network(ABC):
             raise ValueError("Visualization type (vis_type) '{}' is unsupported for this model".format(vis_type))
         elif vis_type == 'gif':
             raise ValueError("Visualization type (vis_type) '{}' is unsupported for this model".format(vis_type))
+        elif vis_type == 'png':
+            raise ValueError("Visualization type (vis_type) '{}' is unsupported for this model".format(vis_type))
         else:
-            raise ValueError("Unrecognised vis_type")
+            raise ValueError("Unrecognised vis_type {}".format(vis_type))
 
     def export(self, filename: str):
         """
@@ -284,6 +287,55 @@ class Network(ABC):
         data_to_frames = list(enumerate(self._calculated_networks.keys()))
         ani = FuncAnimation(fig, update, interval=5, frames=data_to_frames, blit=True)
         ani.save(filename, writer='imagemagick', savefig_kwargs={'facecolor': 'white'}, fps=10)
+
+    def _save_as_png(self, filename, color_by: str, color_map: dict = {}, label_map: dict = {}):
+        networks_as_list = list(self._calculated_networks.values())
+        first_network = networks_as_list[0]
+        last_network = networks_as_list[-1]
+
+        steps = len(self._calculated_networks)
+
+        mpl_cmap = col.ListedColormap(list(color_map.values()))
+        color_nums = {value: num for num, value in enumerate(color_map.keys())}
+
+        first_colors = np.ndarray((len(first_network.nodes()),), dtype=int)
+        last_colors = np.ndarray((len(first_network.nodes()),), dtype=int)
+
+        for i, (node1, node2) in enumerate(zip(first_network.nodes, last_network.nodes)):
+            statuses1 = nx.get_node_attributes(first_network, color_by)
+            statuses2 = nx.get_node_attributes(last_network, color_by)
+            if color_map:
+                first_colors[i] = color_nums[statuses1[node1]]
+                last_colors[i] = color_nums[statuses2[node2]]
+            else:
+                first_colors[i] = hash(statuses1[node1])
+                last_colors[i] = hash(statuses2[node2])
+
+        fig, (ax_plot, ax_first_network, ax_last_network) = plt.subplots(3, 1, figsize=[6, 10])
+
+        metric_names = [name for name in first_network.graph.keys()]
+        for metric_name in metric_names:
+            name = label_map.get(metric_name, metric_name)
+            x = list(self._calculated_networks.keys())
+            y = list(map(lambda x: x.graph[metric_name], self._calculated_networks.values()))
+            ax_plot.plot(x, y, label=name, color=color_map[metric_name])
+        ax_plot.legend()
+        ax_plot.set_xlabel('Time')
+        ax_plot.set_ylabel('Value')
+
+        pos = nx.spring_layout(first_network)
+        first_nodes = nx.draw_networkx_nodes(first_network, pos, ax=ax_first_network, node_size=10,
+                                             node_color=first_colors, cmap=mpl_cmap)
+        last_nodes = nx.draw_networkx_nodes(last_network, pos, ax=ax_last_network, node_size=10,
+                                            node_color=last_colors, cmap=mpl_cmap)
+        first_edges = nx.draw_networkx_edges(first_network, pos, ax=ax_first_network, width=0.15)
+        last_edges = nx.draw_networkx_edges(last_network, pos, ax=ax_last_network, width=0.15)
+        ax_first_network.axis("off")
+        ax_first_network.set_title('Beginning of simulation', pad=-180.0)
+        ax_last_network.axis("off")
+        ax_last_network.set_title('End of simulation', pad=-180.0)
+
+        fig.savefig(filename)
 
     def _add_metric_list(self, path_to_html: str, metrics_to_add: dict):
         """
