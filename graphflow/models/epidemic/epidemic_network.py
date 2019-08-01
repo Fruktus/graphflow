@@ -181,6 +181,8 @@ class EpidemicNetwork(Network):
             self._save_as_animation(filename + '.mp4', 'status', color_map=color_map, label_map=label_map)
         elif vis_type == 'gif':
             self._save_as_animation(filename + '.gif', 'status', color_map=color_map, label_map=label_map)
+        elif vis_type == 'png':
+            self._save_as_png(filename + '.png', color_by='status', color_map=color_map, label_map=label_map)
         else:
             raise ValueError("Unrecognised vis_type")
 
