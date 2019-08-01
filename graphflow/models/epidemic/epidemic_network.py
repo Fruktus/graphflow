@@ -169,12 +169,14 @@ class EpidemicNetwork(Network):
 
         color_map = {'S': 'yellow', 'I': 'red', 'R': 'green'}
         label_map = {'S': 'Susceptible', 'I': 'Infected', 'R': 'Recovered'}
+
         layout = self._get_hv_network(color_by="status", color_map=color_map) + \
             self._get_metrics_plot(color_map=color_map, label_map=label_map)
 
         filename = "graph.html"
         hv.save(layout, filename, backend='bokeh')
         self._add_metric_list(filename, self._static_metrics)
+
         lg.info('visualization done')
         webbrowser.open(filename)
 
