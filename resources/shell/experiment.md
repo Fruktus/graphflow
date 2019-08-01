@@ -9,12 +9,12 @@ Zmniejszałem parametr `transmission_rate` aż do momentu gdy zostały jakieś n
 `recovery_rate = 1.0`  
 ![sir_fast_1-0_1-0](sir_fast_1-0_1-0.gif)
 
-`transmission_rate = 1.0`  
-`recovery_rate = 0.8`  
+`transmission_rate = 0.8`  
+`recovery_rate = 1.0`  
 ![sir_fast_0-8_1-0](sir_fast_0-8_1-0.gif)
 
-`transmission_rate = 1.0`  
-`recovery_rate = 0.5`  
+`transmission_rate = 0.5`  
+`recovery_rate = 1.0`  
 ![sir_fast_0-5_1-0](sir_fast_0-5_1-0.gif)
 
 Można zaobserwować bardzo szybkie zarażanie dużych zbiorowisk węzłów, po tym jak jeden z nich zostanie zainfekowany. 
