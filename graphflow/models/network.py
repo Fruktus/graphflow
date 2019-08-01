@@ -4,6 +4,7 @@ import csv
 import webbrowser
 
 from abc import ABC, abstractmethod
+from copy import deepcopy
 
 import networkx as nx
 import holoviews as hv
@@ -325,8 +326,9 @@ class Network(ABC):
         pos = nx.spring_layout(first_network)
         first_nodes = nx.draw_networkx_nodes(first_network, pos, ax=ax_first_network, node_size=10,
                                              node_color=first_colors, cmap=mpl_cmap)
-        last_nodes = nx.draw_networkx_nodes(last_network, pos, ax=ax_last_network, node_size=10,
-                                            node_color=last_colors, cmap=mpl_cmap)
+        last_nodes = nx.draw_networkx_nodes(first_network, pos, ax=ax_last_network, node_size=10,
+                                            node_color=first_colors, cmap=mpl_cmap)
+        last_nodes.set_array(last_colors)
         first_edges = nx.draw_networkx_edges(first_network, pos, ax=ax_first_network, width=0.15)
         last_edges = nx.draw_networkx_edges(last_network, pos, ax=ax_last_network, width=0.15)
         ax_first_network.axis("off")
