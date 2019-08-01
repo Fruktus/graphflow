@@ -8,6 +8,7 @@ from abc import ABC, abstractmethod
 import networkx as nx
 import holoviews as hv
 import numpy as np
+import matplotlib as mpl
 import matplotlib.colors as col
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
