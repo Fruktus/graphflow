@@ -7,6 +7,10 @@ from abc import ABC, abstractmethod
 
 import networkx as nx
 import holoviews as hv
+import numpy as np
+import matplotlib.colors as col
+import matplotlib.pyplot as plt
+from matplotlib.animation import FuncAnimation
 
 from graphflow.analysis.metric_utils import get_metric, calculate_metric_list
 
@@ -58,22 +62,42 @@ class Network(ABC):
         """Calculates network and applies all metrics."""
         pass
 
-    def visualize(self):
+    def visualize(self, vis_type: str = 'holoviews'):
         """
             Visualises calculated network
 
+            Args:
+                vis_type: What visualisation method should be used. Can be: 'html', 'mp4' or 'gif'. Defaults to
+                    'html'
+
+            Notes:
+            In order to export to 'mp4' and 'gif' **imagemagic** is required!
+
+            Different visualization types are supported for different models:
+                - simple: 'html'
+                - extended: 'html'
+                - epidemic: 'html', 'mp4', 'gif'
+                - epanet: has own visualization
+
             Raises:
-                ValueError: Network is not calculated
+                ValueError: Network is not calculated or wrong `vis_type`
         """
         if not self.is_calculated:
             raise ValueError("Network not calculated.")
 
-        layout = self._get_hv_network() + self._get_metrics_plot()
+        if vis_type == 'html':
+            layout = self._holoviews_get_networks() + self._holoviews_get_metrics()
 
-        filename = "graph.html"
-        hv.save(layout, filename, backend='bokeh')
-        self._add_metric_list(filename, self._static_metrics)
-        webbrowser.open(filename)
+            filename = "graph.html"
+            hv.save(layout, filename, backend='bokeh')
+            self._add_metric_list(filename, self._static_metrics)
+            webbrowser.open(filename)
+        elif vis_type == 'mp4':
+            raise ValueError("Visualization type (vis_type) '{}' is unsupported for this model".format(vis_type))
+        elif vis_type == 'gif':
+            raise ValueError("Visualization type (vis_type) '{}' is unsupported for this model".format(vis_type))
+        else:
+            raise ValueError("Unrecognised vis_type")
 
     def export(self, filename: str):
         """
@@ -145,7 +169,7 @@ class Network(ABC):
             else:
                 network.graph[name] = value
 
-    def _get_hv_network(self, color_by=None, color_map=None):
+    def _holoviews_get_networks(self, color_by=None, color_map=None):
         """
         Returns holovies graph of th network
 
@@ -177,7 +201,7 @@ class Network(ABC):
 
         return holomap
 
-    def _get_metrics_plot(self, color_map: dict = {}, label_map: dict = {}):
+    def _holoviews_get_metrics(self, color_map: dict = {}, label_map: dict = {}):
         """
             Creates holoviews plot for every not node specific metric over time
 
@@ -202,6 +226,64 @@ class Network(ABC):
             .opts(width=400, height=400, padding=0.1)
 
         return distribution
+
+    def _save_as_animation(self, filename: str, color_by: str, color_map: dict = {}, label_map: dict = {}):
+        """
+        Saves calculated networks as mp4 file
+
+        Args:
+            filename: filename to save mp4
+            color_by: By which attribute nodes should be colored
+            color_map: Dictionary {attribute: color} shows what color will nodes have. If None default colors will be
+                used, which vary depending on color_by attribute value. Defaults to None
+            label_map: Dictionary {attribute: label}. What labels to show in metrics plot. Dict key is name of graph
+                attribute, value is label of that attribute in plot
+        """
+        first_network = next(iter(self._calculated_networks.values()))
+        steps = len(self._calculated_networks)
+
+        mpl_cmap = col.ListedColormap(list(color_map.values()))
+        color_nums = {value: num for num, value in enumerate(color_map.keys())}
+
+        colors = np.ndarray((steps, len(first_network.nodes())), dtype=int)
+        for i, network in enumerate(self._calculated_networks.values()):
+            for j, node in enumerate(network.nodes):
+                statuses = nx.get_node_attributes(network, color_by)
+                if color_map:
+                    colors[i, j] = color_nums[statuses[node]]
+                else:
+                    colors[i, j] = hash(statuses[node])
+
+        fig, (ax_plot, ax_network) = plt.subplots(1, 2, figsize=[10, 5])
+
+        metric_names = [name for name in next(iter(self._calculated_networks.values())).graph.keys()]
+        for metric_name in metric_names:
+            name = label_map.get(metric_name, metric_name)
+            x = list(self._calculated_networks.keys())
+            y = list(map(lambda x: x.graph[metric_name], self._calculated_networks.values()))
+            ax_plot.plot(x, y, label=name, color=color_map[metric_name])
+        ax_plot.legend()
+        ax_plot.set_xlabel('Time = 0')
+        ax_plot.set_ylabel('Value')
+
+        line = ax_plot.axvline(x=0)
+
+        pos = nx.spring_layout(first_network)
+        nodes = nx.draw_networkx_nodes(first_network, pos, ax=ax_network, node_size=10, node_color=colors[0],
+                                       cmap=mpl_cmap)
+        edges = nx.draw_networkx_edges(first_network, pos, ax=ax_network, width=0.15)
+        ax_network.axis("off")
+
+        def update(frames):
+            i, time = frames
+            line.set_xdata(time)
+            nodes.set_array(colors[i])
+            ax_plot.set_xlabel('Time = ' + str(time))
+            return nodes, line
+
+        data_to_frames = list(enumerate(self._calculated_networks.keys()))
+        ani = FuncAnimation(fig, update, interval=5, frames=data_to_frames, blit=True)
+        ani.save(filename, writer='imagemagick', savefig_kwargs={'facecolor': 'white'}, fps=10)
 
     def _add_metric_list(self, path_to_html: str, metrics_to_add: dict):
         """

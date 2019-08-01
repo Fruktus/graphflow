@@ -107,7 +107,7 @@ class EpidemicNetwork(Network):
             time_steps, S, I = self.__simulation_investigation.summary()
             R = [0 for _ in time_steps]
 
-        if time_steps[0] == -1.0:
+        if time_steps[0] < 0:
             time_steps = time_steps[1:]
             S = S[1:]
             I = I[1:]
@@ -162,23 +162,29 @@ class EpidemicNetwork(Network):
         self._is_calculated = True
         lg.info('calculation complete')
 
-    def visualize(self):
+    def visualize(self, vis_type: str = 'holoviews', filename: str = 'graph'):
         lg.info('starting visualization')
         if not self.is_calculated:
             raise ValueError("Network not calculated.")
 
-        color_map = {'S': 'yellow', 'I': 'red', 'R': 'green'}
+        color_map = {'S': 'yellow', 'R': 'green', 'I': 'red'}
         label_map = {'S': 'Susceptible', 'I': 'Infected', 'R': 'Recovered'}
 
-        layout = self._get_hv_network(color_by="status", color_map=color_map) + \
-            self._get_metrics_plot(color_map=color_map, label_map=label_map)
+        if vis_type == 'html':
+            layout = self._holoviews_get_networks(color_by="status", color_map=color_map) + \
+                     self._holoviews_get_metrics(color_map=color_map, label_map=label_map)
 
-        filename = "graph.html"
-        hv.save(layout, filename, backend='bokeh')
-        self._add_metric_list(filename, self._static_metrics)
+            hv.save(layout, filename + ".html", backend='bokeh')
+            self._add_metric_list(filename, self._static_metrics)
+            webbrowser.open(filename + ".html")
+        elif vis_type == 'mp4':
+            self._save_as_animation(filename + '.mp4', 'status', color_map=color_map, label_map=label_map)
+        elif vis_type == 'gif':
+            self._save_as_animation(filename + '.gif', 'status', color_map=color_map, label_map=label_map)
+        else:
+            raise ValueError("Unrecognised vis_type")
 
         lg.info('visualization done')
-        webbrowser.open(filename)
 
     def animate(self):
-        return self.__my_sim.animation
+        return self.__my_sim.animation()

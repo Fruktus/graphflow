@@ -63,8 +63,8 @@ def main():
     epidemic_subparser.add_argument('--time_step_length', help='Length of time step', type=float, default=None)
     epidemic_subparser.add_argument('--metric', '-m', action='append',
                                     help='metric to use, can be specified multiple times')
-    epidemic_subparser.add_argument('--visualize', action='store_true', default=False,
-                                    help='whether to visualize results')
+    epidemic_subparser.add_argument('--visualize', type=str, default='none',
+                                    help="visualization of results. Can be: 'none', 'html' or 'mp4'")
     if len(sys.argv) > 1:
         args = parser.parse_args()
     else:
@@ -151,8 +151,8 @@ def __run_epidemic(args):
 
     network.calculate()
 
-    if args.visualize:
-        network.visualize()
+    if args.visualize != 'none':
+        network.visualize(vis_type=args.visualize, filename=os.path.basename(args.path_to_network_file))
 
 
 if __name__ == '__main__':
