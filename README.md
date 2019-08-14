@@ -14,7 +14,7 @@ Po pobraniu projektu, w katalogu głównym wystarczy wywołać polecenie
 ```bash
 pip3 install ./graph-flow
 ```
-
+Pełne informacje dostępne są w [Wiki projektu](https://github.com/Fruktus/graphflow/wiki)
 
 ## Uruchomienie
 
